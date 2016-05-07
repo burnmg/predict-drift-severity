@@ -30,7 +30,7 @@ public class RelativeVolatilityDetector
 	
 	public double getBufferMean()
 	{
-		return buffer.getIntervalsMean();
+		return buffer.getMean();
 	}
 	
 	// Binary input stream (Relative Variance)

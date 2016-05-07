@@ -30,7 +30,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private AbstractClassifier activeClassifier;
 	private int activeClassifierIndex; 
 	
-	private RelativeVolatilityDetector volatilityDetector;
+	private RelativeVolatilityDetector volatilityDriftDetector;
 	private ClassifierSelector classiferSelector;
 	
 	private int instanceCount;
@@ -88,7 +88,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		
 		
-		volatilityDetector = new RelativeVolatilityDetector(new ADWIN(), 32);
+		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(), 32);
 		instanceCount = 0;
 		
 		activeClassifierIndex = 1;
@@ -109,10 +109,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void trainOnInstanceImpl(Instance inst)
 	{
 		// if there is a volatility shift.
-		if(volatilityDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+		if(volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
 		{
 			
-			double avgInterval = volatilityDetector.getBufferMean();
+			double avgInterval = volatilityDriftDetector.getBufferMean();
 			int decision = classiferSelector.makeDecision(avgInterval);
 			
 			//test

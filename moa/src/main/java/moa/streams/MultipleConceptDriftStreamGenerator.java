@@ -1,5 +1,9 @@
 package moa.streams;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.invoke.SwitchPoint;
 import java.util.List;
 import java.util.Random;
@@ -8,6 +12,7 @@ import weka.core.pmml.FieldMetaInfo.Interval;
 import weka.experiment.Compute;
 import java_cup.internal_error;
 
+import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
@@ -60,6 +65,11 @@ InstanceStream{
             'n', "Percentage of noise to add to the data.", 5, 0, 100);
     public IntOption hyperplaneRandomSeedOption = new IntOption("hyperplaneRandomSeed", 'h',
             "Seed for generating hyperplane", 1);
+    
+    public FileOption driftPositionDumpFileOption = new FileOption("driftPositionDumpFile", 'f',
+            "Destination Dump file.", null, "csv", true);
+    
+    private BufferedWriter bw;
 
     protected int numberInstance;
     
@@ -97,6 +107,18 @@ InstanceStream{
 		stream1 = getNewGenerator(hyperplaneRandom.nextInt());
 		stream2 = getNewGenerator(hyperplaneRandom.nextInt());
 		
+		File dumpFile = driftPositionDumpFileOption.getFile();
+		if(dumpFile!=null)
+		{
+			try
+			{
+				bw = new BufferedWriter(new FileWriter(dumpFile));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 
 		
 	}
@@ -131,6 +153,19 @@ InstanceStream{
 			stream1 = stream2;
 			stream2 = getNewGenerator(hyperplaneRandom.nextInt());
 			previousSwitchPoint = switchPoint;
+			
+			if(bw!=null)
+			{
+				try
+				{
+					bw.write(switchPoint+"\n");
+					bw.flush();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+			}		
 			switchPoint += streamLengthOption.getValue() / numDriftsOption.getValue();
 			driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
 		}
