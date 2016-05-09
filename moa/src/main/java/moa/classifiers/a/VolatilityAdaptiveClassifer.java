@@ -153,6 +153,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			{	
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
 				activeClassifierIndex = decision;
+				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
 			}
 		}
 		instanceCount++;
