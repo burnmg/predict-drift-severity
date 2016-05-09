@@ -1,5 +1,13 @@
 package moa.classifiers.a;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.WriteAbortedException;
+import java.util.PrimitiveIterator.OfDouble;
+
+import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
 import classifiers.selectors.AlwaysFirstClassifierSelector;
@@ -15,28 +23,33 @@ import volatilityevaluation.RelativeVolatilityDetector;
 public class VolatilityAdaptiveClassifer extends AbstractClassifier
 {
 
-	
-	
 	private static final long serialVersionUID = -220640148754624744L;
-	
-	
-	public ClassOption classifier1Option = new ClassOption("classifier1", 'a', "The classifier used in low volatility mode",
-			Classifier.class, "moa.classifiers.trees.HoeffdingTree");
-	public ClassOption classifier2Option = new ClassOption("classifier2", 'b', "The classifier used in high volatility mode",
-			Classifier.class, "moa.classifiers.trees.HoeffdingAdaptiveTree");
-	
+
+	public ClassOption classifier1Option = new ClassOption("classifier1", 'a',
+			"The classifier used in low volatility mode", Classifier.class, "moa.classifiers.a.HoeffdingTreeADWIN");
+	public ClassOption classifier2Option = new ClassOption("classifier2", 'b',
+			"The classifier used in high volatility mode", Classifier.class,
+			"moa.classifiers.trees.HoeffdingAdaptiveTree");
+
+	public FileOption volatitlityDriftDumpFileOption = new FileOption("volatitlityDriftDumpFile", 'v',
+			"Destination csv file.", null, "csv", true);
+
+	public FileOption classifierChangePointDumpFileOption = new FileOption("classifierChangePointDumpFileOption", 'c',
+			"Destination csv file.", null, "csv", true);
+
+	private BufferedWriter volatitlityDriftWriter;
+	private BufferedWriter classifierChangePointDumpWriter;
+
 	private AbstractClassifier classifier1;
 	private AbstractClassifier classifier2;
 	private AbstractClassifier activeClassifier;
-	private int activeClassifierIndex; 
-	
+	private int activeClassifierIndex;
+
 	private RelativeVolatilityDetector volatilityDriftDetector;
 	private ClassifierSelector classiferSelector;
-	
+
 	private int instanceCount;
-	
-	
-	
+
 	@Override
 	public boolean isRandomizable()
 	{
@@ -46,29 +59,26 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void getModelDescription(StringBuilder arg0, int arg1)
 	{
-		
+
 	}
 
-	/**return the information of the current algorithm */
+	/** return the information of the current algorithm */
 	@Override
 	protected Measurement[] getModelMeasurementsImpl()
 	{
 		/*
-        return new Measurement[]{
-                new Measurement("tree size (nodes)", this.decisionNodeCount
-                + this.activeLeafNodeCount + this.inactiveLeafNodeCount),
-                new Measurement("tree size (leaves)", this.activeLeafNodeCount
-                + this.inactiveLeafNodeCount),
-                new Measurement("active learning leaves",
-                this.activeLeafNodeCount),
-                new Measurement("tree depth", measureTreeDepth()),
-                new Measurement("active leaf byte size estimate",
-                this.activeLeafByteSizeEstimate),
-                new Measurement("inactive leaf byte size estimate",
-                this.inactiveLeafByteSizeEstimate),
-                new Measurement("byte size estimate overhead",
-                this.byteSizeEstimateOverheadFraction)};
-                */
+		 * return new Measurement[]{ new Measurement("tree size (nodes)",
+		 * this.decisionNodeCount + this.activeLeafNodeCount +
+		 * this.inactiveLeafNodeCount), new Measurement("tree size (leaves)",
+		 * this.activeLeafNodeCount + this.inactiveLeafNodeCount), new
+		 * Measurement("active learning leaves", this.activeLeafNodeCount), new
+		 * Measurement("tree depth", measureTreeDepth()), new Measurement(
+		 * "active leaf byte size estimate", this.activeLeafByteSizeEstimate),
+		 * new Measurement("inactive leaf byte size estimate",
+		 * this.inactiveLeafByteSizeEstimate), new Measurement(
+		 * "byte size estimate overhead",
+		 * this.byteSizeEstimateOverheadFraction)};
+		 */
 		return null;
 	}
 
@@ -82,26 +92,47 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void resetLearningImpl()
 	{
 		initClassifiers();
-		
-		//selector option
-		classiferSelector = new AlwaysFirstClassifierSelector();
-		
-		
-		
-		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(), 32);
+
+		// selector option
+		classiferSelector = new NaiveClassifierSelector(5000);
+
+		//set writers
+		try
+		{
+
+			File volatitlityDriftDumpFile = volatitlityDriftDumpFileOption.getFile();
+			if (volatitlityDriftDumpFile != null)
+			{
+				volatitlityDriftWriter = new BufferedWriter(new FileWriter(volatitlityDriftDumpFile));
+				volatitlityDriftWriter.write("VolatilityDriftInstance,CurrentAvgIntervals\n");
+			}
+			
+			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
+			if(classifierChangePointDumpFile!=null)
+			{
+				classifierChangePointDumpWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
+				classifierChangePointDumpWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+			}
+
+		} catch (IOException e)
+		{
+
+		}
+
+		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.0001), 32);
 		instanceCount = 0;
-		
+
 		activeClassifierIndex = 1;
 		activeClassifier = classifier1;
-		
+
 	}
-	
+
 	private void initClassifiers()
 	{
-		//classifier 1
+		// classifier 1
 		this.classifier1 = (AbstractClassifier) getPreparedClassOption(this.classifier1Option);
-		
-		//classifier 2 
+
+		// classifier 2
 		this.classifier2 = (AbstractClassifier) getPreparedClassOption(this.classifier2Option);
 	}
 
@@ -109,26 +140,39 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void trainOnInstanceImpl(Instance inst)
 	{
 		// if there is a volatility shift.
-		if(volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+		//if(false)
 		{
-			
-			double avgInterval = volatilityDriftDetector.getBufferMean();
-			int decision = classiferSelector.makeDecision(avgInterval);
-			
-			//test
-			System.out.printf("%d, %f \n", instanceCount, avgInterval);
-			
-			if(activeClassifierIndex!=decision)
-			{
-				activeClassifier = (decision==1)?classifier1:classifier2;
-				//test
-				System.out.println(decision);
-			}
 
+			double avgInterval = volatilityDriftDetector.getBufferMean();
+			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
+			
+			int decision = classiferSelector.makeDecision(avgInterval);
+
+			if (activeClassifierIndex != decision)
+			{	
+				activeClassifier = (decision == 1) ? classifier1 : classifier2;
+				activeClassifierIndex = decision;
+			}
 		}
 		instanceCount++;
 		activeClassifier.trainOnInstance(inst);
-		
+
 	}
-	
+
+	private void writeToFile(BufferedWriter bw, String str)
+	{
+		if (bw != null)
+		{
+			try
+			{
+				bw.write(str);
+				bw.flush();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

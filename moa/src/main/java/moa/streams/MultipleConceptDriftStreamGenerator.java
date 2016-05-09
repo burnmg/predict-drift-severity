@@ -113,6 +113,7 @@ InstanceStream{
 			try
 			{
 				bw = new BufferedWriter(new FileWriter(dumpFile));
+				bw.write("switchpoint\n");
 			} catch (IOException e)
 			{
 				e.printStackTrace();
