@@ -169,6 +169,7 @@ InstanceStream{
 			}		
 			switchPoint += streamLengthOption.getValue() / numDriftsOption.getValue();
 			driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
+			//driftPosition = (switchPoint - previousSwitchPoint) / 2;
 		}
 		
 		
@@ -185,6 +186,8 @@ InstanceStream{
 	public int computeNextDriftPosition(int switchPoint, int previousSwitchPoint){
 		
 		double gaussianRandom = driftRandom.nextGaussian()*standardDev.getValue();
+		
+		
 		// limit the range of gaussianRandom within [-0.9, 0.9]. 
 		if (gaussianRandom > 0.9)
 		{
@@ -195,11 +198,11 @@ InstanceStream{
 		}
 		
 		
-		int blockCentrePoint = (switchPoint - previousSwitchPoint) / 2;
-		int driftPositionMean = previousSwitchPoint + blockCentrePoint;
-		int newDriftpos = driftPositionMean + (int)(blockCentrePoint * gaussianRandom); 
-		
-		return newDriftpos;
+		int mean = (switchPoint - previousSwitchPoint) / 2;
+		int blockCentrePosition = previousSwitchPoint + mean;
+		int newDriftPosition = blockCentrePosition + (int)(mean * gaussianRandom); 
+		//int newDriftpos = driftPositionMean + (int)(blockCentrePoint); 
+		return newDriftPosition;
 	}
 
 	@Override
