@@ -136,7 +136,35 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		this.classifier2 = (AbstractClassifier) getPreparedClassOption(this.classifier2Option);
 	}
 
+	
+	/* Use volatility Drift
 	@Override
+	public void trainOnInstanceImpl(Instance inst)
+	{
+		// if there is a volatility shift.
+		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+		//if(false)
+		{
+
+			double avgInterval = volatilityDriftDetector.getBufferMean();
+			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
+			
+			int decision = classiferSelector.makeDecision(avgInterval);
+
+			if (activeClassifierIndex != decision)
+			{	
+				activeClassifier = (decision == 1) ? classifier1 : classifier2;
+				activeClassifierIndex = decision;
+				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
+			}
+		}
+		instanceCount++;
+		activeClassifier.trainOnInstance(inst);
+
+	}
+	*/
+	
+	// use volatility monitor
 	public void trainOnInstanceImpl(Instance inst)
 	{
 		// if there is a volatility shift.

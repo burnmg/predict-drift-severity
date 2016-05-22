@@ -6,6 +6,7 @@ import moa.DoTask;
 
 public class MyTasks
 {
+	final 
 
 	public static void main(String[] args)
 	{
@@ -45,6 +46,11 @@ public class MyTasks
 
 		};
 		return tasks;
+	}
+	
+	private static void myEvaluatePrequential(int algorithm, int stream)
+	{
+		
 	}
 
 }
