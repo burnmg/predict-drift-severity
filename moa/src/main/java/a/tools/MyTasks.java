@@ -1,4 +1,4 @@
-package a;
+package a.tools;
 
 import java.awt.Frame;
 
@@ -10,7 +10,7 @@ public class MyTasks
 
 	public static void main(String[] args)
 	{
-		String[] tasks = test();
+		String[] tasks = myEvaluatePrequential();
 		for (int i = 0; i < tasks.length; i++)
 		{
 			System.out.println("*****Task*****: " + i);
@@ -47,10 +47,14 @@ public class MyTasks
 		};
 		return tasks;
 	}
-	
-	private static void myEvaluatePrequential(int algorithm, int stream)
+	private static String[] myEvaluatePrequential()
 	{
-		
+		String[] tasks =
+		{
+				"EvaluatePrequential -l a.HoeffdingTreeADWIN -s (ArffFileStream -f /Users/rl/789/Streams/regularchangstream.arff/regularchangstream.arff) -f 1000 -q 1000 -d /Users/rl/789/test/a.HoeffdingTreeADWINres.csv",
+
+		};
+		return tasks;
 	}
 
 }
