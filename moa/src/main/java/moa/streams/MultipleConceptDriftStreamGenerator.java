@@ -66,7 +66,7 @@ InstanceStream{
     public IntOption hyperplaneRandomSeedOption = new IntOption("hyperplaneRandomSeed", 'h',
             "Seed for generating hyperplane", 1);
     
-    public FileOption driftPositionDumpFileOption = new FileOption("driftPositionDumpFile", 'f',
+    public FileOption driftDescriptionDumpFileOption = new FileOption("driftDescriptionDumpFile", 'f',
             "Destination Dump file.", null, "csv", true);
     
     private BufferedWriter bw;
@@ -107,13 +107,13 @@ InstanceStream{
 		stream1 = getNewGenerator(hyperplaneRandom.nextInt());
 		stream2 = getNewGenerator(hyperplaneRandom.nextInt());
 		
-		File dumpFile = driftPositionDumpFileOption.getFile();
+		File dumpFile = driftDescriptionDumpFileOption.getFile();
 		if(dumpFile!=null)
 		{
 			try
 			{
 				bw = new BufferedWriter(new FileWriter(dumpFile));
-				bw.write("switchpoint\n");
+				bw.write("dirft point\n");
 			} catch (IOException e)
 			{
 				e.printStackTrace();

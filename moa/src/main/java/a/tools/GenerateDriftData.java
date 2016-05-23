@@ -9,10 +9,22 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-		int[] numDrifts = {10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000};
-		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
+//		int[] numDrifts = {10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000};
+//		int[] numDrifts = {10, 1000, 10, 1000, 10};
+//		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
+		int[] numDrifts = {10, 1000};
+		generateAbruptDriftData(100, 1, numDrifts, "smalldrift.arff");
+		
+		
 	}
 	
+	/**
+	 * 
+	 * @param blockLength
+	 * @param interleavedWindowSize
+	 * @param numDrifts
+	 * @param fileName: examlpe "stream.arff"
+	 */
 	public static void generateAbruptDriftData(int blockLength, int interleavedWindowSize, int[] numDrifts, String fileName)
 	{
 		System.out.print("Total stream length: " + numDrifts.length*blockLength);
@@ -28,7 +40,8 @@ public class GenerateDriftData
 		dir.mkdir();
 		
 		String taskhead = "WriteStreamToARFFFile2 -s "
-				+ "(MultipleConceptDriftStreamGenerator -l "+blockLength+" -d "+numDrifts[0]+" -c 4 -w "+interleavedWindowSize+") "
+				+ "(MultipleConceptDriftStreamGenerator"
+				+ " -l "+blockLength+" -d "+numDrifts[0]+" -c 4 -w "+interleavedWindowSize+" -f "+dir+"/streamDescription.csv) "
 						+ "-f "+dir+'/'+fileName; 
 		//first write
 		String[] ft =  {
