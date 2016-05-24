@@ -1,4 +1,4 @@
-package a.tools;
+package archive;
 
 import inputstream.MultipleDriftBernoulliDistributionGenerator;;
 public class GenerateBinaryStream
