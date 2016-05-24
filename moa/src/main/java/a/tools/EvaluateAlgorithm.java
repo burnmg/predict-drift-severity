@@ -16,7 +16,7 @@ public class EvaluateAlgorithm
 	//test HAT in 12500-10m limit memory
 	// "EvaluatePrequential -l (trees.HoeffdingAdaptiveTree -m 33554) -s (ArffFileStream -f /Users/rl/789/Streams/12500-10m.arff) -f 1000 -q 1000 -d /Users/rl/789/test/12500-10m-limit-m/HAT/res.csv",
 
-	//TODO 
+
 	public static void evaluatePrequential(int algorithm, String streamName) throws IOException
 	{
 		String algorithmName = null; 
@@ -30,7 +30,7 @@ public class EvaluateAlgorithm
 		}
 		
 
-		File algorithmLevelDir = new File("/Users/rl/789/test/"+algorithmName);
+		File algorithmLevelDir = new File(Directory.root+"test/"+algorithmName);
 		
 		if(!(algorithmLevelDir.exists() && algorithmLevelDir.isDirectory()))
 		{
@@ -44,7 +44,7 @@ public class EvaluateAlgorithm
 		
 		String[] t = 
 			{
-					 "EvaluatePrequential -l "+algorithmName+" -s (ArffFileStream -f /Users/rl/789/Streams/"+streamName+"/"+streamName+") -f 1 -q 1 -d "+streamLevelDir+"/res.csv",
+					 "EvaluatePrequential -l "+algorithmName+" -s (ArffFileStream -f "+Directory.root+"Streams/"+streamName+"/"+streamName+") -f 1 -q 1 -d "+streamLevelDir+"/res.csv",
 
 			}; 
 		DoTask.main(t);
@@ -52,7 +52,7 @@ public class EvaluateAlgorithm
 		//use python to analyse the experiment results
 		Runtime rt = Runtime.getRuntime();
 		String res_file = streamLevelDir.getAbsolutePath()+"/res.csv";
-		String drift_point_file = "/Users/rl/789/Streams/"+streamName+"/streamDescription.csv";
+		String drift_point_file = Directory.root+"Streams/"+streamName+"/streamDescription.csv";
 		String to_summary_file = streamLevelDir.getAbsolutePath()+"/summary.csv";
 		String to_figure_file = streamLevelDir.getAbsolutePath()+"/figure.png";
 		

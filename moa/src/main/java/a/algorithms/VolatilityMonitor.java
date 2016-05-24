@@ -1,4 +1,4 @@
-package lin.volatility;
+package a.algorithms;
 
 import cutpointdetection.CutPointDetector;
 import moa.classifiers.core.driftdetection.ADWIN;

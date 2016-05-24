@@ -13,7 +13,7 @@ public class GenerateDriftData
 //		int[] numDrifts = {10, 1000, 10, 1000, 10};
 //		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
 		int[] numDrifts = {10, 1000};
-		generateAbruptDriftData(100, 1, numDrifts, "smalldrift.arff");
+		generateAbruptDriftData(100, 1, numDrifts, "test.arff");
 		
 		
 	}
@@ -36,7 +36,7 @@ public class GenerateDriftData
 			}
 		}
 		
-		File dir = new File("/Users/rl/789/Streams/"+fileName); 
+		File dir = new File(Directory.root+"Streams/"+fileName); 
 		dir.mkdir();
 		
 		String taskhead = "WriteStreamToARFFFile2 -s "

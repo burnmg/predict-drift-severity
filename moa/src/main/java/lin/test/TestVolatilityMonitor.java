@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import lin.volatility.VolatilityMonitor;
+import a.algorithms.VolatilityMonitor;
 import moa.classifiers.core.driftdetection.ADWIN;
 
 public class TestVolatilityMonitor

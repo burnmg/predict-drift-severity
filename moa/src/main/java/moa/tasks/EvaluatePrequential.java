@@ -156,7 +156,7 @@ public class EvaluatePrequential extends MainTask {
             try {
                 if (dumpFile.exists()) {
                     immediateResultStream = new PrintStream(
-                            new FileOutputStream(dumpFile, true), true);
+                            new FileOutputStream(dumpFile, false), true);
                 } else {
                     immediateResultStream = new PrintStream(
                             new FileOutputStream(dumpFile), true);

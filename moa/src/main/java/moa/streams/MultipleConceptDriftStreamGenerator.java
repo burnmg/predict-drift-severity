@@ -99,8 +99,6 @@ InstanceStream{
 		driftRandom = new Random(drifIntOptiontRandomSeedOption.getValue());
 		hyperplaneRandom = new Random(hyperplaneRandomSeedOption.getValue());
 		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
-		
-		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
 		previousSwitchPoint = 0;
 		driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
 		
