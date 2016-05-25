@@ -22,10 +22,6 @@ public class EvaluateMain
 //            
 //            
 //		}
-		LinEvaluator e = new LinEvaluator();
-		e.stream = getStreamFromFile("smalldrift.arff");
-		e.classifier = getHT();
-		e.evaluate();
 
 	}
 	
