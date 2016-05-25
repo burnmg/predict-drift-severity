@@ -2,6 +2,7 @@ package a.evaluator;
 
 import a.tools.Directory;
 import moa.classifiers.a.HoeffdingTreeADWIN;
+import moa.core.Example;
 import moa.streams.ArffFileStream;
 
 public class EvaluateMain
@@ -9,6 +10,18 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
+		
+//        classifier.setModelContext(stream.getHeader());
+//
+//		while(stream.hasMoreInstances())
+//		{
+//            Example trainInst = stream.nextInstance();
+//            Example testInst = (Example) trainInst; 
+//
+//
+//            
+//            
+//		}
 		LinEvaluator e = new LinEvaluator();
 		e.stream = getStreamFromFile("smalldrift.arff");
 		e.classifier = getHT();
