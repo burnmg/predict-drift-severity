@@ -66,20 +66,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	protected Measurement[] getModelMeasurementsImpl()
 	{
-		/*
-		 * return new Measurement[]{ new Measurement("tree size (nodes)",
-		 * this.decisionNodeCount + this.activeLeafNodeCount +
-		 * this.inactiveLeafNodeCount), new Measurement("tree size (leaves)",
-		 * this.activeLeafNodeCount + this.inactiveLeafNodeCount), new
-		 * Measurement("active learning leaves", this.activeLeafNodeCount), new
-		 * Measurement("tree depth", measureTreeDepth()), new Measurement(
-		 * "active leaf byte size estimate", this.activeLeafByteSizeEstimate),
-		 * new Measurement("inactive leaf byte size estimate",
-		 * this.inactiveLeafByteSizeEstimate), new Measurement(
-		 * "byte size estimate overhead",
-		 * this.byteSizeEstimateOverheadFraction)};
-		 */
-		return null;
+		
+		return activeClassifier.getModelMeasurements();
 	}
 
 	@Override

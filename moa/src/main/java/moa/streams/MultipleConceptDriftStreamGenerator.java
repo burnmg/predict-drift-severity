@@ -4,24 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.invoke.SwitchPoint;
-import java.util.List;
 import java.util.Random;
-
-import weka.core.pmml.FieldMetaInfo.Interval;
-import weka.experiment.Compute;
-import java_cup.internal_error;
-
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
-
-import moa.classifiers.core.driftdetection.SEEDChangeDetector.SEED;
 import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
-import moa.options.ClassOption;
 import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.TaskMonitor;
 
@@ -121,6 +111,7 @@ InstanceStream{
 
 		
 	}
+	
 	private HyperplaneGenerator getNewGenerator(int seed){
 		
 		HyperplaneGenerator stream = new HyperplaneGenerator();

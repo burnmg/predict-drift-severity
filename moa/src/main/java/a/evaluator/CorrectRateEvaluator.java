@@ -17,9 +17,11 @@ public class CorrectRateEvaluator implements Evaluator
 	}
 
 	@Override
-	public double addResult(Instance testInst, AbstractClassifier classifer)
+	public double addResult(Instance testInst, double[] votes)
 	{
-        correctSum += testInst.classIndex()==Utils.maxIndex(classifer.getVotesForInstance(testInst))?1.0:0.0; 
+		int trueClass = (int) testInst.classValue();
+		int prediction = Utils.maxIndex(votes);
+        correctSum += trueClass==prediction?1.0:0.0; 
         instanceCount++;
         
         return correctSum/instanceCount;
