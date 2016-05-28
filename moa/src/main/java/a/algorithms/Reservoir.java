@@ -35,6 +35,11 @@ public class Reservoir
 			elementTotal += inputValue;
 		}
 	}
+	
+	public int getElementNum()
+	{
+		return eIndex;
+	}
 
 	public double getReservoirMean()
 	{

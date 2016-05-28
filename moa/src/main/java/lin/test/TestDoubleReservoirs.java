@@ -3,10 +3,15 @@ package lin.test;
 import a.algorithms.DoubleReservoirs;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import com.google.common.collect.Table.Cell;
 
 public class TestDoubleReservoirs
 {
@@ -16,13 +21,42 @@ public class TestDoubleReservoirs
 
 
 		
-		generateData();
-
+		// generateSinData(0, 1000, 1, 10000, 15000);
+		test();
 		
 	}
 	
-	public static void test(int reservoirSize)
+	public static void test() throws IOException
 	{
+		DoubleReservoirs doubleReservoirs = new DoubleReservoirs(100);
+		
+		Workbook outputWorkbook = new HSSFWorkbook();
+		Sheet outputSheet = outputWorkbook.createSheet("1");
+		outputSheet.createRow(0).createCell(0).setCellValue("vol");
+		
+		FileInputStream inputStream = new FileInputStream(new File("sin_wave_vol.xls")); 
+		Workbook inputWorkbook = new HSSFWorkbook(inputStream);
+		Sheet inputsheet = inputWorkbook.getSheetAt(0);
+		Iterator<Row> rowIterator = inputsheet.rowIterator();
+		rowIterator.next();
+		
+		int rowCount = 1;
+		outputSheet.getRow(0).createCell(1).setCellValue("reservoir 100");
+		while(rowIterator.hasNext())
+		{
+			double value = rowIterator.next().getCell(0).getNumericCellValue();
+			outputSheet.createRow(rowCount).createCell(0).setCellValue(value);
+			
+			doubleReservoirs.setInput(value);
+			outputSheet.getRow(rowCount).createCell(1).setCellValue(doubleReservoirs.getMean());
+			
+			rowCount++;
+		}
+		
+		FileOutputStream outputStream = new FileOutputStream(new File("sin_wave_vol_Result.xls")); 
+		outputWorkbook.write(outputStream);
+		outputWorkbook.close();
+		inputWorkbook.close();
 		
 	}
 //	public static void test(int reservoirSize) throws NumberFormatException, IOException
@@ -42,34 +76,28 @@ public class TestDoubleReservoirs
 //		bufferedReader.close();
 //	}
 	
-	public static void generateData() throws IOException
+	public static void generateSinData(double startX, double endX, 
+			double step, double amplitude, double startY) throws IOException
 	{
 		//getDataSet(0, 1000, 1, 1000);
-	    Workbook wb = new HSSFWorkbook();
-	    wb.createSheet("Test");
+	    Workbook workbook = new HSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("Test");
 	    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-	    wb.write(fileOut);
-	    fileOut.close();
-	    wb.close();
-	}
-	
-	public static ArrayList<Double> getDataSet(double low, double high, double step, double amplitude) throws IOException
-	{
-		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("sin wave 100000 middle point.csv"))); 
-		Random ran = new Random();
-		
-		ArrayList<Double> data = new ArrayList<Double>();
-		for(double i=low;i<high; i += step)
+	    sheet.createRow(0).createCell(0).setCellValue("Vol");
+	    
+	    Random ran = new Random();
+	    int rowNum = 1; 
+		for(double i=startX;i<endX; i += step)
 		{
-			double output = 0;
-			output = Math.sin(i)*amplitude*ran.nextFloat()*0.1 + 100000;
-			data.add(output);
-			bufferedWriter.write(output+"\n");
+			double output = Math.sin(i * 0.005)*amplitude + startY + ran.nextFloat()*0.5*amplitude;
+			sheet.createRow(rowNum).createCell(0).setCellValue(output);
+			rowNum++;
 		}
-		bufferedWriter.flush();
-		bufferedWriter.close();
 		
-		return data;
+		
+	    workbook.write(fileOut);
+	    fileOut.close();
+	    workbook.close();
 	}
 	
 
