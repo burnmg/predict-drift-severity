@@ -1,10 +1,6 @@
 package a.evaluator;
 
-import java.util.stream.Stream;
-import javax.naming.TimeLimitExceededException;
-
 import com.yahoo.labs.samoa.instances.Instance;
-
 import a.tools.Directory;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
@@ -12,22 +8,23 @@ import moa.core.Example;
 import moa.core.TimingUtils;
 import moa.streams.ArffFileStream;
 import moa.streams.ExampleStream;
-import java.lang.management.ThreadMXBean;
+
+
 public class EvaluateMain
 {
 
 	public static void main(String[] args)
 	{
 		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
-		ht.getOptions().resetToDefaults();
-		ExampleStream stream = getStreamFromFile("middle.arff");
-		ht.setModelContext(stream.getHeader());
-		evaluate(ht, stream);
+		String streamName = "middle.arff";
+		evaluate(ht, streamName);
 
 	}
 	
-	public static void evaluate(AbstractClassifier classifier, ExampleStream stream)
+	public static void evaluate(AbstractClassifier classifier, String streamName)
 	{
+		ExampleStream stream = getStreamFromFile(streamName);
+		classifier.getOptions().resetToDefaults();
         classifier.setModelContext(stream.getHeader());
         
         Evaluator overallCorrectRateEvaluator = new CorrectRateEvaluator();
@@ -68,6 +65,7 @@ public class EvaluateMain
 		ArffFileStream stream = new ArffFileStream();
 		stream.arffFileOption.setValue(path);
 		stream.prepareForUse();
+		
 		return stream;
 	}
 	
