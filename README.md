@@ -1,9 +1,5 @@
 # About
-
-Volatility Adaptive Tree is integrated with this Moa software.
-
-
-
+This moa version is integrated with hybrid volatility adaptive classification algorithms. 
 
 # MOA (Massive Online Analysis)
 
