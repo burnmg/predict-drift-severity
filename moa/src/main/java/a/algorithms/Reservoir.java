@@ -36,10 +36,6 @@ public class Reservoir
 		}
 	}
 	
-	public int getElementNum()
-	{
-		return eIndex;
-	}
 
 	public double getReservoirMean()
 	{
@@ -57,7 +53,7 @@ public class Reservoir
 		return stdev == 0 ? 0.00000000001 : stdev;
 	}
 
-	public int getCount()
+	public int getWidth()
 	{
 		return eIndex;
 	}
