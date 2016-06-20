@@ -2,17 +2,12 @@ package lin.test;
 
 import a.algorithms.DoubleReservoirs;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import org.apache.poi.POIDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.omg.CORBA.PUBLIC_MEMBER;
-
-import com.google.common.collect.Table.Cell;
 
 public class TestDoubleReservoirs
 {
@@ -22,24 +17,22 @@ public class TestDoubleReservoirs
 
 
 		
-		// generateSinData(0, 1000, 1, 10000, 15000);
-		test();
-		
+//		 test(generateSinData(0, 10000, 1, 10000, 15000, 100));
+		test(generatePlainData(0, 1000, 1, 10000, 15000,1000)); 
 	}
 	
 	
 	
-	public static void test() throws IOException
+	public static void test(String dataPath) throws IOException
 	{
-		DoubleReservoirs doubleReservoirs = new DoubleReservoirs(100);
+		DoubleReservoirs doubleReservoirs = new DoubleReservoirs(100, 0);
 		
 		Workbook outputWorkbook = new HSSFWorkbook();
 		Sheet outputSheet = outputWorkbook.createSheet("1");
 		outputSheet.createRow(0).createCell(0).setCellValue("vol");
-		outputSheet.createRow(0).createCell(1).setCellValue("mean");
-		outputSheet.createRow(0).createCell(2).setCellValue("isActive");
+		outputSheet.getRow(0).createCell(2).setCellValue("isActive");
 		
-		FileInputStream inputStream = new FileInputStream(new File("sin_wave_vol.xls")); 
+		FileInputStream inputStream = new FileInputStream(new File(dataPath)); 
 		Workbook inputWorkbook = new HSSFWorkbook(inputStream);
 		Sheet inputsheet = inputWorkbook.getSheetAt(0);
 		Iterator<Row> rowIterator = inputsheet.rowIterator();
@@ -63,27 +56,33 @@ public class TestDoubleReservoirs
 			rowCount++;
 		}
 		
-		FileOutputStream outputStream = new FileOutputStream(new File("sin_wave_vol_Result_With_Hoeffding.xls")); 
+		FileOutputStream outputStream = new FileOutputStream(new File(dataPath+"_lambda_"+doubleReservoirs.getLambda()+"_Result_With_Hoeffding.xls")); 
 		outputWorkbook.write(outputStream);
 		outputWorkbook.close();
 		inputWorkbook.close();
 		
 	}
 	
-	public static void generateSinData(double startX, double endX, 
-			double step, double amplitude, double startY) throws IOException
+	public static String generatePlainData(double startX, double endX, 
+			double step, double amplitude, double startY, double noise) throws IOException
 	{
-		//getDataSet(0, 1000, 1, 1000);
 	    Workbook workbook = new HSSFWorkbook();
 	    Sheet sheet = workbook.createSheet("Test");
-	    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+	    String filePath = "plain_data_"+
+	    "_amplitude_"+
+	    (int)amplitude+
+	    "_noise_"+
+	    noise+ //TODO
+	    ".xls";
+		FileOutputStream fileOut = new FileOutputStream(filePath
+	    );
 	    sheet.createRow(0).createCell(0).setCellValue("Vol");
 	    
 	    Random ran = new Random();
 	    int rowNum = 1; 
 		for(double i=startX;i<endX; i += step)
 		{
-			double output = Math.sin(i * 0.005)*amplitude + startY + ran.nextFloat()*0.5*amplitude;
+			double output = startY + ran.nextFloat()*noise;
 			sheet.createRow(rowNum).createCell(0).setCellValue(output);
 			rowNum++;
 		}
@@ -92,6 +91,38 @@ public class TestDoubleReservoirs
 	    workbook.write(fileOut);
 	    fileOut.close();
 	    workbook.close();
+	    
+	    return filePath;
+	}
+	
+	public static String generateSinData(double startX, double endX, 
+			double step, double amplitude, double startY, double noise) throws IOException
+	{
+	    Workbook workbook = new HSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("Test");
+	    String filePath = "sin_wave_amplitude_"+(int)amplitude+
+	    		"_startX_"+(int)startX+
+	    		"_endX_"+(int)endX+
+	    		"_noise_"+(int)noise+
+	    		".xls";
+		FileOutputStream fileOut = new FileOutputStream(filePath);
+	    sheet.createRow(0).createCell(0).setCellValue("Vol");
+	    
+	    Random ran = new Random();
+	    int rowNum = 1; 
+		for(double i=startX;i<endX; i += step)
+		{
+			double output = Math.sin(i * 0.005)*amplitude + startY + ran.nextFloat()*noise;
+			sheet.createRow(rowNum).createCell(0).setCellValue(output);
+			rowNum++;
+		}
+		
+		
+	    workbook.write(fileOut);
+	    fileOut.close();
+	    workbook.close();
+	    
+	    return filePath;
 	}
 	
 

@@ -1,6 +1,7 @@
 package a.algorithms;
 
 import org.jfree.util.Log;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 public class DoubleReservoirs
 {
@@ -9,15 +10,20 @@ public class DoubleReservoirs
 	
 	private double variance;
 	private double delta = 0.002; 
+	private double lambda; // threshold of difference
 
-	public DoubleReservoirs(int size)
+	public DoubleReservoirs(int size, double lambda)
 	{
 		this.highReservoir = new Reservoir(size);
 		this.lowReservoir = new Reservoir(size);
-		variance = 0;
+		this.variance = 0;
+		this.lambda = lambda; 
 	}
 	
-	
+	public double getLambda()
+	{
+		return this.lambda;
+	}
 	private int getWidth()
 	{
 		return highReservoir.getWidth() + lowReservoir.getWidth();
@@ -83,30 +89,40 @@ public class DoubleReservoirs
 		
 	}
 
-//    private boolean blnCutexpression(int n0, int n1, double u0, double u1, double v0, double v1, double absvalue, double delta) {
-//        int n = getWidth();
-//        double dd = Math.log(2 * Math.log(n) / delta);     // -- ull perque el ln n va al numerador.
-//        // Formula Gener 2008
-//        double v = getVariance();
-//        double m = ((double) 1 / ((n0 - mintMinWinLength + 1))) + ((double) 1 / ((n1 - mintMinWinLength + 1)));
-//        double epsilon = Math.sqrt(2 * m * v * dd) + (double) 2 / 3 * dd * m;
-//
-//        return (Math.abs(absvalue) > epsilon);
-//    }
+
+	// with ADWIN akin approach
 	public boolean isActive()
 	{
-		
 		int n = getWidth();
 		double v = getVariance();
 		double m = 1.0 / (1.0 / highReservoir.getWidth() + 1.0 / lowReservoir.getWidth());
-		
+
 		double epsilon = Math.sqrt(
-				(2.0/m) * v * Math.log(2/delta)
+				(2.0/m) * v * Math.log(2.0/delta)
 				)
 				+
-				2.0/(3*m) * Math.log(2.0/delta); 
+				2.0/(3*m) * Math.log(2.0/delta);
+		
+		System.out.println(epsilon);
+		
 		return Math.abs(highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > epsilon;
 	}
+
+	// with VFDT akin approach
+//	public boolean isActive()
+//	{
+//		double range = 20000;
+//		double m = 1.0 / (1.0 / highReservoir.getWidth() + 1.0 / lowReservoir.getWidth());
+//		double epsilon = Math.sqrt(
+//				(Math.pow(range, 2)*Math.log(2/delta))
+//				/
+//				8.0 * m
+//				);
+//		
+//		return Math.abs(highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > epsilon;
+//	}
+	
+	
 
 	public double getMean()
 	{
