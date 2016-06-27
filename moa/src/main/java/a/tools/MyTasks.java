@@ -10,7 +10,7 @@ public class MyTasks
 
 	public static void main(String[] args)
 	{
-		String[] tasks = myEvaluatePrequential();
+		String[] tasks = streams();
 		for (int i = 0; i < tasks.length; i++)
 		{
 			System.out.println("*****Task*****: " + i);
@@ -42,7 +42,7 @@ public class MyTasks
 		String[] tasks =
 		{
 				//12500-10m
-				"WriteStreamToARFFFile2 -s (MultipleConceptDriftStreamGenerator -l 10000000 -d 12500 -c 4 -w 600) -f /Users/rl/789/Streams/12500-10m.arff",
+				"WriteStreamToARFFFile2 -s (MultipleConceptDriftStreamGenerator -l 5000000 -d 12500 -c 4 -w 600) -f /Users/rl/789/Streams/sample.arff",
 
 		};
 		return tasks;
