@@ -1,4 +1,4 @@
-package moa.classifiers.a;
+package archive;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,12 +14,13 @@ import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
+import moa.classifiers.a.ClassifierSelector;
 import cutpointdetection.ADWIN;
 import moa.core.Measurement;
 import moa.options.ClassOption;
 import volatilityevaluation.RelativeVolatilityDetector;
 
-public class VolatilityAdaptiveClassifer extends AbstractClassifier
+public class VolatilityAdaptiveClassiferByUsingVoaltilityDrift extends AbstractClassifier
 {
 
 	private static final long serialVersionUID = -220640148754624744L;
@@ -42,12 +43,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private AbstractClassifier classifier1;
 	private AbstractClassifier classifier2;
 	private AbstractClassifier activeClassifier;
-
-	
-	// private RelativeVolatilityDetector volatilityDriftDetector;
-	private CurrentVolatilityMeasure currentVolatilityMeasure;
-	private ClassifierSelector classiferSelector; 
 	private int activeClassifierIndex;
+
+	private RelativeVolatilityDetector volatilityDriftDetector;
+	private ClassifierSelector classiferSelector;
+
 	private int instanceCount;
 
 	@Override
@@ -82,36 +82,32 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		initClassifiers();
 
 		// selector option
-		//classiferSelector = new NaiveClassifierSelector(5000);
-		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
-		
-		
-		
+		classiferSelector = new NaiveClassifierSelector(5000);
+
 		//set writers
-		try
-		{
+//		try
+//		{
+//
+//			File volatitlityDriftDumpFile = volatitlityDriftDumpFileOption.getFile();
+//			if (volatitlityDriftDumpFile != null)
+//			{
+//				volatitlityDriftWriter = new BufferedWriter(new FileWriter(volatitlityDriftDumpFile));
+//				volatitlityDriftWriter.write("VolatilityDriftInstance,CurrentAvgIntervals\n");
+//			}
+//			
+//			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
+//			if(classifierChangePointDumpFile!=null)
+//			{
+//				classifierChangePointDumpWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
+//				classifierChangePointDumpWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+//			}
+//
+//		} catch (IOException e)
+//		{
+//
+//		}
 
-			File volatitlityDriftDumpFile = volatitlityDriftDumpFileOption.getFile();
-			if (volatitlityDriftDumpFile != null)
-			{
-				volatitlityDriftWriter = new BufferedWriter(new FileWriter(volatitlityDriftDumpFile));
-				volatitlityDriftWriter.write("VolatilityDriftInstance,CurrentAvgIntervals\n");
-			}
-			
-			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
-			if(classifierChangePointDumpFile!=null)
-			{
-				classifierChangePointDumpWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
-				classifierChangePointDumpWriter.write("ClassifierChangePoint,ClassifierIndex\n");
-			}
-
-		} catch (IOException e)
-		{
-
-		}
-
-//		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.0001), 32);
+		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.0001), 32);
 		instanceCount = 0;
 
 		activeClassifierIndex = 1;
@@ -159,13 +155,15 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	// use volatility monitor
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		
-		int currentVoaltilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
-		// if there is a concept shift.
-		if (currentVoaltilityLevel!=-1)
+		// if there is a volatility shift.
+		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+		//if(false)
 		{
 
-			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+			double avgInterval = volatilityDriftDetector.getBufferMean();
+			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
+			
+			int decision = classiferSelector.makeDecision(avgInterval);
 
 			if (activeClassifierIndex != decision)
 			{	

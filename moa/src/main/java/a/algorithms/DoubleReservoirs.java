@@ -12,6 +12,11 @@ public class DoubleReservoirs
 	private double delta = 0.002; 
 	private double lambda; // allowable fluctuation
 
+	/**
+	 * 
+	 * @param size: size of the reservoir
+	 * @param lambda: allowable fluctuation
+	 */
 	public DoubleReservoirs(int size, double lambda)
 	{
 		this.highReservoir = new Reservoir(size);
@@ -36,7 +41,7 @@ public class DoubleReservoirs
     
 	/**
 	 * 
-	 * @param input
+	 * @param input: Interval of Drift.
 	 * @return 
 	 * true: is high
 	 * false: is low

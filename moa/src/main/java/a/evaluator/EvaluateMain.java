@@ -16,7 +16,7 @@ public class EvaluateMain
 	public static void main(String[] args)
 	{
 		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
-		String streamName = "middle.arff";
+		String streamName = "test.arff";
 		evaluate(ht, streamName);
 
 	}
