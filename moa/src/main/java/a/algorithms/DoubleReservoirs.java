@@ -10,7 +10,7 @@ public class DoubleReservoirs
 	
 	private double variance;
 	private double delta = 0.002; 
-	private double lambda; // threshold of difference
+	private double lambda; // allowable fluctuation
 
 	public DoubleReservoirs(int size, double lambda)
 	{
@@ -34,28 +34,37 @@ public class DoubleReservoirs
 		return highReservoir.getTotal() + lowReservoir.getTotal();
 	}
     
-	public void setInput(double input)
+	/**
+	 * 
+	 * @param input
+	 * @return 
+	 * true: is high
+	 * false: is low
+	 */
+	public boolean setInput(double input)
 	{
 		if (highReservoir.getWidth() == 0)
 		{
 			highReservoir.addElement(input);
-			return;
+			return false;
 		}
 		
 		if (lowReservoir.getWidth() == 0)
 		{
 			lowReservoir.addElement(input);
-			return;
+			return false;
 		}
 
-		double threshold = getMean();
+		double mean = getMean();
 
-		if (input > threshold)
+		if (input > mean)
 		{
 			highReservoir.addElement(input);
+			return true;
 		} else
 		{
 			lowReservoir.addElement(input);
+			return false;
 		}
 		
 		// update variance incrementally
@@ -101,7 +110,7 @@ public class DoubleReservoirs
 				(2.0/m) * v * Math.log(2.0/delta)
 				)
 				+
-				2.0/(3*m) * Math.log(2.0/delta);
+				2.0/(3*m) * Math.log(2.0/delta) + this.lambda;
 		
 		System.out.println(epsilon);
 		

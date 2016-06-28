@@ -11,7 +11,6 @@ import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
 import classifiers.selectors.AlwaysFirstClassifierSelector;
-import classifiers.selectors.ClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
