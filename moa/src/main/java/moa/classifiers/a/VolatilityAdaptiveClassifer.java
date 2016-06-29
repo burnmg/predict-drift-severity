@@ -17,6 +17,7 @@ import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
+import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import cutpointdetection.ADWIN;
 import moa.core.Measurement;
 import moa.options.ClassOption;
@@ -55,7 +56,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private int activeClassifierIndex;
 	private int instanceCount;
 	
-	//current volatility level writer
+	
+	public VolatilityAdaptiveClassifer() 
+	{
+		resetLearningImpl();
+	}
 	
 
 
@@ -88,12 +93,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void resetLearningImpl()
 	{
+		
 		initClassifiers();
-
-		// selector option
-		//classiferSelector = new NaiveClassifierSelector(5000);
+		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
+		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.00001);
 		
 		
 		
@@ -139,10 +143,16 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private void initClassifiers()
 	{
 		// classifier 1
-		this.classifier1 = (AbstractClassifier) getPreparedClassOption(this.classifier1Option);
-
+//		this.classifier1 = (AbstractClassifier) getPreparedClassOption(this.classifier1Option);
+		this.classifier1 = new HoeffdingTreeADWIN();
+		classifier1.getOptions().resetToDefaults();
+		classifier1.resetLearning();
+		
 		// classifier 2
-		this.classifier2 = (AbstractClassifier) getPreparedClassOption(this.classifier2Option);
+//		this.classifier2 = (AbstractClassifier) getPreparedClassOption(this.classifier2Option);
+		this.classifier2 = new HoeffdingAdaptiveTree();
+		classifier2.getOptions().resetToDefaults();
+		classifier2.resetLearning();
 	}
 
 	
@@ -183,7 +193,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		{
 			
 			// current volatility level dump
-			writeToFile(currentVolatilityLevelDumpWriter, currentVoaltilityLevel +"\n");
+			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
 			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
 

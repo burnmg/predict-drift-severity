@@ -12,9 +12,9 @@ public class GenerateDriftData
 //		int[] numDrifts = {10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000};
 //		int[] numDrifts = {10, 1000, 10, 1000, 10};
 //		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
-		int[] numDrifts = {10, 1000, 10};
-		generateAbruptDriftData(500000, 1000, numDrifts, "test.arff");
-		// TODO HERE
+//		int[] numDrifts = {10, 10000};
+//		generateAbruptDriftData(500000, 1000, numDrifts, "10_1000.arff");
+		
 		
 	}
 	

@@ -1,9 +1,12 @@
 package a.evaluator;
 
+import java.io.File;
+
 import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.Directory;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
+import moa.classifiers.a.VolatilityAdaptiveClassifer;
 import moa.core.Example;
 import moa.core.TimingUtils;
 import moa.streams.ArffFileStream;
@@ -15,23 +18,37 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
-		String streamName = "test.arff";
-		evaluate(ht, streamName);
+		String streamName = "1.arff";
+//		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
+		VolatilityAdaptiveClassifer volatilityAdaptiveClassifer = new VolatilityAdaptiveClassifer();
+		volatilityAdaptiveClassifer.getOptions().resetToDefaults();
+		
+		// set the directory
+		
+		File testResult = new File(Directory.root+"\\"+streamName);
+		testResult.mkdirs();
+		volatilityAdaptiveClassifer.currentVolatilityLevelWriterDumpFileOption.setValue(testResult.getPath()+"\\currentVolatilityLevel.csv");
+		volatilityAdaptiveClassifer.classifierChangePointDumpFileOption.setValue(testResult.getPath()+"\\classifierChangePointDumpFile.csv");
+		
+
+		evaluate(volatilityAdaptiveClassifer, streamName);
 
 	}
 	
 	public static void evaluate(AbstractClassifier classifier, String streamName)
 	{
 		ExampleStream stream = getStreamFromFile(streamName);
-		classifier.getOptions().resetToDefaults();
         classifier.setModelContext(stream.getHeader());
+        classifier.resetLearning();
         
         Evaluator overallCorrectRateEvaluator = new CorrectRateEvaluator();
         double totalTimeCost = 0;
         
+        long instanceCount = 0;
+        
 		while(stream.hasMoreInstances())
 		{
+			System.out.println(instanceCount);
             Example trainInst = stream.nextInstance();
             Example testInst = trainInst; 
             
@@ -49,6 +66,7 @@ public class EvaluateMain
             double timeCost = TimingUtils.nanoTimeToSeconds(endTime - startTime);
             totalTimeCost += timeCost;
             
+            instanceCount++;
             //TODO measure node
             //TODO measure memory
             

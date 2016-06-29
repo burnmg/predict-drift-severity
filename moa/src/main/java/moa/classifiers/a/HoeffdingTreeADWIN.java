@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
@@ -85,6 +87,9 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 			"Stop growing as soon as memory limit is hit.");
 
 	public FlagOption removePoorAttsOption = new FlagOption("removePoorAtts", 'r', "Disable poor attributes.");
+	
+	public FileOption currentVolatilityLevelWriterDumpFileOption = new FileOption("currentVolatilityLevelWriter", 'h',
+			"Destination csv file.", null, "csv", true);
 
 	public FlagOption noPrePruneOption = new FlagOption("noPrePrune", 'p', "Disable pre-pruning.");
 	
