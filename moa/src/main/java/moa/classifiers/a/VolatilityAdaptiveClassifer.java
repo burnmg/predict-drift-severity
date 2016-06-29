@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.WriteAbortedException;
 import java.util.PrimitiveIterator.OfDouble;
 
+import org.omg.CORBA.Current;
+
 import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
+import a.tools.Directory;
 import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
@@ -35,20 +38,26 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	public FileOption classifierChangePointDumpFileOption = new FileOption("classifierChangePointDumpFileOption", 'c',
 			"Destination csv file.", null, "csv", true);
+	
+	public FileOption currentVolatilityLevelWriterDumpFileOption = new FileOption("currentVolatilityLevelWriter", 'h',
+			"Destination csv file.", null, "csv", true);
 
 	private BufferedWriter volatitlityDriftWriter;
 	private BufferedWriter classifierChangePointDumpWriter;
-
+	private BufferedWriter currentVolatilityLevelDumpWriter;
+	private CurrentVolatilityMeasure currentVolatilityMeasure;
+	
 	private AbstractClassifier classifier1;
 	private AbstractClassifier classifier2;
 	private AbstractClassifier activeClassifier;
 
-	
-	// private RelativeVolatilityDetector volatilityDriftDetector;
-	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	private ClassifierSelector classiferSelector; 
 	private int activeClassifierIndex;
 	private int instanceCount;
+	
+	//current volatility level writer
+	
+
 
 	@Override
 	public boolean isRandomizable()
@@ -89,6 +98,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		
 		//set writers
+		
 		try
 		{
 
@@ -104,6 +114,13 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			{
 				classifierChangePointDumpWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
 				classifierChangePointDumpWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+			}
+			
+			File currentVolatilityLevelDumpFile = currentVolatilityLevelWriterDumpFileOption.getFile();
+			if(currentVolatilityLevelDumpFile!=null)
+			{
+				currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(currentVolatilityLevelDumpFile));
+				currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval\n");
 			}
 
 		} catch (IOException e)
@@ -164,14 +181,20 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// if there is a concept shift.
 		if (currentVoaltilityLevel!=-1)
 		{
-
+			
+			// current volatility level dump
+			writeToFile(currentVolatilityLevelDumpWriter, currentVoaltilityLevel +"\n");
+			
 			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
 
 			if (activeClassifierIndex != decision)
 			{	
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
 				activeClassifierIndex = decision;
+				
+				//classifier change point dump
 				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
+
 			}
 		}
 		instanceCount++;

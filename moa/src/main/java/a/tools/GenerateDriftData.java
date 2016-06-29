@@ -13,8 +13,8 @@ public class GenerateDriftData
 //		int[] numDrifts = {10, 1000, 10, 1000, 10};
 //		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
 		int[] numDrifts = {10, 1000, 10};
-		generateAbruptDriftData(300000, 1000, numDrifts, "test.arff");
-		
+		generateAbruptDriftData(500000, 1000, numDrifts, "test.arff");
+		// TODO HERE
 		
 	}
 	
@@ -22,7 +22,7 @@ public class GenerateDriftData
 	 * 
 	 * @param blockLength
 	 * @param interleavedWindowSize
-	 * @param numDrifts
+	 * @param numDrifts: number of drifts in one block
 	 * @param fileName: examlpe "stream.arff"
 	 */
 	public static void generateAbruptDriftData(int blockLength, int interleavedWindowSize, int[] numDrifts, String fileName)
