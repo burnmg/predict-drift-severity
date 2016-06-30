@@ -10,7 +10,7 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 	
 	public RelativeVolatilityDetectorMeasure()
 	{
-		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.05), 32); 
+		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.002), 32); 
 	}
 
 	@Override

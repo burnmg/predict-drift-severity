@@ -62,11 +62,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private int activeClassifierIndex;
 	private int instanceCount;
 	
-	
-	public VolatilityAdaptiveClassifer() 
-	{
-		resetLearningImpl();
-	}
+
 	
 
 
@@ -103,8 +99,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		initClassifiers();
 		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
+//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
+		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
 		
 		
 		
@@ -201,7 +197,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
 //			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-			int decision = 2;
+			int decision = 1;
 			
 			if (activeClassifierIndex != decision)
 			{	

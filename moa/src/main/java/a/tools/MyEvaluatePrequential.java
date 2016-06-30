@@ -65,12 +65,12 @@ public class MyEvaluatePrequential extends MainTask {
 
     private static final long serialVersionUID = 1L;
 
-    public ClassOption learnerOption = new ClassOption("learner", 'l',
-            "Learner to train.", Classifier.class, "moa.classifiers.bayes.NaiveBayes");
+//    public ClassOption learnerOption = new ClassOption("learner", 'l',
+//            "Learner to train.", Classifier.class, "moa.classifiers.bayes.NaiveBayes");
 
-    public ClassOption streamOption = new ClassOption("stream", 's',
-            "Stream to learn from.", ExampleStream.class,
-            "generators.RandomTreeGenerator");
+//    public ClassOption streamOption = new ClassOption("stream", 's',
+//            "Stream to learn from.", ExampleStream.class,
+//            "generators.RandomTreeGenerator");
 
     public ClassOption evaluatorOption = new ClassOption("evaluator", 'e',
             "Classification performance evaluation method.",
@@ -108,19 +108,37 @@ public class MyEvaluatePrequential extends MainTask {
     public FloatOption alphaOption = new FloatOption("alpha",
             'a', "Fading factor or exponential smoothing factor", .01);
     //End New for prequential methods
+    
+    
     private Learner learner;
-    @Override
-    public Class<?> getTaskResultType() {
-        return LearningCurve.class;
-    }
+    private ExampleStream stream;
+    
+    
 	public void setLearner(Learner learner)
 	{
 		this.learner = learner;
 	}
+	
+	public void setStream(ExampleStream stream)
+	{
+		this.stream = stream;
+	}
+    
+    
+    @Override
+    public Class<?> getTaskResultType() {
+        return LearningCurve.class;
+    }
+    
+
+	
+	
     @Override
     public Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
 //        Learner learner = (Learner) getPreparedClassOption(this.learnerOption);
-        ExampleStream stream = (ExampleStream) getPreparedClassOption(this.streamOption);
+//        ExampleStream stream = (ExampleStream) getPreparedClassOption(this.streamOption);
+    	
+    	
         LearningPerformanceEvaluator evaluator = (LearningPerformanceEvaluator) getPreparedClassOption(this.evaluatorOption);
         LearningCurve learningCurve = new LearningCurve(
                 "learning evaluation instances");
@@ -281,6 +299,7 @@ public class MyEvaluatePrequential extends MainTask {
         if (outputPredictionResultStream != null) {
             outputPredictionResultStream.close();
         }
+        System.out.println("Done.");
         return learningCurve;
     }
 

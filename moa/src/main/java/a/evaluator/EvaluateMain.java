@@ -21,74 +21,75 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		String streamName = "1000,100.arff";
+		String streamName = "100,10,100,10.arff";
 //		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
 		VolatilityAdaptiveClassifer volatilityAdaptiveClassifer = new VolatilityAdaptiveClassifer();
 		volatilityAdaptiveClassifer.getOptions().resetToDefaults();
 		
-		// set the directory
 		
-		File testResult = new File(Directory.root+"/Results/"+streamName);
-		testResult.mkdirs();
-		volatilityAdaptiveClassifer.currentVolatilityLevelWriterDumpFileOption.setValue(testResult.getPath()+"/currentVolatilityLevel.csv");
-		volatilityAdaptiveClassifer.classifierChangePointDumpFileOption.setValue(testResult.getPath()+"/classifierChangePointDumpFile.csv");
-		
+		File resultFolder = new File(Directory.root+"/Results/"+streamName);
+		resultFolder.mkdirs();
+		volatilityAdaptiveClassifer.currentVolatilityLevelWriterDumpFileOption.setValue(resultFolder.getPath()+"/currentVolatilityLevel.csv");
+		volatilityAdaptiveClassifer.classifierChangePointDumpFileOption.setValue(resultFolder.getPath()+"/classifierChangePointDumpFile.csv");
+		volatilityAdaptiveClassifer.resetLearning();
 
-		evaluate(volatilityAdaptiveClassifer, streamName);
+		evaluate(volatilityAdaptiveClassifer, streamName, resultFolder.getPath());
 
 	}
 	
-	public static void evaluate(AbstractClassifier classifier, String streamName)
+	public static void evaluate(AbstractClassifier classifier, String streamName, String resultFolder)
 	{
 		MyEvaluatePrequential evaluatePrequential = new MyEvaluatePrequential();
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.setLearner(classifier);
-		evaluatePrequential.dumpFileOption.setValue(Directory.root+"/Results/"+streamName+"/dump.csv");
+		evaluatePrequential.setStream(getStreamFromFile(streamName));
+		
+		evaluatePrequential.dumpFileOption.setValue(resultFolder+"/dump.csv");
 		
 		
 		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
 	}
 	
-//	public static void evaluate(AbstractClassifier classifier, String streamName)
-//	{
-//		ExampleStream stream = getStreamFromFile(streamName);
-//        classifier.setModelContext(stream.getHeader());
-//        classifier.resetLearning();
-//        
-//        Evaluator overallCorrectRateEvaluator = new CorrectRateEvaluator();
-//        double totalTimeCost = 0;
-//        
-//        long instanceCount = 0;
-//        
-//		while(stream.hasMoreInstances())
-//		{
-//			System.out.println(instanceCount);
-//            Example trainInst = stream.nextInstance();
-//            Example testInst = trainInst; 
-//            
-//            //test overall
-//            double[] votes = classifier.getVotesForInstance((Instance)trainInst.getData());
-//            overallCorrectRateEvaluator.addResult((Instance)testInst.getData(), votes); 
-//            
-//            //TODO test window
-//            
-//            //train   
-//            // measure time
-//            long startTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
-//            classifier.trainOnInstance(trainInst);
-//            long endTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
-//            double timeCost = TimingUtils.nanoTimeToSeconds(endTime - startTime);
-//            totalTimeCost += timeCost;
-//            
-//            instanceCount++;
-//            //TODO measure node
-//            //TODO measure memory
-//            
-//		}
-////		System.out.println(overallCorrectRateEvaluator.getOverallMeasurement());
-////        System.out.println(totalTimeCost);
-//		
-//	}
+	public static void evaluate2(AbstractClassifier classifier, String streamName)
+	{
+		ExampleStream stream = getStreamFromFile(streamName);
+        classifier.setModelContext(stream.getHeader());
+        classifier.resetLearning();
+        
+        Evaluator overallCorrectRateEvaluator = new CorrectRateEvaluator();
+        double totalTimeCost = 0;
+        
+        long instanceCount = 0;
+        
+		while(stream.hasMoreInstances())
+		{
+			System.out.println(instanceCount);
+            Example trainInst = stream.nextInstance();
+            Example testInst = trainInst; 
+            
+            //test overall
+            double[] votes = classifier.getVotesForInstance((Instance)trainInst.getData());
+            overallCorrectRateEvaluator.addResult((Instance)testInst.getData(), votes); 
+            
+            //TODO test window
+            
+            //train   
+            // measure time
+            long startTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
+            classifier.trainOnInstance(trainInst);
+            long endTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
+            double timeCost = TimingUtils.nanoTimeToSeconds(endTime - startTime);
+            totalTimeCost += timeCost;
+            
+            instanceCount++;
+            //TODO measure node
+            //TODO measure memory
+            
+		}
+//		System.out.println(overallCorrectRateEvaluator.getOverallMeasurement());
+//        System.out.println(totalTimeCost);
+		
+	}
 	
 	
 	public static ArffFileStream getStreamFromFile(String streamName)

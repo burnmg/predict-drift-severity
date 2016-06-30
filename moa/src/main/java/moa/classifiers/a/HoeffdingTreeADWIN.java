@@ -93,7 +93,7 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 
 	public FlagOption noPrePruneOption = new FlagOption("noPrePrune", 'p', "Disable pre-pruning.");
 	
-	public ADWIN adwin = new ADWIN(0.0002);
+	public ADWIN adwin = new ADWIN(0.00002);
 
 	public static class FoundNode
 	{
