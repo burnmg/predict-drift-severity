@@ -12,9 +12,14 @@ public class GenerateDriftData
 //		int[] numDrifts = {10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000};
 //		int[] numDrifts = {10, 1000, 10, 1000, 10};
 //		generateAbruptDriftData(200000, 1000, numDrifts, "regularchangstream.arff");
-//		int[] numDrifts = {10, 10000};
-//		generateAbruptDriftData(500000, 1000, numDrifts, "10_1000.arff");
+//		int[] numDrifts = {10,3000,10,3000,10,3000};
+//		generateAbruptDriftData(1000000, 1000, numDrifts, "10,3000,10,3000,10,3000.arff");
 		
+//		int[] numDrifts = {30000,10};
+//		generateAbruptDriftData(1000000, 1000, numDrifts, "30000,10.arff");
+		
+		int[] numDrifts = {1000,100};
+		generateAbruptDriftData(500000, 1, numDrifts, "1000,100.arff");
 		
 	}
 	
@@ -48,11 +53,17 @@ public class GenerateDriftData
 				taskhead
 		};
 		DoTask.main(ft);
+		
 		//further write
 		for(int i=1;i<numDrifts.length;i++)
 		{
+			String furtherTaskhead = "WriteStreamToARFFFile2 -s "
+					+ "(MultipleConceptDriftStreamGenerator"
+					+ " -l "+blockLength+" -d "+numDrifts[i]+" -c 4 -w "+interleavedWindowSize+" -f "+dir+"/streamDescription.csv) "
+							+ "-f "+dir+'/'+fileName + " -h -c" ; 
+			
 			String[] t =  {
-					taskhead+" -h -c" 
+					furtherTaskhead
 			};
 			DoTask.main(t);
 		}

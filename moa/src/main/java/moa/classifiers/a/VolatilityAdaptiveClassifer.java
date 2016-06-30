@@ -20,6 +20,7 @@ import moa.classifiers.Classifier;
 import moa.classifiers.a.other.ClassifierSelector;
 import moa.classifiers.a.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
+import moa.classifiers.a.other.RelativeVolatilityDetectorMeasure;
 import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import cutpointdetection.ADWIN;
@@ -102,7 +103,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		initClassifiers();
 		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.00001);
+		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
+//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
 		
 		
 		
@@ -167,7 +169,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 //	{
 //		// if there is a volatility shift.
 //		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
-//		//if(false)
 //		{
 //
 //			double avgInterval = volatilityDriftDetector.getBufferMean();
@@ -199,8 +200,9 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			// current volatility level dump
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
-			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-
+//			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+			int decision = 2;
+			
 			if (activeClassifierIndex != decision)
 			{	
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
