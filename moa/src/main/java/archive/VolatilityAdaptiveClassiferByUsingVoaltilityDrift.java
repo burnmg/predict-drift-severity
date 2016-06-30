@@ -14,7 +14,7 @@ import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
-import moa.classifiers.a.ClassifierSelector;
+import moa.classifiers.a.other.ClassifierSelector;
 import cutpointdetection.ADWIN;
 import moa.core.Measurement;
 import moa.options.ClassOption;

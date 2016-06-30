@@ -17,6 +17,10 @@ import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
+import moa.classifiers.a.other.ClassifierSelector;
+import moa.classifiers.a.other.CurrentVolatilityMeasure;
+import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
+import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import cutpointdetection.ADWIN;
 import moa.core.Measurement;
@@ -53,6 +57,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private AbstractClassifier activeClassifier;
 
 	private ClassifierSelector classiferSelector; 
+	
 	private int activeClassifierIndex;
 	private int instanceCount;
 	
@@ -156,34 +161,33 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	}
 
 	
-	/* Use volatility Drift
-	@Override
-	public void trainOnInstanceImpl(Instance inst)
-	{
-		// if there is a volatility shift.
-		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
-		//if(false)
-		{
-
-			double avgInterval = volatilityDriftDetector.getBufferMean();
-			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
-			
-			int decision = classiferSelector.makeDecision(avgInterval);
-
-			if (activeClassifierIndex != decision)
-			{	
-				activeClassifier = (decision == 1) ? classifier1 : classifier2;
-				activeClassifierIndex = decision;
-				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
-			}
-		}
-		instanceCount++;
-		activeClassifier.trainOnInstance(inst);
-
-	}
-	*/
+	// Use volatility Drift
+//	@Override
+//	public void trainOnInstanceImpl(Instance inst)
+//	{
+//		// if there is a volatility shift.
+//		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
+//		//if(false)
+//		{
+//
+//			double avgInterval = volatilityDriftDetector.getBufferMean();
+//			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
+//			
+//			int decision = classiferSelector.makeDecision(avgInterval);
+//
+//			if (activeClassifierIndex != decision)
+//			{	
+//				activeClassifier = (decision == 1) ? classifier1 : classifier2;
+//				activeClassifierIndex = decision;
+//				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
+//			}
+//		}
+//		instanceCount++;
+//		activeClassifier.trainOnInstance(inst);
+//
+//	}
 	
-	// use volatility monitor
+	
 	public void trainOnInstanceImpl(Instance inst)
 	{
 		

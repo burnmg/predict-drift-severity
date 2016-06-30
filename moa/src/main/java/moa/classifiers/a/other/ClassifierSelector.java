@@ -1,4 +1,4 @@
-package moa.classifiers.a;
+package moa.classifiers.a.other;
 
 public interface ClassifierSelector
 {

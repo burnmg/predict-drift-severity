@@ -1,6 +1,6 @@
 package classifiers.selectors;
 
-import moa.classifiers.a.ClassifierSelector;
+import moa.classifiers.a.other.ClassifierSelector;
 
 public class AlwaysFirstClassifierSelector implements ClassifierSelector
 {
