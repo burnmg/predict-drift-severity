@@ -99,8 +99,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		initClassifiers();
 		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
-		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
+		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
+//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
 		
 		
 		

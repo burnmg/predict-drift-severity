@@ -21,7 +21,7 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		String streamName = "100,10,100,10.arff";
+		String streamName = "1000,10.arff";
 //		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
 		VolatilityAdaptiveClassifer volatilityAdaptiveClassifer = new VolatilityAdaptiveClassifer();
 		volatilityAdaptiveClassifer.getOptions().resetToDefaults();
