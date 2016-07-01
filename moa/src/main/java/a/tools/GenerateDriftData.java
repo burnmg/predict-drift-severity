@@ -18,8 +18,8 @@ public class GenerateDriftData
 //		int[] numDrifts = {30000,10};
 //		generateAbruptDriftData(1000000, 1000, numDrifts, "30000,10.arff");
 		
-		int[] numDrifts = {1000,10};
-		generateAbruptDriftData(500000, 1, numDrifts, "1000,10.arff");
+		int[] numDrifts = {1};
+		generateAbruptDriftData(500000, 1, numDrifts, "1.arff");
 		
 	}
 	

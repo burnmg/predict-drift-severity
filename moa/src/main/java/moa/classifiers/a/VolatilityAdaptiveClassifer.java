@@ -1,11 +1,15 @@
 package moa.classifiers.a;
 
 import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.WriteAbortedException;
+import java.lang.reflect.Parameter;
 import java.util.PrimitiveIterator.OfDouble;
+
+import javax.management.loading.PrivateClassLoader;
 
 import org.omg.CORBA.Current;
 
@@ -13,6 +17,7 @@ import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
 import a.tools.Directory;
+import a.tools.ParameterInjector;
 import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
@@ -62,8 +67,15 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private int activeClassifierIndex;
 	private int instanceCount;
 	
-
+	private int decisionMode;
 	
+	private ParameterInjector parameterInjector;
+	
+
+	public VolatilityAdaptiveClassifer(ParameterInjector p)
+	{
+		this.parameterInjector = p;
+	}
 
 
 	@Override
@@ -99,10 +111,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		initClassifiers();
 		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
-		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
+//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
+		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
 		
-		
+		decisionMode = parameterInjector.getDecisionMode();
 		
 		//set writers
 		
@@ -197,7 +210,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
 //			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-			int decision = 1;
+			int decision = getDecision(currentVoaltilityLevel);
 			
 			if (activeClassifierIndex != decision)
 			{	
@@ -212,6 +225,19 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		instanceCount++;
 		activeClassifier.trainOnInstance(inst);
 
+	}
+	
+	// in optimised version, this method should be removed. 
+	private int getDecision(int currentVoaltilityLevel)
+	{
+		if(this.decisionMode==DecisionMode.AWALYS_1)
+		{
+			return 1;
+		}else if(this.decisionMode==DecisionMode.AWALYS_2)
+		{
+			return 2;
+		}
+		return classiferSelector.makeDecision(currentVoaltilityLevel);
 	}
 
 	private void writeToFile(BufferedWriter bw, String str)
@@ -229,4 +255,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 	}
 
+}
+class DecisionMode
+{
+	public static final int AWALYS_1 = 1;
+	public static final int AWALYS_2 = 2;
+	public static final int REAL_DECISION = 3;
+	
 }

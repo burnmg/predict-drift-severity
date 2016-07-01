@@ -2,6 +2,8 @@ package a.evaluator;
 
 import java.io.File;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.Directory;
 import a.tools.MyEvaluatePrequential;
@@ -21,7 +23,7 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		String streamName = "1000,10.arff";
+		String streamName = "1.arff";
 //		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
 		VolatilityAdaptiveClassifer volatilityAdaptiveClassifer = new VolatilityAdaptiveClassifer();
 		volatilityAdaptiveClassifer.getOptions().resetToDefaults();
@@ -43,7 +45,7 @@ public class EvaluateMain
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.setLearner(classifier);
 		evaluatePrequential.setStream(getStreamFromFile(streamName));
-		
+		evaluatePrequential.sampleFrequencyOption.setValue(1);
 		evaluatePrequential.dumpFileOption.setValue(resultFolder+"/dump.csv");
 		
 		
