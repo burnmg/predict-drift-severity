@@ -19,7 +19,6 @@
  */
 package moa.streams.generators;
 
-import java.security.PrivilegedActionException;
 import java.util.Random;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
@@ -35,13 +34,11 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 
+
 /**
- * Stream generator for Hyperplane data stream.
- *
- * @author Albert Bifet (abifet at cs dot waikato dot ac dot nz)
- * @version $Revision: 7 $
+ * Add partial drifting. 
  */
-public class HyperplaneGenerator extends AbstractOptionHandler implements
+public class DriftingHyperplaneGenerator extends AbstractOptionHandler implements
         InstanceStream {
 
     @Override
@@ -160,15 +157,26 @@ public class HyperplaneGenerator extends AbstractOptionHandler implements
     private void addDrift() {
         for (int i = 0; i < this.numDriftAttsOption.getValue(); i++) {
             this.weights[i] += (double) ((double) sigma[i]) * ((double) this.magChangeOption.getValue());
-            if ((1 + (this.instanceRandom.nextInt(100))) <= this.sigmaPercentageOption.getValue()) {
-            	
-            	// reverse the direction of change.
+            if (//this.weights[i] >= 1.0 || this.weights[i] <= 0.0 ||
+                    (1 + (this.instanceRandom.nextInt(100))) <= this.sigmaPercentageOption.getValue()) {
                 this.sigma[i] *= -1;
             }
         }
     }
     
+    /**
+     * add a strong partial drift to first numDrfitAtts attributes
+     * @param numDrfitAtts: Number of drifting attributes
+     */
+    public void addPartialDrift(int numDrfitAtts)
+	{
+    	
+        for (int i = 0; i < numDrfitAtts; i++) {
+            this.weights[i] = this.instanceRandom.nextDouble();
+            this.sigma[i] = (i < this.numDriftAttsOption.getValue() ? 1 : 0);
+        }
 
+	}
 
     @Override
     public void restart() {

@@ -24,6 +24,25 @@ public class GenerateDriftData
 	}
 	
 	/**
+	 *  Version 2: Command for generating stream is removed. It is replaced by objects format. 
+	 * @param blockLength
+	 * @param interleavedWindowSize
+	 * @param numDrifts: number of drifts in one block
+	 * @param fileName: examlpe "stream.arff"
+	 */
+	public static void generateAbruptDriftData2 (int blockLength, int interleavedWindowSize, int[] numDrifts, String fileName)
+	{
+		System.out.print("Total stream length: " + numDrifts.length*blockLength);
+		if(fileName==null)
+		{
+			for(int i=0; i<numDrifts.length;i++)
+			{
+				fileName += numDrifts[i]+ "_";
+			}
+		}
+	}
+	
+	/**
 	 * 
 	 * @param blockLength
 	 * @param interleavedWindowSize
