@@ -78,7 +78,7 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
 
     protected int[] sigma;
 
-    public int numberInstance;
+    // public int numberInstance;
 
     @Override
     protected void prepareForUseImpl(TaskMonitor monitor,
@@ -157,8 +157,7 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
     private void addDrift() {
         for (int i = 0; i < this.numDriftAttsOption.getValue(); i++) {
             this.weights[i] += (double) ((double) sigma[i]) * ((double) this.magChangeOption.getValue());
-            if (//this.weights[i] >= 1.0 || this.weights[i] <= 0.0 ||
-                    (1 + (this.instanceRandom.nextInt(100))) <= this.sigmaPercentageOption.getValue()) {
+            if ((1 + (this.instanceRandom.nextInt(100))) <= this.sigmaPercentageOption.getValue()) {
                 this.sigma[i] *= -1;
             }
         }

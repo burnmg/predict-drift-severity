@@ -3,6 +3,10 @@ package a.tools;
 import java.io.File;
 
 import moa.DoTask;
+import moa.streams.MultipleConceptDriftStreamGenerator3;
+import moa.streams.VolatilityChangeStreamGenerator;
+import moa.tasks.Task;
+import moa.tasks.WriteStreamToARFFFile3;
 
 public class GenerateDriftData
 {
@@ -18,28 +22,30 @@ public class GenerateDriftData
 //		int[] numDrifts = {30000,10};
 //		generateAbruptDriftData(1000000, 1000, numDrifts, "30000,10.arff");
 		
-		int[] numDrifts = {1};
-		generateAbruptDriftData(500000, 1, numDrifts, "1.arff");
+//		int[] numDrifts = {1};
+//		generateAbruptDriftData(500000, 1, numDrifts, "1.arff");
+		
+		int[] numDrifts = {200,10,200,10};
+		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10.arff");
 		
 	}
 	
-	/**
-	 *  Version 2: Command for generating stream is removed. It is replaced by objects format. 
-	 * @param blockLength
-	 * @param interleavedWindowSize
-	 * @param numDrifts: number of drifts in one block
-	 * @param fileName: examlpe "stream.arff"
-	 */
-	public static void generateAbruptDriftData2 (int blockLength, int interleavedWindowSize, int[] numDrifts, String fileName)
+	public static void generateAbruptDriftData2(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
 	{
-		System.out.print("Total stream length: " + numDrifts.length*blockLength);
-		if(fileName==null)
-		{
-			for(int i=0; i<numDrifts.length;i++)
-			{
-				fileName += numDrifts[i]+ "_";
-			}
-		}
+		File dir = new File(Directory.root+"Streams/"+fileName); 
+		dir.mkdirs();
+		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
+		
+		
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt);
+		generator.prepareForUse();
+		
+		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
+		task.suppressHeaderOption.unset();
+		task.concatenate.unset();
+		task.prepareForUse();
+		task.doTask();
+		
 	}
 	
 	/**
@@ -52,13 +58,13 @@ public class GenerateDriftData
 	public static void generateAbruptDriftData(int blockLength, int interleavedWindowSize, int[] numDrifts, String fileName)
 	{
 		System.out.print("Total stream length: " + numDrifts.length*blockLength);
-		if(fileName==null)
-		{
-			for(int i=0; i<numDrifts.length;i++)
-			{
-				fileName += numDrifts[i]+ "_";
-			}
-		}
+//		if(fileName==null)
+//		{
+//			for(int i=0; i<numDrifts.length;i++)
+//			{
+//				fileName += numDrifts[i]+ "_";
+//			}
+//		}
 		
 		File dir = new File(Directory.root+"Streams/"+fileName); 
 		dir.mkdir();

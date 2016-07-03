@@ -59,7 +59,7 @@ InstanceStream{
             "The number of classes to generate.", 2, 2, Integer.MAX_VALUE);
     
     public IntOption numAttsOption = new IntOption("numAtts", 't',
-            "The number of attributes to generate.", 10, 0, Integer.MAX_VALUE);
+            "The number of attributes to generate.", 5, 0, Integer.MAX_VALUE);
     
     public IntOption noisePercentageOption = new IntOption("noisePercentage",
             'n', "Percentage of noise to add to the data.", 5, 0, 100);
@@ -70,9 +70,9 @@ InstanceStream{
 
     protected int numberInstance;
     
-    protected DriftingHyperplaneGenerator stream1;
+    private DriftingHyperplaneGenerator stream1;
    
-    protected DriftingHyperplaneGenerator stream2;
+    private DriftingHyperplaneGenerator stream2;
     
     protected int switchPoint; 
     
@@ -99,11 +99,8 @@ InstanceStream{
 		driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
 		
 		// set stream options. 
-		stream1 = getInitStream();
-		stream2 = getEvolvedStream(stream1);
-		
-
-		
+//		stream1 = getInitStream();
+//		stream2 = getEvolvedStream(stream1);
 	}
 	
 	private DriftingHyperplaneGenerator getInitStream()
@@ -120,18 +117,24 @@ InstanceStream{
 		return newStream;
 	}
 	
+	public void initStream1AndStream2()
+	{
+		this.stream1 = getInitStream();
+		this.stream2 = getEvolvedStream(stream1);
+	}
 	
-//	private HyperplaneGenerator getNewGenerator(int seed){
-//		
-//		HyperplaneGenerator stream = new HyperplaneGenerator();
-//		stream.instanceRandomSeedOption.setValue(seed);
-//		stream.numClassesOption = numClassesOption;
-//		stream.numAttsOption = numAttsOption;
-//		stream.noisePercentageOption = noisePercentageOption;
-//		stream.prepareForUse();
-//		
-//		return stream;
-//	}
+	public void setStream1(DriftingHyperplaneGenerator newStream1)
+	{
+		this.stream1 = newStream1;
+		this.stream2 = getEvolvedStream(stream1);
+	}
+	
+	public DriftingHyperplaneGenerator getStream2()
+	{
+		return stream2;
+	}
+	
+	
 
 	private DriftingHyperplaneGenerator getEvolvedStream(DriftingHyperplaneGenerator stream)
 	{
@@ -230,5 +233,12 @@ InstanceStream{
 		previousSwitchPoint = 0;
 		
 		
+	}
+	
+	public void restartOnlyParameters()
+	{
+		numberInstance = 0;
+		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
+		previousSwitchPoint = 0;
 	}
 }

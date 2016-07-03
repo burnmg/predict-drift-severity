@@ -72,6 +72,9 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private ParameterInjector parameterInjector;
 	
 
+	public VolatilityAdaptiveClassifer()
+	{
+	}
 	public VolatilityAdaptiveClassifer(ParameterInjector p)
 	{
 		this.parameterInjector = p;
@@ -112,10 +115,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		activeClassifier = classifier1;		
 		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure();
-		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
+		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(0.05);
+//		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
 		
-		decisionMode = parameterInjector.getDecisionMode();
+//		decisionMode = parameterInjector.getDecisionMode();
+		decisionMode = 1;
 		
 		//set writers
 		
@@ -210,7 +214,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
 //			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-			int decision = getDecision(currentVoaltilityLevel);
+			int decision = 1;
 			
 			if (activeClassifierIndex != decision)
 			{	

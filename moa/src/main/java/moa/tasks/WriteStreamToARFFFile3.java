@@ -34,12 +34,12 @@ import com.yahoo.labs.samoa.instances.InstancesHeader;
 import moa.streams.InstanceStream;
 
 /**
- * Task to output a stream to an ARFF file
+ * @version 3
+ * @author rl
  *
- * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
- * @version $Revision: 7 $
+ * This version can be used in object way. 
  */
-public class WriteStreamToARFFFile2 extends MainTask {
+public class WriteStreamToARFFFile3 extends MainTask {
 
     @Override
     public String getPurposeString() {
@@ -47,13 +47,6 @@ public class WriteStreamToARFFFile2 extends MainTask {
     }
 
     private static final long serialVersionUID = 1L;
-
-    public ClassOption streamOption = new ClassOption("stream", 's',
-            "Stream to write.", InstanceStream.class,
-            "generators.RandomTreeGenerator");
-
-    public FileOption arffFileOption = new FileOption("arffFile", 'f',
-            "Destination ARFF file.", null, "arff", true);
 
     public IntOption maxInstancesOption = new IntOption("maxInstances", 'm',
             "Maximum number of instances to write to file.", 10000000, 0,
@@ -65,16 +58,28 @@ public class WriteStreamToARFFFile2 extends MainTask {
     public FlagOption concatenate = new FlagOption("concatenate",
             'c', "Concatenate output to existed file");
     
-
+    private InstanceStream stream;
+    private File destFile;
+    
+    public void setStream(InstanceStream stream)
+	{
+		this.stream = stream;
+	}
+    
+    public WriteStreamToARFFFile3(InstanceStream stream, File destFile)
+	{
+		this.stream = stream;
+		this.destFile = destFile;
+	}
 
     @Override
     protected Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
-        InstanceStream stream = (InstanceStream) getPreparedClassOption(this.streamOption);
-        File destFile = this.arffFileOption.getFile();
+//        File destFile = this.arffFileOption.getFile();
         if (destFile != null) {
             try {
                 Writer w = new BufferedWriter(new FileWriter(destFile, concatenate.isSet()));
-                monitor.setCurrentActivityDescription("Writing stream to ARFF");
+//                monitor.setCurrentActivityDescription("Writing stream to ARFF");
+                System.out.println("Writing stream to ARFF");
                 if (!this.suppressHeaderOption.isSet()) {
                     w.write(stream.getHeader().toString());
                     w.write("\n");
@@ -82,10 +87,13 @@ public class WriteStreamToARFFFile2 extends MainTask {
                 int numWritten = 0;
                 while ((numWritten < this.maxInstancesOption.getValue())
                         && stream.hasMoreInstances()) {
+                	
+                	if(numWritten % 200000 == 0) System.out.println(((double)numWritten*100/(numWritten + stream.estimatedRemainingInstances())) + "%");
                     w.write(stream.nextInstance().getData().toString());
                     w.write("\n");
                     numWritten++;
                 }
+                System.out.println("Done.");
                 w.close();
             } catch (Exception ex) {
                 throw new RuntimeException(

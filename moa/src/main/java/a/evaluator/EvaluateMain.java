@@ -23,19 +23,24 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		String streamName = "1.arff";
+		String streamName = "200,10,200,10.arff";
 //		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
-		VolatilityAdaptiveClassifer volatilityAdaptiveClassifer = new VolatilityAdaptiveClassifer();
-		volatilityAdaptiveClassifer.getOptions().resetToDefaults();
+
 		
 		
 		File resultFolder = new File(Directory.root+"/Results/"+streamName);
 		resultFolder.mkdirs();
-		volatilityAdaptiveClassifer.currentVolatilityLevelWriterDumpFileOption.setValue(resultFolder.getPath()+"/currentVolatilityLevel.csv");
-		volatilityAdaptiveClassifer.classifierChangePointDumpFileOption.setValue(resultFolder.getPath()+"/classifierChangePointDumpFile.csv");
-		volatilityAdaptiveClassifer.resetLearning();
+		VolatilityAdaptiveClassifer classifiers = new VolatilityAdaptiveClassifer();
+		classifiers.getOptions().resetToDefaults();
+		classifiers.currentVolatilityLevelWriterDumpFileOption.setValue(resultFolder.getPath()+"/currentVolatilityLevel.csv");
+		classifiers.classifierChangePointDumpFileOption.setValue(resultFolder.getPath()+"/classifierChangePointDumpFile.csv");
+		classifiers.resetLearning();
+		
+//		HoeffdingTreeADWIN classifiers = new HoeffdingTreeADWIN();
+//		classifiers.getOptions().resetToDefaults();
+//		classifiers.resetLearning();
 
-		evaluate(volatilityAdaptiveClassifer, streamName, resultFolder.getPath());
+		evaluate(classifiers, streamName, resultFolder.getPath());
 
 	}
 	
@@ -45,7 +50,7 @@ public class EvaluateMain
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.setLearner(classifier);
 		evaluatePrequential.setStream(getStreamFromFile(streamName));
-		evaluatePrequential.sampleFrequencyOption.setValue(1);
+		evaluatePrequential.sampleFrequencyOption.setValue(100);
 		evaluatePrequential.dumpFileOption.setValue(resultFolder+"/dump.csv");
 		
 		
