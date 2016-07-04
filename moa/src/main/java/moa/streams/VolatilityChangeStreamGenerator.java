@@ -76,7 +76,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		writeToFile(driftDesciptionWriter, "testWriter"); //TODO
 		
 		
-		// expected switch Description d
+		// expected switch Description
 		
 	}
 	
