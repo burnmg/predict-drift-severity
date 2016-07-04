@@ -1,9 +1,10 @@
 package moa.streams;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
-
-import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 import moa.core.Example;
 import moa.core.ObjectRepository;
@@ -16,6 +17,11 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	// input parameters
 	private int changes[];
 	private Random random;
+	private File descriptionFileDir;
+	
+	//file and writers
+	private File driftDesciptionFile;
+	private BufferedWriter driftDesciptionWriter;
 	
 	private int currentBlockCount;
 	private int numberInstance;
@@ -31,7 +37,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	}
 	
 	public VolatilityChangeStreamGenerator(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt)
+			int randomSeedInt, File descriptionFileDir)
 	{
 		this.currentBlockCount = 0;
 		this.numberInstance = 0;
@@ -52,26 +58,41 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		
 		currentBlock.prepareForUse();
 		
-//		// further blocks
-//		for(int i=1; i < changes.length;i++)
-//		{
-//			streams[i] = new MultipleConceptDriftStreamGenerator3();
-//			streams[i].getOptions().resetToDefaults();
-//			streams[i].streamLengthOption.setValue(blockLength);
-//			streams[i].numDriftsOption.setValue(changes[i]);
-//			streams[i].widthOption.setValue(interleavedWindowSize);
-//			streams[i].numDriftAttsOption.setValue(driftAttsNum);
-//			streams[i].driftRandom = random;
-//			
-//			//special for further blocks
-//			streams[i].setStream1(streams[i-1].getStream2());
-//			
-//			streams[i].prepareForUse();
-//		}
-		
-		// compute max instances count. Assume each block has same lengths. TODO
+		// compute max instances count. Assume each block has same lengths. 
 		maxInstancesCount = blockLength * changes.length;
 		
+		// set descriptionFileDir
+		this.descriptionFileDir = descriptionFileDir;
+		
+		// drift Description
+		driftDesciptionFile = new File(descriptionFileDir.getAbsolutePath() + "/driftDescription.csv");
+		try
+		{
+			driftDesciptionWriter = new BufferedWriter(new FileWriter(driftDesciptionFile));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		writeToFile(driftDesciptionWriter, "testWriter"); //TODO
+		
+		
+		// expected switch Description
+		
+	}
+	
+	private void writeToFile(BufferedWriter bw, String str)
+	{
+		if (bw != null)
+		{
+			try
+			{
+				bw.write(str);
+				bw.flush();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
@@ -102,13 +123,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		}
 		else
 		{
-			// assign stream2 of earlier block to stream 1 of the new block.
-//			currentBlockCount++;
-//			currentBlock		
-//			streams[i].prepareForUse();
-			// TODO
-			
-
 			currentBlockCount++;
 			currentBlock.setStream1(currentBlock.getStream2());
 			currentBlock.numDriftsOption.setValue(changes[currentBlockCount]);
@@ -131,6 +145,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	{
 		
 	}
+	
 
 	@Override
 	public void getDescription(StringBuilder sb, int indent)
@@ -143,6 +158,5 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	{
 		
 	}
-	
 
 }

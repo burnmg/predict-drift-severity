@@ -35,7 +35,6 @@ import moa.streams.InstanceStream;
 
 /**
  * @version 3
- * @author rl
  *
  * This version can be used in object way. 
  */
