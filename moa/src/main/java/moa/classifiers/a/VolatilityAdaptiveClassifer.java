@@ -54,7 +54,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			"Destination csv file.", null, "csv", true);
 
 	private BufferedWriter volatitlityDriftWriter;
-	private BufferedWriter classifierChangePointDumpWriter;
+	private BufferedWriter switchWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	
@@ -113,7 +113,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		initClassifiers();
 		activeClassifier = classifier1;		
-		classiferSelector = new DoubleReservoirsClassifierSelector(100, 0.0); 
+		classiferSelector = new DoubleReservoirsClassifierSelector(10, 0.0); 
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
 		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(0.005);
 //		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
@@ -136,8 +136,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
 			if(classifierChangePointDumpFile!=null)
 			{
-				classifierChangePointDumpWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
-				classifierChangePointDumpWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+				switchWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
+				switchWriter.write("ClassifierChangePoint,ClassifierIndex\n");
 			}
 			
 			File currentVolatilityLevelDumpFile = currentVolatilityLevelWriterDumpFileOption.getFile();
@@ -204,7 +204,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		
+
 		int currentVoaltilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
 		// if there is a concept shift.
 		if (currentVoaltilityLevel!=-1)
@@ -222,7 +222,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				activeClassifierIndex = decision;
 				
 				//classifier change point dump
-				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
+				writeToFile(switchWriter, instanceCount+","+decision+"\n");
 
 			}
 		}

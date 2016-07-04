@@ -23,7 +23,7 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		String streamName = "200,10,200,10.arff";
+		String streamName = "200,10,200,10,200,10,200,10.arff";
 //		HoeffdingTreeADWIN ht = new HoeffdingTreeADWIN();
 
 		

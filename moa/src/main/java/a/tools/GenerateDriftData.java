@@ -25,8 +25,8 @@ public class GenerateDriftData
 //		int[] numDrifts = {1};
 //		generateAbruptDriftData(500000, 1, numDrifts, "1.arff");
 		
-		int[] numDrifts = {200,10,200,10};
-		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10.arff");
+		int[] numDrifts = {200,10,200,10,200,10,200,10};
+		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10,200,10,200,10.arff");
 		
 	}
 	
