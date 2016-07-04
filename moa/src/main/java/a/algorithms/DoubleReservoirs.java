@@ -43,26 +43,24 @@ public class DoubleReservoirs
 	 * 
 	 * @param input: Interval of Drift.
 	 * @return 
-	 * true: is high
-	 * false: is low
+	 * true: is in high value mode
+	 * false: is in low value mode
 	 */
 	public boolean setInput(double input)
 	{
-		if (highReservoir.getWidth() == 0)
-		{
-			highReservoir.addElement(input);
-			return false;
-		}
-		
-		if (lowReservoir.getWidth() == 0)
-		{
-			lowReservoir.addElement(input);
-			return false;
-		}
+//		if (highReservoir.getWidth() == 0)
+//		{
+//			highReservoir.addElement(input);
+//			return false;
+//		}
+//		
+//		if (lowReservoir.getWidth() == 0)
+//		{
+//			lowReservoir.addElement(input);
+//			return false;
+//		}
 
-		double mean = getMean();
-
-		if (input > mean)
+		if (input > this.getMean())
 		{
 			highReservoir.addElement(input);
 			return true;
@@ -84,7 +82,7 @@ public class DoubleReservoirs
 	
 	public double getVariance()
 	{
-		double mean = getMean();
+		double mean = this.getMean();
 		double sum = 0;
 	
 		double[] highElements = highReservoir.getElements();

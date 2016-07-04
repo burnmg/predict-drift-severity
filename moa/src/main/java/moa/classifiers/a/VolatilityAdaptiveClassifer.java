@@ -113,9 +113,9 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		initClassifiers();
 		activeClassifier = classifier1;		
-		classiferSelector = new DoubleReservoirsClassifierSelector(300, 0.0); 
+		classiferSelector = new DoubleReservoirsClassifierSelector(100, 0.0); 
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
-		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(0.05);
+		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(0.005);
 //		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
 		
 //		decisionMode = parameterInjector.getDecisionMode();
@@ -213,8 +213,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			// current volatility level dump
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
-//			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-			int decision = 1;
+			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+//			int decision = 1;
 			
 			if (activeClassifierIndex != decision)
 			{	
@@ -231,7 +231,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	}
 	
-	// in optimised version, this method should be removed. 
+	// in optimised version, this method should be removed. FIXME
 	private int getDecision(int currentVoaltilityLevel)
 	{
 		if(this.decisionMode==DecisionMode.AWALYS_1)

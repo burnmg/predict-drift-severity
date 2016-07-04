@@ -82,7 +82,7 @@ InstanceStream{
     
     protected Random driftRandom;
     
-    private boolean isSwitching;
+    private boolean drifting;
     
 	@Override
 	public InstancesHeader getHeader() {
@@ -152,11 +152,6 @@ InstanceStream{
 	public boolean hasMoreInstances() {
 		return numberInstance < streamLengthOption.getValue();
 	}
-
-	public boolean getIsSwitching()
-	{
-		return isSwitching;
-	}
 	
 	
 	@Override
@@ -178,11 +173,11 @@ InstanceStream{
 			switchPoint += streamLengthOption.getValue() / numDriftsOption.getValue();
 			driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
 //			driftPosition = (switchPoint - previousSwitchPoint) / 2;
-			isSwitching = true;
+			drifting = true;
 		}
 		else
 		{
-			isSwitching = false;
+			drifting = false;
 		}
 		
 		
@@ -240,5 +235,10 @@ InstanceStream{
 		numberInstance = 0;
 		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
 		previousSwitchPoint = 0;
+	}
+	
+	public boolean isDrifting()
+	{
+		return drifting;
 	}
 }

@@ -21,12 +21,12 @@ public class DoubleReservoirsClassifierSelector implements ClassifierSelector {
 		if(doubleReservoirs.setInput(avgInterval))
 		{
 			// high volatility
-			return 1;
+			return 2;
 		}
 		else
 		{
 			// low volatility
-			return 0;
+			return 1;
 		}
 		
 		

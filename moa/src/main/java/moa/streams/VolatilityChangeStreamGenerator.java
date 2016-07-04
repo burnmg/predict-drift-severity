@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
+
+import moa.classifiers.core.driftdetection.SeqDrift2ChangeDetector.Block;
 import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
@@ -21,7 +23,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	
 	//file and writers
 	private File driftDesciptionFile;
+	private File switchDescriptionFile;
 	private BufferedWriter driftDesciptionWriter;
+	private BufferedWriter switchDescriptionWriter;
 	
 	private int currentBlockCount;
 	private int numberInstance;
@@ -73,10 +77,19 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		{
 			e.printStackTrace();
 		}
-		writeToFile(driftDesciptionWriter, "testWriter"); //TODO
+		writeToFile(driftDesciptionWriter, "DriftInstanceIndex\n"); 
 		
 		
-		// expected switch Description
+		// expected switch Description TODO 
+		switchDescriptionFile = new File(descriptionFileDir.getAbsolutePath() + "/switchDescription.csv");
+		try
+		{
+			switchDescriptionWriter = new BufferedWriter(new FileWriter(switchDescriptionFile));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		writeToFile(switchDescriptionWriter, "ExpectedSwitchIndex, SwitchTo\n");
 		
 	}
 	
@@ -116,19 +129,36 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	@Override
 	public Example nextInstance()
 	{
-		numberInstance++;
+
 		if(currentBlock.hasMoreInstances())
 		{
-			return currentBlock.nextInstance();
+			Example inst = currentBlock.nextInstance();
+			numberInstance++;
+			
+			if(currentBlock.isDrifting()){
+				writeToFile(driftDesciptionWriter, numberInstance+"\n");
+			}
+			
+			return inst;
 		}
 		else
 		{
+			
 			currentBlockCount++;
 			currentBlock.setStream1(currentBlock.getStream2());
 			currentBlock.numDriftsOption.setValue(changes[currentBlockCount]);
 			currentBlock.restartOnlyParameters();
 			
-			return currentBlock.nextInstance();
+			Example inst = currentBlock.nextInstance();
+			numberInstance++;
+			
+//			TODO
+			// if current block has a greater value than previous one, it means current block has higher volatility level, so switch
+//			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
+//			
+//			writeToFile(switchDescriptionWriter, str);
+			
+			return inst;
 		}
 
 
