@@ -19,8 +19,8 @@ public class EvaluateMain
 		
 		// tasks
 		Runnable[] tasks = {
-				getTask("200,10,200,10,200,10,200,10.arff"),
-				getTask("10,1000,10,1000.arff"),
+				buildTask("200,10,200,10,200,10,200,10.arff"),
+				buildTask("10,1000,10,1000.arff"),
 				};
 		
 		for(Runnable task : tasks)
@@ -38,7 +38,7 @@ public class EvaluateMain
 		};
 	}
 	
-	private static Runnable getTask(String streamName)
+	private static Runnable buildTask(String streamName)
 	{
 		//stream
 		ExampleStream stream = getStreamFromFile(streamName);
