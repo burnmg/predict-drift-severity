@@ -7,10 +7,6 @@ import moa.DoTask;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.*;
-
 public class GenerateDriftData
 {
 
