@@ -1,4 +1,4 @@
-package a.evaluator;
+package archive;
 
 import com.yahoo.labs.samoa.instances.Instance;
 

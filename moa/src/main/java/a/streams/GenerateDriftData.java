@@ -1,11 +1,10 @@
-package a.tools;
+package a.streams;
 
 import java.io.File;
 
+import a.tools.Directory;
 import moa.DoTask;
-import moa.streams.MultipleConceptDriftStreamGenerator3;
 import moa.streams.VolatilityChangeStreamGenerator;
-import moa.tasks.Task;
 import moa.tasks.WriteStreamToARFFFile3;
 
 public class GenerateDriftData
@@ -37,7 +36,7 @@ public class GenerateDriftData
 		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
 		
 		
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, dir);
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
 		generator.prepareForUse();
 		
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);

@@ -2,7 +2,6 @@ package archive;
 
 import com.yahoo.labs.samoa.instances.Instance;
 
-import a.evaluator.Evaluator;
 import moa.classifiers.AbstractClassifier;
 import moa.core.Utils;
 

@@ -7,6 +7,7 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.Directory;
 import archive.CorrectRateEvaluator;
+import archive.Evaluator;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;

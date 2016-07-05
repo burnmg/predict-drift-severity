@@ -32,6 +32,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	private int maxInstancesCount;
 	private MultipleConceptDriftStreamGenerator3 currentBlock;
 	
+	// state the index of current expected algorithm
+	private int currentAlgorithmIndex;
+	
 	
 	private static final long serialVersionUID = 7628833159490333423L;
 
@@ -41,7 +44,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	}
 	
 	public VolatilityChangeStreamGenerator(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt, File descriptionFileDir)
+			int randomSeedInt, int startClassifier, File descriptionFileDir)
 	{
 		this.currentBlockCount = 0;
 		this.numberInstance = 0;
@@ -91,6 +94,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		}
 		writeToFile(switchDescriptionWriter, "ExpectedSwitchIndex, SwitchTo\n");
 		
+		currentAlgorithmIndex = startClassifier;
 	}
 	
 	private void writeToFile(BufferedWriter bw, String str)
@@ -154,9 +158,13 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			
 //			TODO
 			// if current block has a greater value than previous one, it means current block has higher volatility level, so switch
-//			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
-//			
-//			writeToFile(switchDescriptionWriter, str);
+			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
+			if(switchTo!=currentAlgorithmIndex)
+			{
+				writeToFile(switchDescriptionWriter, numberInstance+","+switchTo +"\n");
+			}
+			
+			
 			
 			return inst;
 		}

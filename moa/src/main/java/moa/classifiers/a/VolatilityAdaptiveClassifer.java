@@ -5,21 +5,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.WriteAbortedException;
-import java.lang.reflect.Parameter;
-import java.util.PrimitiveIterator.OfDouble;
-
-import javax.management.loading.PrivateClassLoader;
-
-import org.omg.CORBA.Current;
-
 import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
-
-import a.tools.Directory;
 import a.tools.ParameterInjector;
-import classifiers.selectors.AlwaysFirstClassifierSelector;
-import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
 import moa.classifiers.a.other.ClassifierSelector;
@@ -28,7 +16,6 @@ import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
 import moa.classifiers.a.other.RelativeVolatilityDetectorMeasure;
 import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
-import cutpointdetection.ADWIN;
 import moa.core.Measurement;
 import moa.options.ClassOption;
 import volatilityevaluation.RelativeVolatilityDetector;
