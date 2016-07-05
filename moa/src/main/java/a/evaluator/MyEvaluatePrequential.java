@@ -216,7 +216,7 @@ public class MyEvaluatePrequential extends MainTask {
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
                 && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) {
         	
-        	if(instancesProcessed%50000==0) System.out.println((float)instancesProcessed*100/(stream.estimatedRemainingInstances()+instancesProcessed)+"%");
+        	if(instancesProcessed%50000==0) System.out.println("Thread#"+Thread.currentThread().getId()+": "+(float)instancesProcessed*100/(stream.estimatedRemainingInstances()+instancesProcessed)+"%");
         	
             Example trainInst = stream.nextInstance();
             Example testInst = (Example) trainInst; //.copy();
@@ -299,7 +299,7 @@ public class MyEvaluatePrequential extends MainTask {
         if (outputPredictionResultStream != null) {
             outputPredictionResultStream.close();
         }
-        System.out.println("Done.");
+        System.out.println("Thread#"+Thread.currentThread().getId()+": "+"Done.");
         return learningCurve;
     }
 

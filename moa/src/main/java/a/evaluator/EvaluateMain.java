@@ -17,9 +17,17 @@ public class EvaluateMain
 	{
 		ExecutorService executorService = Executors.newFixedThreadPool(10);
 		
-		Runnable task = getTask("200,10,200,10,200,10,200,10.arff");
+		// tasks
+		Runnable[] tasks = {
+				getTask("200,10,200,10,200,10,200,10.arff"),
+				getTask("10,1000,10,1000.arff"),
+				};
 		
-		executorService.submit(task);
+		for(Runnable task : tasks)
+		{
+			executorService.submit(task);
+		}
+		
 		executorService.shutdown();
 		try
 		{
