@@ -6,7 +6,7 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 
 import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.Directory;
-import a.tools.MyEvaluatePrequential;
+import archive.CorrectRateEvaluator;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
