@@ -7,10 +7,19 @@ import moa.DoTask;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.*;
+
 public class GenerateDriftData
 {
 
 	public static void main(String[] args)
+	{
+		
+	}
+	
+	public static void doWork()
 	{
 //		int[] numDrifts = {10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000, 10, 1000};
 //		int[] numDrifts = {10, 1000, 10, 1000, 10};
@@ -24,9 +33,10 @@ public class GenerateDriftData
 //		int[] numDrifts = {1};
 //		generateAbruptDriftData(500000, 1, numDrifts, "1.arff");
 		
-		int[] numDrifts = {200,10,200,10,200,10,200,10};
-		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10,200,10,200,10.arff");
-		
+//		int[] numDrifts = {200,10,200,10,200,10,200,10};
+//		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10,200,10,200,10.arff");
+		int[] numDrifts = {10,100,10,100};
+		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "10,100,10,100.arff");
 	}
 	
 	public static void generateAbruptDriftData2(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName)

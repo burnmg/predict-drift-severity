@@ -162,6 +162,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			if(switchTo!=currentAlgorithmIndex)
 			{
 				writeToFile(switchDescriptionWriter, numberInstance+","+switchTo +"\n");
+				currentAlgorithmIndex = switchTo;
 			}
 			
 			

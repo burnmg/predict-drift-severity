@@ -210,7 +210,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				
 				//classifier change point dump
 				writeToFile(switchWriter, instanceCount+","+decision+"\n");
-
 			}
 		}
 		instanceCount++;
@@ -247,6 +246,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	}
 
 }
+
 class DecisionMode
 {
 	public static final int AWALYS_1 = 1;
