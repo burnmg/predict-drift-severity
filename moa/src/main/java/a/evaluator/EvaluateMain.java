@@ -15,12 +15,18 @@ public class EvaluateMain
 
 	public static void main(String[] args)
 	{
-		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		ExecutorService executorService = Executors.newFixedThreadPool(8);
 		
 		// tasks
 		Runnable[] tasks = {
 				buildTask("200,10,200,10,200,10,200,10.arff"),
 				buildTask("10,1000,10,1000.arff"),
+				buildTask("blocksize200000_1000,10,100,10.arff"),
+				buildTask("200,10,200,10.arff"),
+				buildTask("200,10,200,10,200,10,200,10.arff"),
+				buildTask("10,1000,10,1000.arff"),
+				buildTask("blocksize200000_1000,10,100,10.arff"),
+				buildTask("200,10,200,10.arff"),
 				};
 		
 		for(Runnable task : tasks)

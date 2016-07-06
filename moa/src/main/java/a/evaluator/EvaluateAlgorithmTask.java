@@ -33,6 +33,7 @@ public class EvaluateAlgorithmTask implements Runnable
 		
 		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
 		
+		//analyse TODO
 	}
 
 }

@@ -19,7 +19,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	// input parameters
 	private int changes[];
 	private Random random;
-	private File descriptionFileDir;
 	
 	//file and writers
 	private File driftDesciptionFile;
@@ -67,9 +66,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		
 		// compute max instances count. Assume each block has same lengths. 
 		maxInstancesCount = blockLength * changes.length;
-		
-		// set descriptionFileDir
-		this.descriptionFileDir = descriptionFileDir;
 		
 		// drift Description
 		driftDesciptionFile = new File(descriptionFileDir.getAbsolutePath() + "/driftDescription.csv");
@@ -185,7 +181,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		
 	}
 	
-
 	@Override
 	public void getDescription(StringBuilder sb, int indent)
 	{
