@@ -100,17 +100,41 @@ public class EvaluateCorreteModeCoverage
 //			}
 			
 			
-//			//case 1: expected interval is on the right of actual
-//			if(expected[indexExpected][0] > actual[indexActual][1])
-//			{
-//				
-//			}
-//			//case 1: expected interval is on the left of actual
-//			else if(expected[indexExpected][1] < actual[indexActual][0])
-//			{
-//				
-//			}
-			
+			//case 1: expected interval is on the right of actual
+			if(!(expected[indexExpected][0] > actual[indexActual][1] && expected[indexExpected][1] > actual[indexActual][0]) 
+					&& (expected[indexExpected][2] == actual[indexActual][2]))
+			{
+				int actualHead = actual[indexActual][0];
+				int actualTail = actual[indexActual][1];
+				
+				if(actual[indexActual][0] < expected[indexExpected][0] )
+				{
+					actualHead = expected[indexExpected][0];
+				}
+				
+				if(actual[indexActual][1] > expected[indexExpected][1])
+				{
+					actualTail = expected[indexExpected][1];
+					indexExpected++;
+				}
+				else
+				{
+					indexActual++;
+				}
+				
+				numOverlaps += actualTail - actualHead + 1;
+			}
+			else
+			{
+				if(actual[indexActual][1] > expected[indexExpected][1])
+				{
+					indexExpected++;
+				}
+				else
+				{
+					indexActual++;
+				}
+			}
 			
 			
 			
