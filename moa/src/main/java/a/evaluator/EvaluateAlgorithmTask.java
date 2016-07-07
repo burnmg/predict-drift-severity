@@ -29,10 +29,7 @@ public class EvaluateAlgorithmTask implements Runnable
 	@Override
 	public void run()
 	{
-
-		
-		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
-		
+		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);	
 		//analyse TODO
 	}
 

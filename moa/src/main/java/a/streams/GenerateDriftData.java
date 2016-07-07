@@ -12,7 +12,7 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-		
+		doWork();
 	}
 	
 	public static void doWork()

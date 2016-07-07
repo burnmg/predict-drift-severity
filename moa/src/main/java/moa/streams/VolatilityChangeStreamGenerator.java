@@ -166,7 +166,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			return inst;
 		}
 
-
 	}
 
 	@Override
