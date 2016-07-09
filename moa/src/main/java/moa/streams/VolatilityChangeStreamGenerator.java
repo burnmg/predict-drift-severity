@@ -102,7 +102,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		{
 			e.printStackTrace();
 		}
-		writeToFile(volatilityIntervalDescriptionWriter, "Head, Tail, End\n");
+		writeToFile(volatilityIntervalDescriptionWriter, "Head, Tail, Mode\n");
 		
 		currentAlgorithmIndex = startClassifier;
 	}
@@ -144,6 +144,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	public Example nextInstance()
 	{
 
+
 		if(currentBlock.hasMoreInstances())
 		{
 			Example inst = currentBlock.nextInstance();
@@ -151,6 +152,13 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			
 			if(currentBlock.isDrifting()){
 				writeToFile(driftDesciptionWriter, numberInstance+"\n");
+			}
+			
+			
+			// in end of the stream, output the last interval. 
+			if(numberInstance==maxInstancesCount)
+			{
+				writeToFile(volatilityIntervalDescriptionWriter, intervalHead + "," + (numberInstance - 1) + "," + currentAlgorithmIndex + "\n");
 			}
 			
 			return inst;
@@ -165,15 +173,16 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			
 			Example inst = currentBlock.nextInstance();
 			numberInstance++;
-			
-
-			
+				
 			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
+			
+			
 			if(switchTo!=currentAlgorithmIndex)
 			{
 				// output expected interval TODO
-				writeToFile(volatilityIntervalDescriptionWriter, intervalHead + "," + (numberInstance - 1) + "," + currentAlgorithmIndex);
+				writeToFile(volatilityIntervalDescriptionWriter, intervalHead + "," + (numberInstance - 1) + "," + currentAlgorithmIndex + "\n");
 				intervalHead = numberInstance;
+
 				
 				// output expected switch point
 				writeToFile(switchPointDescriptionWriter, numberInstance+","+switchTo +"\n");
@@ -181,6 +190,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 				
 			}
 			
+
+			
+
 			
 			
 			

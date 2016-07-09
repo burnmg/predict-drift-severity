@@ -41,7 +41,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			"Destination csv file.", null, "csv", true);
 
 	private BufferedWriter volatitlityDriftWriter;
-	private BufferedWriter switchWriter;
+	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	
@@ -123,8 +123,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
 			if(classifierChangePointDumpFile!=null)
 			{
-				switchWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
-				switchWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+				switchPointDescriptionWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
+				switchPointDescriptionWriter.write("ClassifierChangePoint,ClassifierIndex\n");
 			}
 			
 			File currentVolatilityLevelDumpFile = currentVolatilityLevelWriterDumpFileOption.getFile();
@@ -196,20 +196,24 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// if there is a concept shift.
 		if (currentVoaltilityLevel!=-1)
 		{
-			
+			// EVALUATE CODE
 			// current volatility level dump
 			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
 			
 			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
 //			int decision = 1;
 			
+			
 			if (activeClassifierIndex != decision)
 			{	
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
 				activeClassifierIndex = decision;
 				
-				//classifier change point dump
-				writeToFile(switchWriter, instanceCount+","+decision+"\n");
+				// EVALUATE CODE
+				// switch point dump
+				writeToFile(switchPointDescriptionWriter, instanceCount+","+decision+"\n");
+				
+				//
 			}
 		}
 		instanceCount++;
