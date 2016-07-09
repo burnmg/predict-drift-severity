@@ -432,4 +432,5 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
             Instances insts) {
         return insts.classIndex() > index ? index : index + 1;
     }
+    
 }

@@ -19,14 +19,7 @@ public class EvaluateMain
 		
 		// tasks
 		Runnable[] tasks = {
-				buildTask("200,10,200,10,200,10,200,10.arff"),
-				buildTask("10,1000,10,1000.arff"),
-				buildTask("blocksize200000_1000,10,100,10.arff"),
-				buildTask("200,10,200,10.arff"),
-				buildTask("200,10,200,10,200,10,200,10.arff"),
-				buildTask("10,1000,10,1000.arff"),
-				buildTask("blocksize200000_1000,10,100,10.arff"),
-				buildTask("200,10,200,10.arff"),
+				buildTask("10,100,10,100.arff"),
 				};
 		
 		for(Runnable task : tasks)
@@ -54,8 +47,7 @@ public class EvaluateMain
 		resultFolder.mkdirs();
 		VolatilityAdaptiveClassifer classifier = new VolatilityAdaptiveClassifer();
 		classifier.getOptions().resetToDefaults();
-		classifier.currentVolatilityLevelWriterDumpFileOption.setValue(resultFolder.getPath()+"/currentVolatilityLevel.csv");
-		classifier.classifierChangePointDumpFileOption.setValue(resultFolder.getPath()+"/classifierChangePointDumpFile.csv");
+		classifier.dumpFileDirOption.setValue(resultFolder.getPath());
 		classifier.resetLearning();
 		
 		return new EvaluateAlgorithmTask(classifier, stream, resultFolder.getAbsolutePath());

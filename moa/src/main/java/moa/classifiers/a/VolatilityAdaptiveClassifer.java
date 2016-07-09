@@ -19,6 +19,7 @@ import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.core.Measurement;
 import moa.options.ClassOption;
 import volatilityevaluation.RelativeVolatilityDetector;
+import weka.core.pmml.FieldMetaInfo.Interval;
 
 public class VolatilityAdaptiveClassifer extends AbstractClassifier
 {
@@ -31,17 +32,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			"The classifier used in high volatility mode", Classifier.class,
 			"moa.classifiers.trees.HoeffdingAdaptiveTree");
 
-	public FileOption volatitlityDriftDumpFileOption = new FileOption("volatitlityDriftDumpFile", 'v',
-			"Destination csv file.", null, "csv", true);
-
-	public FileOption classifierChangePointDumpFileOption = new FileOption("classifierChangePointDumpFileOption", 'c',
-			"Destination csv file.", null, "csv", true);
-	
-	public FileOption currentVolatilityLevelWriterDumpFileOption = new FileOption("currentVolatilityLevelWriter", 'h',
-			"Destination csv file.", null, "csv", true);
+	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v',
+			"Dir.", null, "csv", true);
 
 	private BufferedWriter volatitlityDriftWriter;
 	private BufferedWriter switchPointDescriptionWriter;
+	private BufferedWriter volIntervalDescriptionWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	
@@ -52,9 +48,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private ClassifierSelector classiferSelector; 
 	
 	private int activeClassifierIndex;
-	private int instanceCount;
+	private int numInstance;
 	
 	private int decisionMode;
+	
+	private int intervalStart;
 	
 	private ParameterInjector parameterInjector;
 	
@@ -112,27 +110,27 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		try
 		{
+			File dir = dumpFileDirOption.getFile();
+			if(!(dir.exists() && dir.isDirectory())) dir.mkdirs();
 
-			File volatitlityDriftDumpFile = volatitlityDriftDumpFileOption.getFile();
-			if (volatitlityDriftDumpFile != null)
-			{
-				volatitlityDriftWriter = new BufferedWriter(new FileWriter(volatitlityDriftDumpFile));
+				volatitlityDriftWriter = new BufferedWriter(new FileWriter(dir+"/driftDess.csv"));
 				volatitlityDriftWriter.write("VolatilityDriftInstance,CurrentAvgIntervals\n");
-			}
 			
-			File classifierChangePointDumpFile = classifierChangePointDumpFileOption.getFile();
-			if(classifierChangePointDumpFile!=null)
-			{
-				switchPointDescriptionWriter = new BufferedWriter(new FileWriter(classifierChangePointDumpFile));
+				switchPointDescriptionWriter = new BufferedWriter(new FileWriter(dir+"/switchPointDesc.csv"));
 				switchPointDescriptionWriter.write("ClassifierChangePoint,ClassifierIndex\n");
-			}
-			
-			File currentVolatilityLevelDumpFile = currentVolatilityLevelWriterDumpFileOption.getFile();
-			if(currentVolatilityLevelDumpFile!=null)
-			{
-				currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(currentVolatilityLevelDumpFile));
+
+				volIntervalDescriptionWriter = new BufferedWriter(new FileWriter(dir+"/volSwitchIntervalDesc.csv"));
+				volIntervalDescriptionWriter.write("Head,Tail,Mode\n");
+				
+				currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(dir+"/currentVolLevelDesc.csv"));
 				currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval\n");
-			}
+				
+
+
+				
+				// 
+			
+			//volIntervalDescriptionWriter
 
 		} catch (IOException e)
 		{
@@ -140,10 +138,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 
 //		volatilityDriftDetector = new RelativeVolatilityDetector(new ADWIN(0.0001), 32);
-		instanceCount = 0;
-
+		numInstance = 0;
+		intervalStart = 0;
+		
 		activeClassifierIndex = 1;
 		activeClassifier = classifier1;
+
 
 	}
 
@@ -198,7 +198,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		{
 			// EVALUATE CODE
 			// current volatility level dump
-			writeToFile(currentVolatilityLevelDumpWriter, instanceCount+","+currentVoaltilityLevel +"\n");
+			writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVoaltilityLevel +"\n");
 			
 			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
 //			int decision = 1;
@@ -207,18 +207,32 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			if (activeClassifierIndex != decision)
 			{	
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
+				int previousClassifierIndex = activeClassifierIndex;
 				activeClassifierIndex = decision;
 				
 				// EVALUATE CODE
 				// switch point dump
-				writeToFile(switchPointDescriptionWriter, instanceCount+","+decision+"\n");
+				writeToFile(switchPointDescriptionWriter, numInstance+","+decision+"\n");
 				
-				//
+				// EVALUATE CODE
+				// interval dump
+				writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+previousClassifierIndex+"\n");
+				intervalStart = numInstance + 1;
 			}
 		}
-		instanceCount++;
+		numInstance++;
 		activeClassifier.trainOnInstance(inst);
 
+	}
+	
+	/**
+	 * Call this method after training complete. 
+	 */
+	@Override
+	public void cleanup()
+	{
+		writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+activeClassifierIndex+"\n");
+		intervalStart = numInstance + 1;
 	}
 	
 	// in optimised version, this method should be removed. FIXME

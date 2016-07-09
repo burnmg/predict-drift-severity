@@ -291,8 +291,12 @@ public class MyEvaluatePrequential extends MainTask {
                         - evaluateStartTime);
             }
             
-            
+
         }
+        
+        // do after training work
+        learner.cleanup();
+        
         if (immediateResultStream != null) {
             immediateResultStream.close();
         }
