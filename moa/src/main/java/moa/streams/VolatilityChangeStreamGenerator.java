@@ -22,9 +22,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	
 	//file and writers
 	private File driftDesciptionFile;
-	private File switchDescriptionFile;
 	private BufferedWriter driftDesciptionWriter;
-	private BufferedWriter switchDescriptionWriter;
+	private BufferedWriter switchPointDescriptionWriter;
+	private BufferedWriter volatilityIntervalDescriptionWriter;
 	
 	private int currentBlockCount;
 	private int numberInstance;
@@ -33,6 +33,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	
 	// state the index of current expected algorithm
 	private int currentAlgorithmIndex;
+	
+	// denote the expected head index of the interval of a volatility mode. 
+	private int intervalHead; 
 	
 	
 	private static final long serialVersionUID = 7628833159490333423L;
@@ -79,16 +82,27 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		writeToFile(driftDesciptionWriter, "DriftInstanceIndex\n"); 
 		
 		
-		// expected switch Description TODO 
-		switchDescriptionFile = new File(descriptionFileDir.getAbsolutePath() + "/switchDescription.csv");
+		// expected switch point Description 
 		try
 		{
-			switchDescriptionWriter = new BufferedWriter(new FileWriter(switchDescriptionFile));
+			switchPointDescriptionWriter = new BufferedWriter(new FileWriter(
+					new File(descriptionFileDir.getAbsolutePath() + "/switchDescription.csv")));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		writeToFile(switchDescriptionWriter, "ExpectedSwitchIndex, SwitchTo\n");
+		writeToFile(switchPointDescriptionWriter, "ExpectedSwitchIndex, SwitchTo\n");
+		
+		// expected volatility internval Description 
+		try
+		{
+			volatilityIntervalDescriptionWriter = new BufferedWriter(new FileWriter(
+					new File(descriptionFileDir.getAbsolutePath() + "/volIntervalDescription.csv")));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		writeToFile(volatilityIntervalDescriptionWriter, "Head, Tail, End\n");
 		
 		currentAlgorithmIndex = startClassifier;
 	}
@@ -152,14 +166,21 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			Example inst = currentBlock.nextInstance();
 			numberInstance++;
 			
-//			TODO
-			// if current block has a greater value than previous one, it means current block has higher volatility level, so switch
+
+			
 			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
 			if(switchTo!=currentAlgorithmIndex)
 			{
-				writeToFile(switchDescriptionWriter, numberInstance+","+switchTo +"\n");
+				// output expected interval TODO
+				writeToFile(volatilityIntervalDescriptionWriter, intervalHead + "," + (numberInstance - 1) + "," + currentAlgorithmIndex);
+				intervalHead = numberInstance;
+				
+				// output expected switch point
+				writeToFile(switchPointDescriptionWriter, numberInstance+","+switchTo +"\n");
 				currentAlgorithmIndex = switchTo;
+				
 			}
+			
 			
 			
 			
