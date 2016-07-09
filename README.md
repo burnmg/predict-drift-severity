@@ -1,10 +1,9 @@
 # About
-This repository contains all implementations and experiments on Volatility Adpative Classifier developed by Ruolin Jia
+This repository contains all implementations and experiments on Volatility Adpative Classifier developed by Ruolin Jia. 
 
 Volatility Adpative Classifier is an algoirhtm used in mining data stream in which the volatility drifts occur regularly.
 
-
-All implmentations and experienments run in MOA. See below for more information about MOA
+All implementations and experienments run in MOA. See below for more information about MOA
 
 # MOA (Massive Online Analysis)
 
