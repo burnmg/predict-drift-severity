@@ -45,8 +45,17 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	@Override
 	public Integer call()
 	{
-		//		 evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
+//		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
+	
+		evluateVolIntervalCoverage();
 
+		//analyse TODO
+
+		return 0;
+	}
+	
+	private void evluateVolIntervalCoverage()
+	{
 		//		 evaluate the volatility interval coverage
 		BufferedReader readActual;
 		BufferedReader readExpected;
@@ -56,12 +65,12 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		{
 			//load actual
 			readActual = new BufferedReader(new FileReader(this.resultFolderPath+"/"+"volSwitchIntervalDesc.csv"));
-			actual = load2DArray(readActual);
+//			actual = load2DArray(readActual);
 
 			//load expected
 			readExpected = new BufferedReader(new FileReader(
 					new File(Directory.streamsPath+this.streamName+"/"+"volExpectedIntervalDescription.csv")));
-			expected = load2DArray(readExpected);
+//			expected = load2DArray(readExpected);
 
 
 
@@ -75,11 +84,6 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 
 		EvaluateCorreteModeCoverage evaluateCorreteModeCoverage = new EvaluateCorreteModeCoverage();
 		System.out.println(evaluateCorreteModeCoverage.evalutate(expected, actual));
-
-
-		//analyse TODO
-
-		return 0;
 	}
 
 	private int[][] load2DArray(BufferedReader br) throws IOException

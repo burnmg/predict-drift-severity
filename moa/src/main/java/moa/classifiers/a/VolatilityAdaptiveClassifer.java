@@ -231,8 +231,21 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void cleanup()
 	{
+		
 		writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+activeClassifierIndex+"\n");
 		intervalStart = numInstance + 1;
+		
+		try
+		{
+			volatitlityDriftWriter.close();
+			switchPointDescriptionWriter.close();
+			volIntervalDescriptionWriter.close();
+			currentVolatilityLevelDumpWriter.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
 	}
 	
 	// in optimised version, this method should be removed. FIXME
@@ -255,7 +268,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			try
 			{
 				bw.write(str);
-				bw.flush();
+//				bw.flush();
 			} catch (IOException e)
 			{
 				e.printStackTrace();
