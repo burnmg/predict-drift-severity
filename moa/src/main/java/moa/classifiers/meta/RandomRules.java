@@ -195,5 +195,12 @@ public class RandomRules extends AbstractClassifier implements Regressor {
 		// System.out.println("============");
 		return instance;
 	}
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
 

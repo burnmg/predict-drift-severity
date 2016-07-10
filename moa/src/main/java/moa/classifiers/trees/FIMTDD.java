@@ -963,6 +963,13 @@ public class FIMTDD extends AbstractClassifier implements Regressor {
 		return ret;
 	}
 	//endregion --- Processing methods
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 	//endregion ================ METHODS ================
 }

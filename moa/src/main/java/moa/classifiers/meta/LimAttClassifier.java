@@ -535,4 +535,11 @@ public class LimAttClassifier extends AbstractClassifier {
         return votes;
 
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

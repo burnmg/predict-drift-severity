@@ -141,4 +141,11 @@ public class PairedLearners extends AbstractClassifier {
     public void getModelDescription(StringBuilder out, int indent) {
 
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

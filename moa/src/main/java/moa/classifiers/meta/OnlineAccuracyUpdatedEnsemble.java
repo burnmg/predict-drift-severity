@@ -441,4 +441,11 @@ public class OnlineAccuracyUpdatedEnsemble extends AbstractClassifier {
 			this.mse_it = 0;
 		}
 	}
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -205,4 +205,11 @@ public class WEKAClassifier
         newoptions[0] = "";
         this.classifier = weka.classifiers.AbstractClassifier.forName(classifierName, newoptions);
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

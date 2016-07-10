@@ -121,4 +121,11 @@ public class OzaBag extends AbstractClassifier {
     public Classifier[] getSubClassifiers() {
         return this.ensemble.clone();
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

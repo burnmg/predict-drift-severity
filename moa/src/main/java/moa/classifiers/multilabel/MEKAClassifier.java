@@ -193,4 +193,11 @@ public class MEKAClassifier extends AbstractMultiLabelLearner implements MultiTa
 		}
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

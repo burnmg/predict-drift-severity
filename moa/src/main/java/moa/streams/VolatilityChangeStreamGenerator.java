@@ -97,7 +97,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		try
 		{
 			volatilityIntervalDescriptionWriter = new BufferedWriter(new FileWriter(
-					new File(descriptionFileDir.getAbsolutePath() + "/volIntervalDescription.csv")));
+					new File(descriptionFileDir.getAbsolutePath() + "/volExpectedIntervalDescription.csv")));
 		} catch (IOException e)
 		{
 			e.printStackTrace();

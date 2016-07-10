@@ -153,4 +153,11 @@ public class DecisionStump extends AbstractClassifier {
         }
         return bestFound;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

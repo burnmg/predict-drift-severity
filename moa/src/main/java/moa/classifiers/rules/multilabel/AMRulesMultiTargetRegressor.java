@@ -52,6 +52,13 @@ public class AMRulesMultiTargetRegressor extends AMRulesMultiLabelLearner implem
 		super(attributesPercentage);
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	
 }

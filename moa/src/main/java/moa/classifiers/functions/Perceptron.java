@@ -152,4 +152,11 @@ public class Perceptron extends AbstractClassifier {
     public boolean isRandomizable() {
         return true;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

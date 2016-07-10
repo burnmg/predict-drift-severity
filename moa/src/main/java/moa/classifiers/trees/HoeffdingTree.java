@@ -1031,4 +1031,11 @@ public class HoeffdingTree extends AbstractClassifier
 		}
 		return ret;
 	}
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

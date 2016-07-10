@@ -192,4 +192,11 @@ public class VolatilityAdaptiveClassiferByUsingVoaltilityDrift extends AbstractC
 		}
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

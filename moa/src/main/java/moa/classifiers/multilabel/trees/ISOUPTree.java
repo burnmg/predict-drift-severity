@@ -1145,5 +1145,12 @@ public class ISOUPTree extends AbstractMultiLabelLearner implements MultiTargetR
 	}
 	//endregion --- Processing methods
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 	//endregion ================ METHODS ================
 }

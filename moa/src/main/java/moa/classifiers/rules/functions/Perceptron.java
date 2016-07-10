@@ -394,6 +394,13 @@ public class Perceptron extends AbstractClassifier implements AMRulesRegressorFu
 			return Double.MAX_VALUE;
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
 

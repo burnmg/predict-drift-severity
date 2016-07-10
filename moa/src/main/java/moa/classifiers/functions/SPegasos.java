@@ -350,4 +350,11 @@ public class SPegasos extends AbstractClassifier {
     public boolean isRandomizable() {
         return false;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

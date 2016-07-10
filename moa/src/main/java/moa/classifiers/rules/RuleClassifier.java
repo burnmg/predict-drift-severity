@@ -1305,4 +1305,11 @@ public void printAnomaliesSupervised(StringBuilder out, int indent) { // Get Mod
     public void manageMemory(int currentByteSize, int maxByteSize) {
         // TODO Auto-generated method stub
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
     }

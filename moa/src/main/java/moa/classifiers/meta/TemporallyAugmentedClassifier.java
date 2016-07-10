@@ -179,4 +179,11 @@ public class TemporallyAugmentedClassifier extends AbstractClassifier {
     public String toString() {
         return "TemporallyAugmentedClassifier using " + this.numOldLabelsOption.getValue() + " labels\n" + this.baseLearner;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

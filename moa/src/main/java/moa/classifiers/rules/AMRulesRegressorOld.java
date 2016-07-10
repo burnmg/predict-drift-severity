@@ -198,6 +198,14 @@ public class AMRulesRegressorOld extends AbstractAMRules implements Regressor{
 		return  (ErrorWeightedVote)((ErrorWeightedVote) votingTypeOption.getPreMaterializedObject()).copy();
 	}
 
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 		
 		

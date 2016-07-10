@@ -202,4 +202,11 @@ public class WeightedMajorityAlgorithm extends AbstractClassifier {
         discardModel(poorestIndex);
         return byteSize;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

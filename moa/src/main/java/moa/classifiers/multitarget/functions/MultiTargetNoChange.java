@@ -70,4 +70,11 @@ public class MultiTargetNoChange extends AbstractMultiLabelLearner implements Mu
 		return (lastSeenClasses!=null) ? this.lastSeenClasses : null;
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

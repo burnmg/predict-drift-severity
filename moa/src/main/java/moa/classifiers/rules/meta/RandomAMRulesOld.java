@@ -211,5 +211,12 @@ public class RandomAMRulesOld extends AbstractClassifier implements Regressor {
 	public String getPurposeString() {
 		return "WeightedRandomRules";
 	}
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

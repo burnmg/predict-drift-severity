@@ -74,4 +74,11 @@ public class ChangeDetectorLearner extends AbstractClassifier {
         //return ((AbstractClassifier) this.classifier).getModelMeasurementsImpl();
         return new Measurement[0];
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

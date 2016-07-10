@@ -135,6 +135,13 @@ public class TargetMean extends AbstractClassifier implements AMRulesRegressorFu
 		this.errorSum=0;
 		this.nError=0;
 	}
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 

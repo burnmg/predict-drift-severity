@@ -461,4 +461,11 @@ public class AccuracyWeightedEnsemble extends AbstractClassifier {
         this.ensemble = newEnsemble;
         this.ensembleWeights = newEnsembleWeights;
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

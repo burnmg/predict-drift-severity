@@ -268,5 +268,12 @@ public class LeveragingBag extends AbstractClassifier {
     public Classifier[] getSubClassifiers() {
         return this.ensemble.clone();
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
 

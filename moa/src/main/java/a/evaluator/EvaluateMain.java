@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import a.tools.Directory;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
-import moa.streams.ArffFileStream;
 import moa.streams.ExampleStream;
 
 public class EvaluateMain
@@ -37,31 +36,27 @@ public class EvaluateMain
 		};
 	}
 	
+	/**
+	 * 
+	 * @param streamName: give a streamName, it will generate a evaluation task for this stream.
+	 * @return
+	 */
 	private static Runnable buildTask(String streamName)
 	{
-		//stream
-		ExampleStream stream = getStreamFromFile(streamName);
 		
 		// classifier
 		File resultFolder = new File(Directory.root+"/Results/"+streamName);
 		resultFolder.mkdirs();
+		
 		VolatilityAdaptiveClassifer classifier = new VolatilityAdaptiveClassifer();
 		classifier.getOptions().resetToDefaults();
 		classifier.dumpFileDirOption.setValue(resultFolder.getPath());
 		classifier.resetLearning();
 		
-		return new EvaluateAlgorithmTask(classifier, stream, resultFolder.getAbsolutePath());
+		return new EvaluateAlgorithmTask(classifier, streamName, resultFolder.getAbsolutePath());
 		
 	}
 	
-	private static ArffFileStream getStreamFromFile(String streamName)
-	{
-		String path = Directory.streamsPath + streamName + '/' + streamName;
-		ArffFileStream stream = new ArffFileStream();
-		stream.arffFileOption.setValue(path);
-		stream.prepareForUse();
-		
-		return stream;
-	}
+
 
 }

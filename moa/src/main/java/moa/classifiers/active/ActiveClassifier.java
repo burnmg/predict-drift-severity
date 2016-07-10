@@ -257,4 +257,11 @@ public class ActiveClassifier extends AbstractClassifier {
         }
         return measurementList.toArray(new Measurement[measurementList.size()]);
     }
+
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

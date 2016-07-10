@@ -108,4 +108,11 @@ public class MajorityLabelset extends AbstractMultiLabelLearner implements Multi
 
     }
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

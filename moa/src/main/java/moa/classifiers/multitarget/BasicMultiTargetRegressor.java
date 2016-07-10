@@ -142,6 +142,13 @@ public class BasicMultiTargetRegressor extends AbstractMultiLabelLearner impleme
 		return prediction;
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
 

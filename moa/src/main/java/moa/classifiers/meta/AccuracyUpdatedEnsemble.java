@@ -372,4 +372,11 @@ public class AccuracyUpdatedEnsemble extends AbstractClassifier {
 		}
 	}
 
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

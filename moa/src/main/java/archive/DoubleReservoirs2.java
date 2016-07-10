@@ -1,4 +1,6 @@
-package a.algorithms;
+package archive;
+
+import a.algorithms.Reservoir;
 
 public class DoubleReservoirs2
 {

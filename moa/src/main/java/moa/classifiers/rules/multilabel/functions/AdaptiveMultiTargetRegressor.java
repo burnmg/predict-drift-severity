@@ -120,6 +120,12 @@ implements MultiTargetRegressor, AMRulesFunction {
 				((AMRulesFunction)baseLearner[i]).resetWithMemory();
 		}
 	}
+	@Override
+	public void cleanup()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 
