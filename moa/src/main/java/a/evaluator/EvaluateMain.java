@@ -25,23 +25,23 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
+				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
 				};
-		// remember, decision is 1 now. 
 		
-		for(Callable<Integer> task : tasks)
-		{
-			executorService.submit(task);
-		}
-		
-		executorService.shutdown();
-		try
-		{
-			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		};
+		tasks[0].call();
+//		for(Callable<Integer> task : tasks)
+//		{
+//			executorService.submit(task);
+//		}
+//		
+//		executorService.shutdown();
+//		try
+//		{
+//			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+//		} catch (InterruptedException e)
+//		{
+//			e.printStackTrace();
+//		};
 	}
 	
 	/**

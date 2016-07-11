@@ -14,6 +14,7 @@ import moa.classifiers.a.other.ClassifierSelector;
 import moa.classifiers.a.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
 import moa.classifiers.a.other.RelativeVolatilityDetectorMeasure;
+import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.core.Measurement;
 import moa.options.ClassOption;
@@ -53,8 +54,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	private ParameterInjector parameterInjector;
 	
-	final boolean DEBUG_MODE = true;
+	static final boolean DEBUG_MODE = true;
 	
+	private long partialTime;
+	private long totalTime;
 
 	public VolatilityAdaptiveClassifer()
 	{
@@ -187,8 +190,14 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	public void trainOnInstanceImpl(Instance inst)
 	{
-
+		// EVALUATE
+		long startTime = System.currentTimeMillis();
+		
 		int currentVoaltilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
+		
+		// EVALUATE
+		partialTime += System.currentTimeMillis() - startTime;
+		
 		// if there is a concept shift.
 		if (currentVoaltilityLevel!=-1)
 		{
@@ -197,8 +206,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				// current volatility level dump
 				writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVoaltilityLevel +"\n");
 			}
-//			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-			int decision = 1;
+			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+//			int decision = 1;
 			
 			
 			if (activeClassifierIndex != decision)
@@ -220,6 +229,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 		numInstance++;
 		activeClassifier.trainOnInstance(inst);
+		// EVALUATE
+		totalTime += System.currentTimeMillis() - startTime;
 	}
 	
 	/**
@@ -242,7 +253,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		{
 			e.printStackTrace();
 		}
-
+		
+		// EVALUATE
+		System.out.println(partialTime);
+		System.out.println(totalTime);
 	}
 	
 	// in optimised version, this method should be removed. FIXME
