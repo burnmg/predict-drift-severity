@@ -45,7 +45,6 @@ import moa.classifiers.Regressor;
 import moa.streams.ExampleStream;
 
 import com.yahoo.labs.samoa.instances.Instance;
-import com.yahoo.labs.samoa.instances.InstanceData;
 import com.yahoo.labs.samoa.instances.Prediction;
 
 import moa.evaluation.RegressionPerformanceEvaluator;

@@ -1,7 +1,5 @@
 package cutpointdetection;
 
-import cutpointdetection.SEEDChangeDetector.SEED;
-
 public class SingDetector implements CutPointDetector
 {
     public SingWindow window;

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import a.algorithms.VolatilityMonitor;
-import moa.classifiers.core.driftdetection.ADWIN;
 
 public class TestVolatilityMonitor
 {

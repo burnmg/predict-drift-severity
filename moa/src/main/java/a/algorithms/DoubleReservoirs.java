@@ -1,8 +1,5 @@
 package a.algorithms;
 
-import org.jfree.util.Log;
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 public class DoubleReservoirs
 {
 	public Reservoir highReservoir;

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import moa.core.InstanceExample;
-import moa.streams.MultiTargetInstanceStream;
-
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.Attribute;
 import com.yahoo.labs.samoa.instances.Instance;

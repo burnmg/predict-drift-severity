@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import moa.classifiers.Classifier;
 import moa.core.Example;
 import moa.core.Measurement;
 import moa.core.ObjectRepository;
@@ -42,7 +41,6 @@ import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import moa.streams.ExampleStream;
-import moa.streams.InstanceStream;
 import moa.tasks.MainTask;
 import moa.tasks.TaskMonitor;
 

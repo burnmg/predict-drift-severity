@@ -1,13 +1,5 @@
 package lin.test;
 
-import java.io.*;
-import java.util.Enumeration;
-
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
-import classifiers.thirdparty.VFDT;
-
 public class CVFDTTest
 {
 	public static void main(String args[]) throws Exception

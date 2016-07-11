@@ -6,11 +6,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-
-import sizeof.agent.SizeOfAgent;
 import volatilityevaluation.VolatilityPredictionFeatureExtractor;
-import cutpointdetection.ADWIN;
 import cutpointdetection.SingDetector;
 
 public class VDriftDetectionTruePositiveTester implements Tester

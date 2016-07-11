@@ -28,7 +28,6 @@ import moa.classifiers.Classifier;
 import moa.classifiers.Regressor;
 import moa.core.Example;
 import moa.core.ObjectRepository;
-import moa.core.Utils;
 import moa.evaluation.LearningEvaluation;
 import moa.evaluation.LearningPerformanceEvaluator;
 import moa.evaluation.RegressionPerformanceEvaluator;

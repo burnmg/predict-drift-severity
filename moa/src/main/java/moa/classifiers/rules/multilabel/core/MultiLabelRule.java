@@ -10,14 +10,8 @@ import com.yahoo.labs.samoa.instances.Prediction;
 
 import moa.AbstractMOAObject;
 import moa.classifiers.MultiLabelLearner;
-import moa.classifiers.core.attributeclassobservers.NumericAttributeClassObserver;
-import moa.classifiers.core.conditionaltests.InstanceConditionalTest;
-import moa.classifiers.core.conditionaltests.NumericAttributeBinaryTest;
 import moa.classifiers.core.driftdetection.ChangeDetector;
-import moa.classifiers.rules.core.RuleActiveLearningNode;
-import moa.classifiers.rules.core.RuleSplitNode;
 import moa.classifiers.rules.core.anomalydetection.AnomalyDetector;
-import moa.classifiers.rules.core.conditionaltests.NumericAttributeBinaryRulePredicate;
 import moa.classifiers.rules.multilabel.attributeclassobservers.NominalStatisticsObserver;
 import moa.classifiers.rules.multilabel.attributeclassobservers.NumericStatisticsObserver;
 import moa.classifiers.rules.multilabel.core.splitcriteria.MultiLabelSplitCriterion;

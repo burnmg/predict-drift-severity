@@ -14,12 +14,9 @@ import moa.classifiers.a.other.ClassifierSelector;
 import moa.classifiers.a.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
 import moa.classifiers.a.other.RelativeVolatilityDetectorMeasure;
-import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.core.Measurement;
 import moa.options.ClassOption;
-import volatilityevaluation.RelativeVolatilityDetector;
-import weka.core.pmml.FieldMetaInfo.Interval;
 
 public class VolatilityAdaptiveClassifer extends AbstractClassifier
 {

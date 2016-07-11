@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Random;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 
-import moa.classifiers.core.driftdetection.SeqDrift2ChangeDetector.Block;
 import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;

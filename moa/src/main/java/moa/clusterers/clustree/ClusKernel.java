@@ -20,7 +20,6 @@
 
 package moa.clusterers.clustree;
 
-import moa.clusterers.clustree.util.*;
 import java.util.Arrays;
 import moa.cluster.CFCluster;
 import moa.cluster.Cluster;

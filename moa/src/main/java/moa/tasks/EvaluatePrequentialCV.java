@@ -21,10 +21,8 @@
 package moa.tasks;
 
 import com.github.javacliparser.FileOption;
-import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.MultiChoiceOption;
-import com.yahoo.labs.samoa.instances.Instance;
 import moa.classifiers.Classifier;
 import moa.core.*;
 import moa.evaluation.*;

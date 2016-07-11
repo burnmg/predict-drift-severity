@@ -1,20 +1,19 @@
 package a.evaluator;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import java.util.function.IntPredicate;
 
 import a.tools.Directory;
-import java_cup.internal_error;
 import moa.classifiers.AbstractClassifier;
 import moa.streams.ExampleStream;
 import moa.tasks.StandardTaskMonitor;
-import weka.core.converters.Loader;
 
 public class EvaluateAlgorithmTask implements Callable<Integer>
 {
@@ -52,15 +51,11 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	public Integer call()
 	{
 		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
-	
-		evluateVolIntervalCoverage();
-
-		//analyse TODO
-
+		evaluateVolIntervalCoverage();
 		return 0;
 	}
 	
-	public void evluateVolIntervalCoverage()
+	private void evaluateVolIntervalCoverage()
 	{
 		//		 evaluate the volatility interval coverage
 		BufferedReader readActual;
@@ -78,7 +73,8 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 					new File(Directory.streamsPath+this.streamName+"/"+"volExpectedIntervalDescription.csv")));
 			expected = load2DArray(readExpected);
 
-
+			readActual.close();
+			readExpected.close();
 
 		} catch (FileNotFoundException e)
 		{
@@ -89,10 +85,22 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		}
 
 		CorreteModeCoverageEvaluator evaluateCorreteModeCoverage = new CorreteModeCoverageEvaluator();
-		System.out.println(evaluateCorreteModeCoverage.evalutate(expected, actual));
+		double result = evaluateCorreteModeCoverage.evalutate(expected, actual);
+		
+		// output the result to file. 
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", true));
+			writer.write("VolCoverageRate:"+result);
+			
+			writer.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-	public int[][] load2DArray(BufferedReader br) throws IOException
+	private int[][] load2DArray(BufferedReader br) throws IOException
 	{
 		String test = br.readLine();
 

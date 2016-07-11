@@ -1,14 +1,6 @@
 package moa.streams;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.security.PrivilegedActionException;
 import java.util.Random;
-import java.util.stream.Stream;
-
-import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
@@ -16,7 +8,6 @@ import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.streams.generators.DriftingHyperplaneGenerator;
-import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.TaskMonitor;
 
 

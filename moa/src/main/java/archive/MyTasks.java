@@ -1,7 +1,5 @@
 package archive;
 
-import java.awt.Frame;
-
 import moa.DoTask;
 
 public class MyTasks

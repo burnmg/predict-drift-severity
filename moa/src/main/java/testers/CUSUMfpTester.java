@@ -2,19 +2,14 @@ package testers;
 
 import inputstream.BernoulliDistributionGenerator;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Scanner;
 
-import cutpointdetection.ADWIN;
 import cutpointdetection.CUSUM;
 import cutpointdetection.CutPointDetector;
 import cutpointdetection.EnsembleDetector;
-import cutpointdetection.SingDetector;
-import cutpointdetection.OnePassDetector.EDD;
 
 public class CUSUMfpTester implements Tester
 {

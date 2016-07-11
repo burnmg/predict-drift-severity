@@ -2,8 +2,6 @@ package moa.classifiers.rules.multilabel.meta;
 
 import moa.classifiers.AbstractMultiLabelLearner;
 import moa.classifiers.MultiTargetRegressor;
-import moa.classifiers.rules.AbstractAMRules;
-import moa.classifiers.rules.core.voting.ErrorWeightedVote;
 import moa.classifiers.rules.multilabel.AMRulesMultiLabelLearner;
 import moa.classifiers.rules.multilabel.core.voting.ErrorWeightedVoteMultiLabel;
 import moa.classifiers.rules.multilabel.core.voting.UniformWeightedVoteMultiLabel;

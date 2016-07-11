@@ -21,7 +21,6 @@ package moa.classifiers;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -35,7 +34,6 @@ import moa.test.TestHelper;
 import moa.test.TmpFile;
 import weka.core.MOAUtils;
 
-import com.yahoo.labs.samoa.instances.ArffLoader;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.instances.InstancesHeader;

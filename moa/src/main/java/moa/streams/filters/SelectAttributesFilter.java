@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import moa.core.InstanceExample;
-import moa.streams.MultiTargetInstanceStream;
-
 import com.github.javacliparser.StringOption;
 import com.yahoo.labs.samoa.instances.Attribute;
 import com.yahoo.labs.samoa.instances.Instance;

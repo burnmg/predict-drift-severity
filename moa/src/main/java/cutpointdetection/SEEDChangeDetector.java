@@ -23,7 +23,6 @@ import com.github.javacliparser.IntOption;
 
 import moa.classifiers.core.driftdetection.AbstractChangeDetector;
 import moa.core.ObjectRepository;
-import moa.options.*;
 import moa.tasks.TaskMonitor;
 
 /**

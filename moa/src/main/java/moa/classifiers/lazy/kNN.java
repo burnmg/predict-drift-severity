@@ -17,7 +17,6 @@
  */
 package moa.classifiers.lazy;
 
-import java.io.StringReader;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.lazy.neighboursearch.KDTree;
 import moa.classifiers.lazy.neighboursearch.LinearNNSearch;

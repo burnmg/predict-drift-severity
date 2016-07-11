@@ -19,11 +19,8 @@
  */
 package moa.classifiers.multilabel;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import com.yahoo.labs.samoa.instances.InstancesHeader;
 import moa.core.Measurement;
-import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.MultiLabelInstance;
 import com.yahoo.labs.samoa.instances.MultiLabelPrediction;
 import com.yahoo.labs.samoa.instances.Prediction;

@@ -17,8 +17,6 @@ import weka.core.converters.ArffLoader;
 import java.util.ArrayList;
 import java.util.Random;
 
-import cutpointdetection.ADWIN;
-
 public class ADWINTester implements Tester {
 
 	int inst = 250000;

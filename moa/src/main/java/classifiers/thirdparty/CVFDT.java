@@ -1,6 +1,4 @@
 package classifiers.thirdparty;
-import static com.metsci.glimpse.util.logging.LoggerUtils.logWarning;
-
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;

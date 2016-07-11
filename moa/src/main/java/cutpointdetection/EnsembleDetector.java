@@ -1,7 +1,5 @@
 package cutpointdetection;
 
-import java.util.Random;
-
 public class EnsembleDetector implements CutPointDetector
 {
     private int capacity;

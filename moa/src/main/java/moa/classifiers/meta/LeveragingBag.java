@@ -32,7 +32,6 @@ import com.yahoo.labs.samoa.instances.Instance;
 import moa.core.DoubleVector;
 import moa.core.Measurement;
 import moa.core.MiscUtils;
-import moa.options.*;
 
 /**
  * Leveraging Bagging for evolving data streams using ADWIN. Leveraging Bagging

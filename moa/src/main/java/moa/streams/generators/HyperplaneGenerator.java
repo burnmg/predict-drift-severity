@@ -19,7 +19,6 @@
  */
 package moa.streams.generators;
 
-import java.security.PrivilegedActionException;
 import java.util.Random;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;

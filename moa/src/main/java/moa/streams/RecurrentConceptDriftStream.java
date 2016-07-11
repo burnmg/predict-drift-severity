@@ -24,7 +24,6 @@ import moa.core.Example;
 import java.util.Random;
 import moa.core.ObjectRepository;
 import moa.tasks.TaskMonitor;
-import com.yahoo.labs.samoa.instances.Instance;
 import com.github.javacliparser.IntOption;
 
 

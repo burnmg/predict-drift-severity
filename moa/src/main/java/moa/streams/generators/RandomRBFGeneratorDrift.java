@@ -24,7 +24,6 @@ import moa.core.InstanceExample;
 
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.FloatOption;
-import com.yahoo.labs.samoa.instances.Instance;
 
 /**
  * Stream generator for a random radial basis function stream with drift.

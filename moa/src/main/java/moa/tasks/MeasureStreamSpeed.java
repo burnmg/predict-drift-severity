@@ -26,7 +26,6 @@ import moa.evaluation.LearningEvaluation;
 import moa.options.ClassOption;
 import com.github.javacliparser.IntOption;
 import moa.streams.ExampleStream;
-import moa.streams.InstanceStream;
 
 /**
  * Task for measuring the speed of the stream.

@@ -1,16 +1,10 @@
 package archive;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.WriteAbortedException;
-import java.util.PrimitiveIterator.OfDouble;
-
 import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
-import classifiers.selectors.AlwaysFirstClassifierSelector;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;

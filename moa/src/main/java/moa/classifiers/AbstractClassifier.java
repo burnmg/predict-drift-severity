@@ -41,9 +41,7 @@ import com.github.javacliparser.IntOption;
 
 import moa.tasks.TaskMonitor;
 
-import com.yahoo.labs.samoa.instances.DenseInstanceData;
 import com.yahoo.labs.samoa.instances.Instance;
-import com.yahoo.labs.samoa.instances.InstanceData;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.instances.MultiLabelPrediction;
 import com.yahoo.labs.samoa.instances.Prediction;
