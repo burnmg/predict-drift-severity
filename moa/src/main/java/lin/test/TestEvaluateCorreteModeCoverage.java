@@ -4,12 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import a.evaluator.EvaluateCorreteModeCoverage;
+import a.evaluator.CorreteModeCoverageEvaluator;
 
 public class TestEvaluateCorreteModeCoverage
 {
 	
-	EvaluateCorreteModeCoverage ev = new EvaluateCorreteModeCoverage();
+	CorreteModeCoverageEvaluator ev = new CorreteModeCoverageEvaluator();
 	@Test
 	public void test1()
 	{

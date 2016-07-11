@@ -1,6 +1,6 @@
 package a.evaluator;
 
-public class EvaluateCorreteModeCoverage
+public class CorreteModeCoverageEvaluator
 {
 	/**
 	 * Evaluate percentage of using the right volatility mode. 
@@ -14,7 +14,7 @@ public class EvaluateCorreteModeCoverage
 	 * 
 	 * @return percentage of using the right mode.  
 	 */
-	public int evalutate(int[][] expected, int[][] actual)
+	public double evalutate(int[][] expected, int[][] actual)
 	{
 
 		
@@ -142,8 +142,8 @@ public class EvaluateCorreteModeCoverage
 		
 		
 		
-//		return (double)numOverlaps/streamLength;
-		return numOverlaps;
+		return (double)numOverlaps/streamLength;
+//		return numOverlaps;
 	}
 
 }

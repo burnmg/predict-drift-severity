@@ -24,6 +24,12 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	private String streamName;
 
 
+	public EvaluateAlgorithmTask(String streamName, String resultFolderPath)
+	{
+		this.streamName = streamName;
+		this.resultFolderPath = resultFolderPath;
+	}
+	
 	public EvaluateAlgorithmTask(AbstractClassifier classifier, String streamName, String resultFolderPath)
 	{
 		this.classifier = classifier;
@@ -45,7 +51,7 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	@Override
 	public Integer call()
 	{
-//		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
+		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
 	
 		evluateVolIntervalCoverage();
 
@@ -54,7 +60,7 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		return 0;
 	}
 	
-	private void evluateVolIntervalCoverage()
+	public void evluateVolIntervalCoverage()
 	{
 		//		 evaluate the volatility interval coverage
 		BufferedReader readActual;
@@ -65,12 +71,12 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		{
 			//load actual
 			readActual = new BufferedReader(new FileReader(this.resultFolderPath+"/"+"volSwitchIntervalDesc.csv"));
-//			actual = load2DArray(readActual);
+			actual = load2DArray(readActual);
 
 			//load expected
 			readExpected = new BufferedReader(new FileReader(
 					new File(Directory.streamsPath+this.streamName+"/"+"volExpectedIntervalDescription.csv")));
-//			expected = load2DArray(readExpected);
+			expected = load2DArray(readExpected);
 
 
 
@@ -82,11 +88,11 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 			e.printStackTrace();
 		}
 
-		EvaluateCorreteModeCoverage evaluateCorreteModeCoverage = new EvaluateCorreteModeCoverage();
+		CorreteModeCoverageEvaluator evaluateCorreteModeCoverage = new CorreteModeCoverageEvaluator();
 		System.out.println(evaluateCorreteModeCoverage.evalutate(expected, actual));
 	}
 
-	private int[][] load2DArray(BufferedReader br) throws IOException
+	public int[][] load2DArray(BufferedReader br) throws IOException
 	{
 		String test = br.readLine();
 
@@ -95,11 +101,12 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		while((line = br.readLine())!=null)
 		{
 			String[] es = line.split(",");
+			int[] a = new int[3];
 			for(int i=0;i<es.length;i++)
 			{
-				int[] a = new int[3];
 				a[i] = Integer.parseInt(es[i]);
 			}
+			list.add(a);
 		}
 		int[][] result = new int[list.size()][list.get(0).length];
 		for(int i=0;i<result.length;i++)
