@@ -15,6 +15,7 @@ import moa.classifiers.a.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
 import moa.classifiers.a.other.RelativeVolatilityDetectorMeasure;
 import moa.classifiers.a.other.SimpleCurrentVolatilityMeasure;
+import moa.classifiers.multilabel.trees.ISOUPTree.InnerNode;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.core.Measurement;
 import moa.options.ClassOption;
@@ -54,10 +55,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	private ParameterInjector parameterInjector;
 	
-	static final boolean DEBUG_MODE = true;
+	static final boolean DEBUG_MODE = false;
 	
-	private long partialTime;
-	private long totalTime;
+	private long innerrun = 0;
+
+	private long outterrun;
 
 	public VolatilityAdaptiveClassifer()
 	{
@@ -98,15 +100,14 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void resetLearningImpl()
 	{
 		
-		initClassifiers();
-		activeClassifier = classifier1;		
+		initClassifiers();	
 		classiferSelector = new DoubleReservoirsClassifierSelector(10, 0.0); 
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.0002);
 		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(0.005);
 //		currentVolatilityMeasure = parameterInjector.getcurrentVolatilityMeasureObject();
 		
 //		decisionMode = parameterInjector.getDecisionMode();
-		decisionMode = 1;
+//		decisionMode = 1;
 		
 		//set writers
 		
@@ -162,43 +163,16 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	}
 
 	
-	// Use volatility Drift
-//	@Override
-//	public void trainOnInstanceImpl(Instance inst)
-//	{
-//		// if there is a volatility shift.
-//		if (volatilityDriftDetector.setInputVar(correctlyClassifies(inst) ? 0.0 : 1.0))
-//		{
-//
-//			double avgInterval = volatilityDriftDetector.getBufferMean();
-//			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
-//			
-//			int decision = classiferSelector.makeDecision(avgInterval);
-//
-//			if (activeClassifierIndex != decision)
-//			{	
-//				activeClassifier = (decision == 1) ? classifier1 : classifier2;
-//				activeClassifierIndex = decision;
-//				writeToFile(classifierChangePointDumpWriter, instanceCount+","+decision+"\n");
-//			}
-//		}
-//		instanceCount++;
-//		activeClassifier.trainOnInstance(inst);
-//
-//	}
-	
-	
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		// EVALUATE
-		long startTime = System.currentTimeMillis();
-		
+//		// EVALUATE
+//		long startTime = System.currentTimeMillis();
 		int currentVoaltilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
-		
+//		int currentVoaltilityLevel = 10;
 		// EVALUATE
-		partialTime += System.currentTimeMillis() - startTime;
-		
-		// if there is a concept shift.
+//		partialTime += System.currentTimeMillis() - startTime;
+//		
+		// if there is a shift.
 		if (currentVoaltilityLevel!=-1)
 		{
 			if(DEBUG_MODE)
@@ -212,8 +186,13 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			
 			if (activeClassifierIndex != decision)
 			{	
+				activeClassifier.resetLearning();
 				activeClassifier = (decision == 1) ? classifier1 : classifier2;
 				int previousClassifierIndex = activeClassifierIndex;
+				
+				// EVAL TODO
+//				System.out.println(activeClassifier.getClass().getName());
+				
 				activeClassifierIndex = decision;
 				
 				if(DEBUG_MODE)
@@ -222,15 +201,15 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 					writeToFile(switchPointDescriptionWriter, numInstance+","+decision+"\n");
 					// interval dump
 					writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+previousClassifierIndex+"\n");
+					intervalStart = numInstance + 1;
 				}
 
-				intervalStart = numInstance + 1;
+				
 			}
 		}
 		numInstance++;
 		activeClassifier.trainOnInstance(inst);
-		// EVALUATE
-		totalTime += System.currentTimeMillis() - startTime;
+//		totalTime += System.currentTimeMillis() - startTime;
 	}
 	
 	/**
@@ -255,8 +234,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 		
 		// EVALUATE
-		System.out.println(partialTime);
-		System.out.println(totalTime);
+//		System.out.println(innerrun);
+//		System.out.println(outterrun);
+//		System.out.println(partialTime);
+//		System.out.println(totalTime);
 	}
 	
 	// in optimised version, this method should be removed. FIXME

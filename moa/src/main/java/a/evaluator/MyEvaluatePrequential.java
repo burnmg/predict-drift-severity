@@ -130,7 +130,11 @@ public class MyEvaluatePrequential extends MainTask {
     
 
 	
-	
+	private void doSimpleTask()
+	{
+
+
+	}
     @Override
     public Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
 //        Learner learner = (Learner) getPreparedClassOption(this.learnerOption);
@@ -208,6 +212,7 @@ public class MyEvaluatePrequential extends MainTask {
         boolean firstDump = true;
         boolean preciseCPUTiming = TimingUtils.enablePreciseTiming();
         long evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
+        long totalTime = 0;
         long lastEvaluateStartTime = evaluateStartTime;
         double RAMHours = 0.0;
         while (stream.hasMoreInstances()
@@ -228,13 +233,18 @@ public class MyEvaluatePrequential extends MainTask {
             }
 
             //evaluator.addClassificationAttempt(trueClass, prediction, testInst.weight());
-            evaluator.addResult(testInst, prediction);
+            evaluator.addResult(testInst, prediction)
+            ;
+            long trainStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
             learner.trainOnInstance(trainInst);
+            totalTime += TimingUtils.getNanoCPUTimeOfCurrentThread() - trainStartTime;
+            
             instancesProcessed++;
             if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
                     || stream.hasMoreInstances() == false) {
                 long evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
-                double time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
+//                double time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
+                double time = TimingUtils.nanoTimeToSeconds(totalTime);
                 double timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
                 double RAMHoursIncrement = learner.measureByteSize() / (1024.0 * 1024.0 * 1024.0); //GBs
                 RAMHoursIncrement *= (timeIncrement / 3600.0); //Hours

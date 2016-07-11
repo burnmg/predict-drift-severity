@@ -25,23 +25,26 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HAT),
+//				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("10,100,10,100.arff", HAT),
 				};
 		
-		tasks[0].call();
-//		for(Callable<Integer> task : tasks)
-//		{
-//			executorService.submit(task);
-//		}
-//		
-//		executorService.shutdown();
-//		try
-//		{
-//			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-//		} catch (InterruptedException e)
-//		{
-//			e.printStackTrace();
-//		};
+//		tasks[0].call();
+		for(Callable<Integer> task : tasks)
+		{
+			executorService.submit(task);
+		}
+		
+		executorService.shutdown();
+		try
+		{
+			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		};
 	}
 	
 	/**
