@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 
 import a.tools.Directory;
 import moa.classifiers.AbstractClassifier;
+import moa.classifiers.a.VolatilityAdaptiveClassifer;
 import moa.streams.ExampleStream;
 import moa.tasks.StandardTaskMonitor;
 
@@ -43,10 +44,9 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		evaluatePrequential.sampleFrequencyOption.setValue(100);
 		evaluatePrequential.dumpFileOption.setValue(this.resultFolderPath+"/dump.csv");
 
-
-
 	}
 
+	
 	@Override
 	public Integer call()
 	{
@@ -57,6 +57,9 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	
 	private void evaluateVolIntervalCoverage()
 	{
+		if(!this.classifier.getClass().isInstance(VolatilityAdaptiveClassifer.class)) return;
+		
+		
 		//		 evaluate the volatility interval coverage
 		BufferedReader readActual;
 		BufferedReader readExpected;

@@ -53,6 +53,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	private ParameterInjector parameterInjector;
 	
+	final boolean DEBUG_MODE = true;
+	
 
 	public VolatilityAdaptiveClassifer()
 	{
@@ -122,9 +124,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(dir+"/currentVolLevelDesc.csv"));
 				currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval\n");
 				
-
-
-				
 				// 
 			
 			//volIntervalDescriptionWriter
@@ -193,12 +192,13 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// if there is a concept shift.
 		if (currentVoaltilityLevel!=-1)
 		{
-			// EVALUATE CODE
-			// current volatility level dump
-			writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVoaltilityLevel +"\n");
-			
-			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
-//			int decision = 1;
+			if(DEBUG_MODE)
+			{
+				// current volatility level dump
+				writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVoaltilityLevel +"\n");
+			}
+//			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+			int decision = 1;
 			
 			
 			if (activeClassifierIndex != decision)
@@ -207,19 +207,19 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				int previousClassifierIndex = activeClassifierIndex;
 				activeClassifierIndex = decision;
 				
-				// EVALUATE CODE
-				// switch point dump
-				writeToFile(switchPointDescriptionWriter, numInstance+","+decision+"\n");
-				
-				// EVALUATE CODE
-				// interval dump
-				writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+previousClassifierIndex+"\n");
+				if(DEBUG_MODE)
+				{
+					// switch point dump
+					writeToFile(switchPointDescriptionWriter, numInstance+","+decision+"\n");
+					// interval dump
+					writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+previousClassifierIndex+"\n");
+				}
+
 				intervalStart = numInstance + 1;
 			}
 		}
 		numInstance++;
 		activeClassifier.trainOnInstance(inst);
-
 	}
 	
 	/**
@@ -265,7 +265,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			try
 			{
 				bw.write(str);
-//				bw.flush();
 			} catch (IOException e)
 			{
 				e.printStackTrace();

@@ -25,9 +25,9 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-				buildTask("10,100,10,100.arff", HAT),
-				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
 				};
+		// remember, decision is 1 now. 
 		
 		for(Callable<Integer> task : tasks)
 		{
