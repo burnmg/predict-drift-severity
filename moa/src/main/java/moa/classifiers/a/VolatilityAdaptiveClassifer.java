@@ -10,6 +10,7 @@ import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.ParameterInjector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
+import moa.classifiers.MyAbstractClassifier;
 import moa.classifiers.a.other.ClassifierSelector;
 import moa.classifiers.a.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.other.DoubleReservoirsClassifierSelector;
@@ -20,7 +21,7 @@ import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.core.Measurement;
 import moa.options.ClassOption;
 
-public class VolatilityAdaptiveClassifer extends AbstractClassifier
+public class VolatilityAdaptiveClassifer extends MyAbstractClassifier
 {
 
 	private static final long serialVersionUID = -220640148754624744L;
@@ -265,6 +266,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				e.printStackTrace();
 			}
 		}
+	}
+	@Override
+	protected boolean conceptDrift()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

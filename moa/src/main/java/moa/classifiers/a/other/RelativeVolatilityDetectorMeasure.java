@@ -30,4 +30,11 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 		}
 	}
 
+	@Override
+	public boolean conceptDrift()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

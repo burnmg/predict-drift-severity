@@ -10,5 +10,7 @@ public interface CurrentVolatilityMeasure {
 	 */
 	public int setInput(double input);
 	
+	public boolean conceptDrift();
+	
 
 }
