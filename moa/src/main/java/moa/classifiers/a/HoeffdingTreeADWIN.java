@@ -506,7 +506,7 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		if(cutPointDetector.setInput(correctlyClassifies(inst)?0.0:1.0))
+		if(cutPointDetector!=null && cutPointDetector.setInput(correctlyClassifies(inst)?0.0:1.0))
 		{
 			resetLearning();
 		}

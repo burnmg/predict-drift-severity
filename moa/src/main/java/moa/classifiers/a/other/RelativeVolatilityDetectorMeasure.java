@@ -73,7 +73,7 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 			}
 			timestamp = 0;
 
-		} 
+		}
 		else
 		{
 			this.conceptDrift = false;
@@ -159,5 +159,12 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 	public boolean conceptDrift()
 	{
 		return this.conceptDrift;
+	}
+
+	@Override
+	public double getMeasure()
+	{
+		
+		return this.getBufferMean();
 	}
 }

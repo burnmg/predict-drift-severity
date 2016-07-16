@@ -43,4 +43,11 @@ public class AverageCurrentDriftIntervalMeasure implements CurrentVolatilityMeas
 		return isDrifting;
 	}
 
+	@Override
+	public double getMeasure()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

@@ -12,5 +12,7 @@ public interface CurrentVolatilityMeasure {
 	
 	public boolean conceptDrift();
 	
+	public double getMeasure();
+	
 
 }

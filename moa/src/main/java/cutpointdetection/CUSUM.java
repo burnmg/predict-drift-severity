@@ -27,101 +27,101 @@ package cutpointdetection;
  */
 public class CUSUM implements CutPointDetector {
 
-    private static final long serialVersionUID = -3518369648142099719L;
+	private static final long serialVersionUID = -3518369648142099719L;
 
-    private int m_n;
+	private int m_n;
 
-    private double sum;
+	private double sum;
 
-    private double x_mean;
+	private double x_mean;
 
-    private double alpha;
+	private double alpha;
 
-    private double delta;
+	private double delta;
 
 
-    private double lambda;
+	private double lambda;
 
-    public double getLambda(){
-	return lambda;
-    }
-
-    private boolean isChangeDetected;
-    private double estimation;
-    private boolean isWarningZone;
-    private int delay;
-    private int minNumInstancesOption = 30;
-    private int time;
-
-    public CUSUM() {
-	resetLearning();
-    }
-    
-    public CUSUM(double lambda) {
-	resetLearning();
-	setLambda(lambda);
-    }
-
-    public void resetLearning() {
-	m_n = 1;
-	x_mean = 0.0;
-	sum = 0.0;
-	delta = 0.005;
-//	lambda = 50;
-    }
-
-    public boolean setInput(double x) {
-	// It monitors the error rate
-	if (this.isChangeDetected == true) {
-	    resetLearning();
+	public double getLambda(){
+		return lambda;
 	}
 
-	x_mean = x_mean + (x - x_mean) / (double) m_n;
-	sum = Math.max(0, sum + x - x_mean - this.delta);
-	// System.out.println(sum + " " + x_mean + " " + m_n);
-	m_n++;
+	private boolean isChangeDetected;
+	private double estimation;
+	private boolean isWarningZone;
+	private int delay;
+	private int minNumInstancesOption = 30;
+	private int time;
 
-	// System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");
-	this.estimation = x_mean;
-	this.isChangeDetected = false;
-	this.isWarningZone = false;
-	this.delay = 0;
-
-	if (m_n < (this.minNumInstancesOption)) {
-	    return false;
+	public CUSUM() {
+		resetLearning();
 	}
 
-	if (sum > this.lambda) {
-	    this.isChangeDetected = true;
-	    return this.isChangeDetected;
-	} 
+	public CUSUM(double lambda) {
+		resetLearning();
+		setLambda(lambda);
+	}
 
-	return false;
-    }
+	public void resetLearning() {
+		m_n = 1;
+		x_mean = 0.0;
+		sum = 0.0;
+		delta = 0.005;
+		//	lambda = 50;
+	}
 
-    public void setDelta(double delta){
-	this.delta = delta;
-    }
+	public boolean setInput(double x) {
+		// It monitors the error rate
+		if (this.isChangeDetected == true) {
+			resetLearning();
+		}
 
-    public void setLambda(double lambda){
-	this.lambda = lambda;
-    }
+		x_mean = x_mean + (x - x_mean) / (double) m_n;
+		sum = Math.max(0, sum + x - x_mean - this.delta);
+		// System.out.println(sum + " " + x_mean + " " + m_n);
+		m_n++;
+
+		// System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");
+		this.estimation = x_mean;
+		this.isChangeDetected = false;
+		this.isWarningZone = false;
+		this.delay = 0;
+
+		if (m_n < (this.minNumInstancesOption)) {
+			return false;
+		}
+
+		if (sum > this.lambda) {
+			this.isChangeDetected = true;
+			return this.isChangeDetected;
+		} 
+
+		return false;
+	}
+
+	public void setDelta(double delta){
+		this.delta = delta;
+	}
+
+	public void setLambda(double lambda){
+		this.lambda = lambda;
+	}
 
 
-    //Timer
+	//Timer
 
-    public void timer() {
-	time++;
-    }
+	public void timer() {
+		time++;
+	}
 
-    public void resetTime(){
-	time = 0;
+	public void resetTime(){
+		time = 0;
 
-    }
+	}
 
-    public int getTime(){
-	return time;
-    }
+	public int getTime(){
+		return time;
+	}
 
 
 

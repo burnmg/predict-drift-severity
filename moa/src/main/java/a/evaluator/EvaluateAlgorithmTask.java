@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+
 import a.tools.Directory;
+
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
 import moa.streams.ExampleStream;
@@ -24,11 +26,11 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	private String streamName;
 
 
-	public EvaluateAlgorithmTask(String streamName, String resultFolderPath)
-	{
-		this.streamName = streamName;
-		this.resultFolderPath = resultFolderPath;
-	}
+//	public EvaluateAlgorithmTask(String streamName, String resultFolderPath)
+//	{
+//		this.streamName = streamName;
+//		this.resultFolderPath = resultFolderPath;
+//	}
 	
 	public EvaluateAlgorithmTask(AbstractClassifier classifier, String streamName, String resultFolderPath)
 	{
@@ -55,9 +57,10 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		return 0;
 	}
 	
-	private void evaluateVolIntervalCoverage()
+	
+	public void evaluateVolIntervalCoverage()
 	{
-		if(!this.classifier.getClass().isInstance(VolatilityAdaptiveClassifer.class)) return;
+		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return;
 		
 		
 		//		 evaluate the volatility interval coverage
@@ -93,7 +96,7 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		// output the result to file. 
 		try
 		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", true));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
 			writer.write("VolCoverageRate:"+result);
 			
 			writer.close();

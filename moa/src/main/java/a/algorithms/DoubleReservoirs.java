@@ -147,8 +147,8 @@ public class DoubleReservoirs
 		if (highReservoir.getWidth() == 0 && lowReservoir.getWidth() == 0)
 			return 0;
 
-//		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
-		return (highReservoir.getReservoirMean() + lowReservoir.getReservoirMean())/2;
+		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
+//		return (highReservoir.getReservoirMean() + lowReservoir.getReservoirMean())/2;
 	}
 
 }

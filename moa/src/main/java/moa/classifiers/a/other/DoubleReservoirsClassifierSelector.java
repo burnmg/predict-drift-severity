@@ -32,4 +32,11 @@ public class DoubleReservoirsClassifierSelector implements ClassifierSelector {
 		
 	}
 
+	@Override
+	public double getMeasure()
+	{
+
+		return doubleReservoirs.getMean();
+	}
+
 }

@@ -13,6 +13,7 @@ import com.github.javacliparser.FileOption;
 import com.yahoo.labs.samoa.instances.Instance;
 import a.tools.ParameterInjector;
 import cutpointdetection.ADWIN;
+import cutpointdetection.CUSUM;
 import cutpointdetection.CutPointDetector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
@@ -42,11 +43,14 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v',
 			"Dir.", null, "csv", true);
 
+	private CutPointDetector cutPointDetector;
+	
 //	private BufferedWriter volatitlityDriftWriter;
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volIntervalDescriptionWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
+//	currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(50, cutPointDetector);
 	
 	private MyAbstractClassifier activeClassifier;
 
@@ -54,6 +58,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	
 	private int activeClassifierIndex;
 	private int numInstance;
+	private int noDriftCount;
 	
 //	private int decisionMode;
 	
@@ -64,7 +69,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	static final boolean DEBUG_MODE = true;
 	
 	
-	private CutPointDetector cutPointDetector;
+	
 
 	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector)
 	{
@@ -106,10 +111,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void resetLearningImpl()
 	{
 		
-		
+
 		// classifier 1
 //		this.classifier1 = (AbstractClassifier) getPreparedClassOption(this.classifier1Option);
-		this.activeClassifier = new HoeffdingTreeADWIN(this.cutPointDetector);
+		this.activeClassifier = new HoeffdingTreeADWIN();
 		activeClassifier.getOptions().resetToDefaults();
 		activeClassifier.resetLearning();
 		
@@ -119,9 +124,11 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		classiferSelector = new DoubleReservoirsClassifierSelector(10, 3000); 
 		cutPointDetector = new ADWIN(0.05);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
-		currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(50, cutPointDetector);
+//		CUSUM cusum = new CUSUM(10);
+//		cutPointDetector = cusum;
 		
+		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
+//		currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(3, cutPointDetector);
 		
 		//set writers
 		
@@ -171,34 +178,39 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	{
 //		// EVALUATE block 1 7300
 //		long startTime = System.currentTimeMillis();
-		int currentVoaltilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
+		int currentVolatilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
 		if(currentVolatilityMeasure.conceptDrift())
 		{
+			noDriftCount = 0;
 			activeClassifier.notifyConceptDrift();
+		}
+		else
+		{
+			noDriftCount++;
 		}
 //		// EVALUATE
 ////		time1 += System.currentTimeMillis() - startTime;
 //		
 //		// EVALUATE block 2 222
 ////		startTime = System.currentTimeMillis();
+		
 //		// if there is a shift.
-//		// TODO HERE
-		if (currentVoaltilityLevel!=-1)
+		if (currentVolatilityLevel!=-1)
 		{
 			if(DEBUG_MODE)
 			{
-				// current volatility level dump
-				writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVoaltilityLevel +"\n");
+				writeToFile(currentVolatilityLevelDumpWriter, numInstance+","+currentVolatilityLevel +"\n");
 			}
-			int decision = classiferSelector.makeDecision(currentVoaltilityLevel);
+			
+			int decision = classiferSelector.makeDecision(currentVolatilityLevel);
 //			int decision = 1;
 			
-			
+						
 			if (activeClassifierIndex != decision)
 			{	
 				if(decision==1)
 				{
-					this.activeClassifier = new HoeffdingTreeADWIN(this.cutPointDetector);
+					this.activeClassifier = new HoeffdingTreeADWIN();
 					activeClassifier.getOptions().resetToDefaults();
 					activeClassifier.resetLearning();
 				}
@@ -223,8 +235,24 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 					writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+previousClassifierIndex+"\n");
 					intervalStart = numInstance + 1;
 				}
-
-				
+			}
+		}
+		
+		// if there is no drift in long enough period, switch back to low volatility algorithm
+		if(activeClassifierIndex==2 && noDriftCount > classiferSelector.getMeasure())
+		{
+			System.out.println(1);
+			this.activeClassifier = new HoeffdingTreeADWIN();
+			activeClassifier.getOptions().resetToDefaults();
+			activeClassifier.resetLearning();
+			activeClassifierIndex = 1;
+			
+			if(DEBUG_MODE)
+			{
+				// switch point dump
+				writeToFile(switchPointDescriptionWriter, numInstance+","+1+"\n");
+				// interval dump
+				writeToFile(volIntervalDescriptionWriter, intervalStart+","+numInstance+","+2+"\n");
 			}
 		}
 		numInstance++;
@@ -236,8 +264,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		activeClassifier.trainOnInstance(inst);
 //		time3 += System.currentTimeMillis() - startTime;
 //		totalTime += System.currentTimeMillis() - startTime;
-		// TODO HERE
+		
+//		System.out.println(((ADWIN)cutPointDetector).getEstimation());
 	}
+	
 	
 	/**
 	 * Call this method after training complete. 
