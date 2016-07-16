@@ -173,8 +173,18 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			Example inst = currentBlock.nextInstance();
 			numberInstance++;
 				
-			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
-			
+			int switchTo;
+//			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
+			if(changes[currentBlockCount] > changes[currentBlockCount - 1])
+			{
+				switchTo = 2;
+			}
+			else if (changes[currentBlockCount] < changes[currentBlockCount - 1]){
+				switchTo = 1;
+			}
+			else{
+				switchTo = currentAlgorithmIndex;
+			}
 			
 			if(switchTo!=currentAlgorithmIndex)
 			{

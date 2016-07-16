@@ -14,7 +14,7 @@ import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.MultiChoiceOption;
 import moa.AbstractMOAObject;
-import moa.classifiers.AbstractClassifier;
+import moa.classifiers.MyAbstractClassifier;
 import moa.classifiers.bayes.NaiveBayes;
 import moa.classifiers.core.AttributeSplitSuggestion;
 import moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
@@ -33,8 +33,10 @@ import moa.core.Utils;
 import moa.options.ClassOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
+import cutpointdetection.CutPointDetector;
 
-public class HoeffdingTreeADWIN extends AbstractClassifier
+
+public class HoeffdingTreeADWIN extends MyAbstractClassifier
 {
 
 	private static final long serialVersionUID = 1L;
@@ -46,7 +48,7 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 	}
 
 	public IntOption maxByteSizeOption = new IntOption("maxByteSize", 'm', "Maximum memory consumed by the tree.",
-			33554432, 0, Integer.MAX_VALUE);
+			33554, 0, Integer.MAX_VALUE);
 
 	/*
 	 * public MultiChoiceOption numericEstimatorOption = new MultiChoiceOption(
@@ -93,8 +95,18 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 
 	public FlagOption noPrePruneOption = new FlagOption("noPrePrune", 'p', "Disable pre-pruning.");
 	
-	public ADWIN adwin = new ADWIN(0.00005);
+	public CutPointDetector cutPointDetector;
+	
 
+	public HoeffdingTreeADWIN()
+	{
+	}
+	
+	public HoeffdingTreeADWIN(CutPointDetector cutPointDetector)
+	{
+		this.cutPointDetector = cutPointDetector;
+	}
+	
 	public static class FoundNode
 	{
 
@@ -494,7 +506,7 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		if(adwin.setInput(correctlyClassifies(inst)?0.0:1.0))
+		if(cutPointDetector.setInput(correctlyClassifies(inst)?0.0:1.0))
 		{
 			resetLearning();
 		}
@@ -968,7 +980,12 @@ public class HoeffdingTreeADWIN extends AbstractClassifier
 	@Override
 	public void cleanup()
 	{
-		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void notifyConceptDrift()
+	{
+		this.resetLearning();
 	}
 }

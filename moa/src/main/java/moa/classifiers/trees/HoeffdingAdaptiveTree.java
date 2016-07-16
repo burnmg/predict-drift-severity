@@ -505,4 +505,5 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
         }
         return new double[0];
     }
+    
 }

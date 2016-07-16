@@ -31,6 +31,7 @@ import com.github.javacliparser.IntOption;
 import com.github.javacliparser.MultiChoiceOption;
 import moa.AbstractMOAObject;
 import moa.classifiers.AbstractClassifier;
+import moa.classifiers.MyAbstractClassifier;
 import moa.classifiers.bayes.NaiveBayes;
 import moa.classifiers.core.AttributeSplitSuggestion;
 import moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
@@ -111,7 +112,7 @@ import com.yahoo.labs.samoa.instances.Instance;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class HoeffdingTree extends AbstractClassifier
+public class HoeffdingTree extends MyAbstractClassifier
 {
 
 	private static final long serialVersionUID = 1L;
@@ -123,7 +124,7 @@ public class HoeffdingTree extends AbstractClassifier
 	}
 
 	public IntOption maxByteSizeOption = new IntOption("maxByteSize", 'm', "Maximum memory consumed by the tree.",
-			33554432, 0, Integer.MAX_VALUE);
+			33554, 0, Integer.MAX_VALUE);
 
 	/*
 	 * public MultiChoiceOption numericEstimatorOption = new MultiChoiceOption(
@@ -1035,7 +1036,12 @@ public class HoeffdingTree extends AbstractClassifier
 	@Override
 	public void cleanup()
 	{
-		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyConceptDrift()
+	{
 		
 	}
 }

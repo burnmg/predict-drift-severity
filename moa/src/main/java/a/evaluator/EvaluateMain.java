@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import a.tools.Directory;
+import cutpointdetection.ADWIN;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
@@ -25,8 +27,9 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HAT),
+				buildTask("1,100,1,1,100,1,1.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("1,100,1,1,100,1,1.arff", HAT),
+//				buildTask("1,100,1,1,100,1,1.arff", HOEFFDING_ADWIN),
 //				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("10,100,10,100.arff", HAT),
 				};
@@ -64,7 +67,7 @@ public class EvaluateMain
 		if(classifierOption==HOEFFDING_ADWIN)
 		{
 			resultFolder = new File(pathname+"/HOEFFDING_ADWIN");
-			classifier = new HoeffdingTreeADWIN();
+			classifier = new HoeffdingTreeADWIN(new ADWIN(0.005));
 			classifier.getOptions().resetToDefaults();
 		}
 		else if (classifierOption==HAT) 
@@ -76,7 +79,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer();
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(0.002));
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 			
 			classifier = temp;

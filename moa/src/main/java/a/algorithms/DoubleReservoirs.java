@@ -22,10 +22,7 @@ public class DoubleReservoirs
 		this.lambda = lambda; 
 	}
 	
-	public double getLambda()
-	{
-		return this.lambda;
-	}
+
 	private int getWidth()
 	{
 		return highReservoir.getWidth() + lowReservoir.getWidth();
@@ -57,10 +54,13 @@ public class DoubleReservoirs
 //			return false;
 //		}
 
-		if (input > this.getMean())
+		double mean = this.getMean();
+		if (input > mean)
 		{
+			
 			highReservoir.addElement(input);
 			return true;
+
 		} else
 		{
 			lowReservoir.addElement(input);
@@ -100,22 +100,22 @@ public class DoubleReservoirs
 
 
 	// with ADWIN akin approach
-	public boolean isActive()
-	{
-		int n = getWidth();
-		double v = getVariance();
-		double m = 1.0 / (1.0 / highReservoir.getWidth() + 1.0 / lowReservoir.getWidth());
-
-		double epsilon = Math.sqrt(
-				(2.0/m) * v * Math.log(2.0/delta)
-				)
-				+
-				2.0/(3*m) * Math.log(2.0/delta) + this.lambda;
-		
-		System.out.println(epsilon);
-		
-		return Math.abs(highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > epsilon;
-	}
+//	public boolean isActive()
+//	{
+//		int n = getWidth();
+//		double v = getVariance();
+//		double m = 1.0 / (1.0 / highReservoir.getWidth() + 1.0 / lowReservoir.getWidth());
+//
+//		double epsilon = Math.sqrt(
+//				(2.0/m) * v * Math.log(2.0/delta)
+//				)
+//				+
+//				2.0/(3*m) * Math.log(2.0/delta) + this.lambda;
+//		
+//		System.out.println(epsilon);
+//		
+//		return Math.abs(highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > epsilon;
+//	}
 
 	// with VFDT akin approach
 //	public boolean isActive()
@@ -132,13 +132,23 @@ public class DoubleReservoirs
 //	}
 	
 	
-
+	// mean of totla
+//	public double getMean()
+//	{
+//		if (highReservoir.size() == 0 && lowReservoir.size() == 0)
+//			return 0;
+//
+//		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
+//	}
+	
+	// mean of two means of reservoirs
 	public double getMean()
 	{
-		if (highReservoir.size() == 0 && lowReservoir.size() == 0)
+		if (highReservoir.getWidth() == 0 && lowReservoir.getWidth() == 0)
 			return 0;
 
-		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
+//		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
+		return (highReservoir.getReservoirMean() + lowReservoir.getReservoirMean())/2;
 	}
 
 }
