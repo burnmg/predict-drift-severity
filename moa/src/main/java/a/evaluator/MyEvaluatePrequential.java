@@ -76,10 +76,10 @@ public class MyEvaluatePrequential extends MainTask {
 //            "Stream to learn from.", ExampleStream.class,
 //            "generators.RandomTreeGenerator");
 
-    public ClassOption evaluatorOption = new ClassOption("evaluator", 'e',
-            "Classification performance evaluation method.",
-            LearningPerformanceEvaluator.class,
-            "WindowClassificationPerformanceEvaluator");
+//    public ClassOption evaluatorOption = new ClassOption("evaluator", 'e',
+//            "Classification performance evaluation method.",
+//            LearningPerformanceEvaluator.class,
+//            "WindowClassificationPerformanceEvaluator");
 
     public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i',
             "Maximum number of instances to test/train on  (-1 = no limit).",
@@ -118,6 +118,8 @@ public class MyEvaluatePrequential extends MainTask {
     private int driftWidth;
     private BufferedReader driftReader;
     private BufferedWriter driftPeriodPerformanceWriter;
+    
+    private int criticalCount;
   
     
     public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, String resultFolderPath, int driftWidth)
@@ -127,12 +129,12 @@ public class MyEvaluatePrequential extends MainTask {
     	this.streamPath = streamPath;
     	this.driftWidth = driftWidth;
     	this.resultFolderPath = resultFolderPath;
+    	this.criticalCount = 0;
     	
     	try
 		{
 			driftReader = new BufferedReader(new FileReader(this.streamPath+"/driftDescription.csv"));
 			driftPeriodPerformanceWriter = new BufferedWriter(new FileWriter(this.resultFolderPath+"/driftPeriodPerformance.csv"));
-			driftPeriodPerformanceWriter.write("InstanceCount,accuracy\n");
 			
 		} catch (IOException e)
 		{
@@ -159,7 +161,10 @@ public class MyEvaluatePrequential extends MainTask {
     @Override
     public Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
     	
-        LearningPerformanceEvaluator evaluator = (LearningPerformanceEvaluator) getPreparedClassOption(this.evaluatorOption);
+    	WindowClassificationPerformanceEvaluator windowClassificationPerformanceEvaluator = new WindowClassificationPerformanceEvaluator();
+//    	windowClassificationPerformanceEvaluator.widthOption.setValue(100);
+        LearningPerformanceEvaluator evaluator = windowClassificationPerformanceEvaluator;
+
         LearningCurve learningCurve = new LearningCurve(
                 "learning evaluation instances");
         
@@ -230,6 +235,7 @@ public class MyEvaluatePrequential extends MainTask {
             }
         }
         boolean firstDump = true;
+		boolean firstWrite = true;
         boolean preciseCPUTiming = TimingUtils.enablePreciseTiming();
         long evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
         long totalTime = 0;
@@ -245,7 +251,7 @@ public class MyEvaluatePrequential extends MainTask {
 		{
 			e.printStackTrace();
 		}
-        
+
         
         while (stream.hasMoreInstances()
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
@@ -270,6 +276,19 @@ public class MyEvaluatePrequential extends MainTask {
             long trainStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
             learner.trainOnInstance(trainInst);
             totalTime += TimingUtils.getNanoCPUTimeOfCurrentThread() - trainStartTime;
+            
+            
+
+            
+        	Measurement[] measurements = evaluator.getPerformanceMeasurements();
+        	Measurement measurement = null;
+        	for(int i=0;i<measurements.length;i++)
+        	{
+        		if(measurements[i].getName().equals("classifications correct (percent)"))
+        		{
+        			measurement = measurements[i];
+        		}
+        	}
             
             instancesProcessed++;
             if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
@@ -308,31 +327,37 @@ public class MyEvaluatePrequential extends MainTask {
                 }
                 
                 // output performance in drift environment
-                if(instancesProcessed >= driftCentre - driftWidth/2 && instancesProcessed <= driftCentre + driftWidth/2)
+                if(instancesProcessed >= driftCentre && instancesProcessed <= driftCentre + driftWidth)
                 {
-                	Measurement[] measurements = evaluator.getPerformanceMeasurements();
-                	Measurement measurement = null;
-                	for(int i=0;i<measurements.length;i++)
-                	{
-                		if(measurements[i].getName().equals("classifications correct (percent)"))
-                		{
-                			measurement = measurements[i];
-                		}
-                	}
+//                	Measurement[] measurements = evaluator.getPerformanceMeasurements();
+//                	Measurement measurement = null;
+//                	for(int i=0;i<measurements.length;i++)
+//                	{
+//                		if(measurements[i].getName().equals("classifications correct (percent)"))
+//                		{
+//                			measurement = measurements[i];
+//                		}
+//                	}
                 	
                 	try
-					{
-						driftPeriodPerformanceWriter.write(instancesProcessed+","+measurement.getValue()+"\n");
-					} catch (IOException e)
-					{
-						e.printStackTrace();
-					}
+    				{
+
+    					if(firstWrite)
+                		{
+                			driftPeriodPerformanceWriter.write(learningCurve.headerToString()+"\n");
+                			firstWrite = false;
+                		}
+//    					driftPeriodPerformanceWriter.write(instancesProcessed+","+measurement.getValue()+"\n");
+                		driftPeriodPerformanceWriter.write(learningCurve.entryToString(learningCurve.numEntries() - 1)+"\n");
+    				} catch (IOException e)
+    				{
+    					e.printStackTrace();
+    				}
                 }
-                
                 String line = null;
                 try
                 {
-                	if(instancesProcessed > driftCentre + driftWidth/2 
+                	if(instancesProcessed > driftCentre + driftWidth
                 			&& (line = driftReader.readLine())!=null)
                 	{
                 		driftCentre =Integer.parseInt(line);
@@ -341,6 +366,8 @@ public class MyEvaluatePrequential extends MainTask {
                 {
                 	e.printStackTrace();
                 }
+                
+
               
 
                 
@@ -372,6 +399,8 @@ public class MyEvaluatePrequential extends MainTask {
         
         // do after training work
         learner.cleanup();
+        
+        // close
         try
 		{
             driftPeriodPerformanceWriter.close();
@@ -388,8 +417,12 @@ public class MyEvaluatePrequential extends MainTask {
         if (outputPredictionResultStream != null) {
             outputPredictionResultStream.close();
         }
+        
         System.out.println("Thread#"+Thread.currentThread().getId()+": "+"Done.");
+        
         return learningCurve;
+        
+
     }
     
 //	private void writeToFile(BufferedWriter bw, String str)

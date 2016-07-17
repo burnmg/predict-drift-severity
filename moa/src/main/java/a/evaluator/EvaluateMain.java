@@ -30,8 +30,13 @@ public class EvaluateMain
 				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
 				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HAT),
 				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
-//				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("10,100,10,100.arff", HAT),
+//				buildTask("1,100,1,1,100,1,1.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("1,100,1,1,100,1,1.arff", HAT),
+//				buildTask("1,100,1,1,100,1,1.arff", HOEFFDING_ADWIN),
+				
+//				buildTask("normal.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("normal.arff", HAT),
+//				buildTask("normal.arff", HOEFFDING_ADWIN),
 				};
 		
 //		tasks[0].call();

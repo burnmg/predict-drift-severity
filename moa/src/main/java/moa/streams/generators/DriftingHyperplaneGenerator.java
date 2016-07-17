@@ -78,7 +78,21 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
 
     protected int[] sigma;
 
+	private boolean isGradualDrift = false;
+
     // public int numberInstance;
+	
+	public void setGradualDrift(boolean gradualDrift)
+	{
+		this.isGradualDrift = gradualDrift;
+	}
+	
+	public boolean getGradualDrift()
+	{
+		return this.isGradualDrift;
+	}
+    
+    
 
     @Override
     protected void prepareForUseImpl(TaskMonitor monitor,
@@ -150,7 +164,11 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
         Instance inst = new DenseInstance(1.0, attVals);
         inst.setDataset(getHeader());
         inst.setClassValue(classLabel);
-        addDrift();
+        if(isGradualDrift)
+        {
+        	addDrift();
+        }
+        
         return new InstanceExample(inst);
     }
 
@@ -164,7 +182,7 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
     }
     
     /**
-     * add a strong partial drift to first numDrfitAtts attributes
+     * add a abrupt partial drift to first numDrfitAtts attributes
      * @param numDrfitAtts: Number of drifting attributes
      */
     public void addPartialDrift(int numDrfitAtts)

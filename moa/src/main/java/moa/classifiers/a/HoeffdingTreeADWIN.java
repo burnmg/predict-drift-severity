@@ -35,7 +35,6 @@ import com.yahoo.labs.samoa.instances.Instance;
 
 import cutpointdetection.CutPointDetector;
 
-
 public class HoeffdingTreeADWIN extends MyAbstractClassifier
 {
 
@@ -89,24 +88,23 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 			"Stop growing as soon as memory limit is hit.");
 
 	public FlagOption removePoorAttsOption = new FlagOption("removePoorAtts", 'r', "Disable poor attributes.");
-	
+
 	public FileOption currentVolatilityLevelWriterDumpFileOption = new FileOption("currentVolatilityLevelWriter", 'h',
 			"Destination csv file.", null, "csv", true);
 
 	public FlagOption noPrePruneOption = new FlagOption("noPrePrune", 'p', "Disable pre-pruning.");
-	
+
 	public CutPointDetector cutPointDetector;
-	
 
 	public HoeffdingTreeADWIN()
 	{
 	}
-	
+
 	public HoeffdingTreeADWIN(CutPointDetector cutPointDetector)
 	{
 		this.cutPointDetector = cutPointDetector;
 	}
-	
+
 	public static class FoundNode
 	{
 
@@ -506,11 +504,11 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		if(cutPointDetector!=null && cutPointDetector.setInput(correctlyClassifies(inst)?0.0:1.0))
+		if (cutPointDetector != null && cutPointDetector.setInput(correctlyClassifies(inst) ? 0.0 : 1.0))
 		{
 			resetLearning();
 		}
-		
+
 		if (this.treeRoot == null)
 		{
 			this.treeRoot = newLearningNode();

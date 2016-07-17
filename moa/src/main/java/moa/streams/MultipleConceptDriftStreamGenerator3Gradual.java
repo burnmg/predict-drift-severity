@@ -3,7 +3,10 @@ package moa.streams;
 import java.util.Random;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
+
+import Jama.examples.MagicSquareExample;
 import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
@@ -16,7 +19,7 @@ import moa.tasks.TaskMonitor;
  * @author rl
  *
  */
-public class MultipleConceptDriftStreamGenerator3 extends AbstractOptionHandler implements
+public class MultipleConceptDriftStreamGenerator3Gradual extends MultipleConceptDriftStreamGenerator3 implements
 InstanceStream{
 
 	private static final long serialVersionUID = 1L;
@@ -58,12 +61,11 @@ InstanceStream{
     // Options for partial drifting
     public IntOption numDriftAttsOption = new IntOption("numDriftAtts", 'p',
             "Number of drifting atts", 3);
-   
+    
+
     protected int numberInstance;
     
     private DriftingHyperplaneGenerator stream1;
-   
-    private DriftingHyperplaneGenerator stream2;
     
     protected int switchPoint; 
     
@@ -75,9 +77,10 @@ InstanceStream{
     
     private boolean switching;
     
-    protected int sigma;
-    protected double mag;
-    
+    public MultipleConceptDriftStreamGenerator3Gradual()
+    {
+    	
+    }
 	@Override
 	public InstancesHeader getHeader() {
 		return this.stream1.getHeader();
@@ -97,6 +100,7 @@ InstanceStream{
 //		stream2 = getEvolvedStream(stream1);
 	}
 	
+	
 	private DriftingHyperplaneGenerator getInitStream()
 	{
 		
@@ -106,37 +110,29 @@ InstanceStream{
 		newStream.numAttsOption = this.numAttsOption;
 		newStream.instanceRandomSeedOption.setValue(drifIntOptiontRandomSeedOption.getValue());
 		newStream.noisePercentageOption = this.noisePercentageOption;
+		newStream.sigmaPercentageOption.setValue(sigma);
+		newStream.magChangeOption.setValue(mag);
 		newStream.prepareForUse();
 		
 		return newStream;
 	}
 	
+	@Override
 	public void initStream1AndStream2()
 	{
 		this.stream1 = getInitStream();
-		this.stream2 = getEvolvedStream(stream1);
 	}
-	
+	@Override
 	public void setStream1(DriftingHyperplaneGenerator newStream1)
 	{
 		this.stream1 = newStream1;
-		this.stream2 = getEvolvedStream(stream1);
 	}
-	
+	@Override
 	public DriftingHyperplaneGenerator getStream2()
 	{
-		return stream2;
+		return stream1;
 	}
 	
-	
-
-	private DriftingHyperplaneGenerator getEvolvedStream(DriftingHyperplaneGenerator stream)
-	{
-		DriftingHyperplaneGenerator newStream = (DriftingHyperplaneGenerator) stream.copy();
-		newStream.addPartialDrift(numDriftAttsOption.getValue());
-		
-		return newStream;
-	}
 	@Override
 	public long estimatedRemainingInstances() {
 		return streamLengthOption.getValue() - numberInstance;
@@ -161,12 +157,10 @@ InstanceStream{
 		// perform the switch
 		
 		if(numberInstance >= switchPoint){
-			stream1 = stream2;
-			stream2 = getEvolvedStream(stream1);
 			previousSwitchPoint = switchPoint;
 			switchPoint += streamLengthOption.getValue() / numDriftsOption.getValue();
 			driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
-//			driftPosition = (switchPoint - previousSwitchPoint) / 2;
+
 			switching = true;
 		}
 		else
@@ -174,15 +168,16 @@ InstanceStream{
 			switching = false;
 		}
 		
+		if(numberInstance< driftPosition + widthOption.getValue()/2.0 && numberInstance > driftPosition - widthOption.getValue()/2.0)
+		{
+			stream1.setGradualDrift(true);
+		}
+		else
+		{
+			stream1.setGradualDrift(false);
+		}
 		
-		double x = -4.0 * (double) (numberInstance - driftPosition) / (double) this.widthOption.getValue();
-		double probabilityDrift = 1.0 / (1.0 + Math.exp(x));
-		
-        if (this.driftRandom.nextDouble() > probabilityDrift) {
-            return this.stream1.nextInstance();
-        } else {
-            return this.stream2.nextInstance();
-        }
+		return stream1.nextInstance();
 	}
 	
 	private int computeNextDriftPosition(int switchPoint, int previousSwitchPoint){
@@ -209,13 +204,12 @@ InstanceStream{
 
 	@Override
 	public boolean isRestartable() {
-		return this.stream1.isRestartable() && this.stream2.isRestartable();
+		return this.stream1.isRestartable();
 	}
 
 	@Override
 	public void restart() {
 		this.stream1.restart();
-		this.stream2.restart();
 		
 		numberInstance = 0;
 		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
@@ -223,30 +217,21 @@ InstanceStream{
 		
 		
 	}
-	
+	@Override
 	public void restartOnlyParameters()
 	{
 		numberInstance = 0;
 		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
 		previousSwitchPoint = 0;
 	}
-	
+	@Override
 	public boolean hasNewDriftPosition()
 	{
 		return switching;
 	}
-	
+	@Override
 	public int getDriftPosition()
 	{
 		return this.driftPosition;
-	}
-	
-	public void setSigma(int sigma)
-	{
-		this.sigma = sigma;
-	}
-	public void setMag(double mag)
-	{
-		this.mag = mag;
 	}
 }

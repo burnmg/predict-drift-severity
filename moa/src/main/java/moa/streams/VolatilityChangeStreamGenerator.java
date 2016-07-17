@@ -25,7 +25,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volatilityIntervalDescriptionWriter;
 	
-	private int currentBlockCount;
+	private int currentBlockIndex;
 	private int numberInstance;
 	private int maxInstancesCount;
 	private MultipleConceptDriftStreamGenerator3 currentBlock;
@@ -35,7 +35,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	
 	// denote the expected head index of the interval of a volatility mode. 
 	private int intervalHead; 
-	
+	private int blockLength;
 	
 	private static final long serialVersionUID = 7628833159490333423L;
 
@@ -45,21 +45,25 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	}
 	
 	public VolatilityChangeStreamGenerator(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt, int startClassifier, File descriptionFileDir)
+			int randomSeedInt, int startClassifier, File descriptionFileDir, double mag, int signma)
 	{
-		this.currentBlockCount = 0;
+		this.currentBlockIndex = 0;
 		this.numberInstance = 0;
 		
-		
+		this.blockLength = blockLength;
 		this.changes = changes;
+		
 		// first block
-		currentBlock = new MultipleConceptDriftStreamGenerator3();
+//		currentBlock = new MultipleConceptDriftStreamGenerator3();
+		currentBlock = new MultipleConceptDriftStreamGenerator3Gradual();
 		currentBlock.getOptions().resetToDefaults();
 		currentBlock.streamLengthOption.setValue(blockLength);
-		currentBlock.numDriftsOption.setValue(changes[currentBlockCount]);
+		currentBlock.numDriftsOption.setValue(changes[currentBlockIndex]);
 		currentBlock.widthOption.setValue(interleavedWindowSize);
 		currentBlock.numDriftAttsOption.setValue(driftAttsNum);
 		currentBlock.driftRandom = random;
+		currentBlock.setSigma(signma);
+		currentBlock.setMag(mag);
 		
 		//special for first block
 		currentBlock.initStream1AndStream2();
@@ -149,8 +153,10 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			Example inst = currentBlock.nextInstance();
 			numberInstance++;
 			
-			if(currentBlock.isDrifting()){
-				writeToFile(driftDesciptionWriter, numberInstance+"\n");
+			int instancesNumInPreviousBlocks = currentBlockIndex*this.blockLength;
+			
+			if(currentBlock.hasNewDriftPosition()){
+				writeToFile(driftDesciptionWriter, instancesNumInPreviousBlocks+currentBlock.getDriftPosition()+"\n");
 			}
 			
 			
@@ -165,9 +171,9 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		else
 		{
 			
-			currentBlockCount++;
+			currentBlockIndex++;
 			currentBlock.setStream1(currentBlock.getStream2());
-			currentBlock.numDriftsOption.setValue(changes[currentBlockCount]);
+			currentBlock.numDriftsOption.setValue(changes[currentBlockIndex]);
 			currentBlock.restartOnlyParameters();
 			
 			Example inst = currentBlock.nextInstance();
@@ -175,11 +181,11 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 				
 			int switchTo;
 //			int switchTo = changes[currentBlockCount] > changes[currentBlockCount - 1] ? 2:1;
-			if(changes[currentBlockCount] > changes[currentBlockCount - 1])
+			if(changes[currentBlockIndex] > changes[currentBlockIndex - 1])
 			{
 				switchTo = 2;
 			}
-			else if (changes[currentBlockCount] < changes[currentBlockCount - 1]){
+			else if (changes[currentBlockIndex] < changes[currentBlockIndex - 1]){
 				switchTo = 1;
 			}
 			else{

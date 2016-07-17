@@ -39,9 +39,9 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		this.streamName = streamName;
 		this.resultFolderPath = resultFolderPath;
 
-		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+streamName, this.resultFolderPath, 1000);
+		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+streamName, this.resultFolderPath, 2000);
 		evaluatePrequential.getOptions().resetToDefaults();
-		evaluatePrequential.sampleFrequencyOption.setValue(100);
+		evaluatePrequential.sampleFrequencyOption.setValue(50);
 		
 
 	}

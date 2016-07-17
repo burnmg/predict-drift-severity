@@ -5,7 +5,9 @@ import java.io.File;
 import a.tools.Directory;
 import moa.DoTask;
 import moa.streams.VolatilityChangeStreamGenerator;
+import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
+import weka.gui.HierarchyPropertyParser;
 
 public class GenerateDriftData
 {
@@ -32,10 +34,30 @@ public class GenerateDriftData
 //		int[] numDrifts = {200,10,200,10,200,10,200,10};
 //		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "200,10,200,10,200,10,200,10.arff");
 		
-		int[] numDrifts = {1,100,1,1,100,1,1};
-		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "1,100,1,1,100,1,1.arff");
+//		int[] numDrifts = {10,100,10,100,10,100,10,100,10,100};
+//		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "10,100,10,100,10,100,10,100,10,100.arff");
+		
+		int[] numDrifts = {10,100,10,100,10,100,10,100,10,100};
+		generateGradualDriftData(500000, 10, 3, numDrifts, 2314, "test.arff");
+		
+//		generateNormalData(2000000, "test.arff");
 	}
-	
+	public static void generateGradualDriftData(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
+	{
+		File dir = new File(Directory.root+"Streams/"+fileName); 
+		dir.mkdirs();
+		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
+		
+		
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, 0.5, 1);
+		generator.prepareForUse();
+		
+		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
+		task.suppressHeaderOption.unset();
+		task.concatenate.unset();
+		task.prepareForUse();
+		task.doTask();
+	}
 	public static void generateAbruptDriftData2(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
 	{
 		File dir = new File(Directory.root+"Streams/"+fileName); 
@@ -43,10 +65,30 @@ public class GenerateDriftData
 		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
 		
 		
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, 0.5, 1);
 		generator.prepareForUse();
 		
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
+		task.suppressHeaderOption.unset();
+		task.concatenate.unset();
+		task.prepareForUse();
+		task.doTask();
+		
+	}
+	
+	public static void generateNormalData(int length, String fileName)
+	{
+		File dir = new File(Directory.root+"Streams/"+fileName); 
+		dir.mkdirs();
+		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
+		
+		HyperplaneGenerator hyperplaneGenerator = new HyperplaneGenerator();
+		hyperplaneGenerator.getOptions().resetToDefaults();
+		hyperplaneGenerator.prepareForUse();
+		
+		
+		
+		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(hyperplaneGenerator, destFile);
 		task.suppressHeaderOption.unset();
 		task.concatenate.unset();
 		task.prepareForUse();
