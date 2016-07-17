@@ -19,7 +19,7 @@ import moa.tasks.TaskMonitor;
  * @author rl
  *
  */
-public class MultipleConceptDriftStreamGenerator3Gradual extends MultipleConceptDriftStreamGenerator3 implements
+public class MultipleConceptDriftStreamGenerator3Gradual extends AbstractOptionHandler implements
 InstanceStream{
 
 	private static final long serialVersionUID = 1L;
@@ -77,10 +77,23 @@ InstanceStream{
     
     private boolean switching;
     
+    private int sigma;
+    private double mag;
+    
     public MultipleConceptDriftStreamGenerator3Gradual()
     {
     	
     }
+    
+    public void setSigma(int sigma)
+	{
+		this.sigma = sigma;
+	}
+    public void setMag(double mag)
+	{
+		this.mag = mag;
+	}
+    
 	@Override
 	public InstancesHeader getHeader() {
 		return this.stream1.getHeader();
@@ -117,17 +130,17 @@ InstanceStream{
 		return newStream;
 	}
 	
-	@Override
+
 	public void initStream1AndStream2()
 	{
 		this.stream1 = getInitStream();
 	}
-	@Override
+
 	public void setStream1(DriftingHyperplaneGenerator newStream1)
 	{
 		this.stream1 = newStream1;
 	}
-	@Override
+
 	public DriftingHyperplaneGenerator getStream2()
 	{
 		return stream1;
@@ -217,19 +230,19 @@ InstanceStream{
 		
 		
 	}
-	@Override
+
 	public void restartOnlyParameters()
 	{
 		numberInstance = 0;
 		switchPoint = streamLengthOption.getValue() / numDriftsOption.getValue();
 		previousSwitchPoint = 0;
 	}
-	@Override
+
 	public boolean hasNewDriftPosition()
 	{
 		return switching;
 	}
-	@Override
+
 	public int getDriftPosition()
 	{
 		return this.driftPosition;

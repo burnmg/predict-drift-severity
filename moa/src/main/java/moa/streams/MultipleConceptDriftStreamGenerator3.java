@@ -13,7 +13,7 @@ import moa.tasks.TaskMonitor;
 
 /**
  * This version uses DriftingHyperplaneGenerator
- * @author rl
+ * @author rl1
  *
  */
 public class MultipleConceptDriftStreamGenerator3 extends AbstractOptionHandler implements
@@ -241,12 +241,4 @@ InstanceStream{
 		return this.driftPosition;
 	}
 	
-	public void setSigma(int sigma)
-	{
-		this.sigma = sigma;
-	}
-	public void setMag(double mag)
-	{
-		this.mag = mag;
-	}
 }

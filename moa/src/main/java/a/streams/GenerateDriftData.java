@@ -5,6 +5,7 @@ import java.io.File;
 import a.tools.Directory;
 import moa.DoTask;
 import moa.streams.VolatilityChangeStreamGenerator;
+import moa.streams.VolatilityChangeStreamGeneratorGradual;
 import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 import weka.gui.HierarchyPropertyParser;
@@ -37,19 +38,19 @@ public class GenerateDriftData
 //		int[] numDrifts = {10,100,10,100,10,100,10,100,10,100};
 //		generateAbruptDriftData2(500000, 10, 3, numDrifts, 2314, "10,100,10,100,10,100,10,100,10,100.arff");
 		
-		int[] numDrifts = {10,100,10,100,10,100,10,100,10,100};
-		generateGradualDriftData(500000, 10, 3, numDrifts, 2314, "test.arff");
+		int[] numDrifts = {10,100,10,100};
+		generateGradualDriftData(500000, 1000, 3, numDrifts, 2314, "test5.arff", 0, 0);
 		
 //		generateNormalData(2000000, "test.arff");
 	}
-	public static void generateGradualDriftData(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
+	public static void generateGradualDriftData(int blockLength, int interleavedWindowSize, int driftAttsNum, int[] changes, int randomSeedInt, String fileName, double mag, int sigma) 
 	{
 		File dir = new File(Directory.root+"Streams/"+fileName); 
 		dir.mkdirs();
 		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
 		
 		
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, 0.5, 1);
+		VolatilityChangeStreamGeneratorGradual generator = new VolatilityChangeStreamGeneratorGradual(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, mag, sigma);
 		generator.prepareForUse();
 		
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
@@ -65,7 +66,7 @@ public class GenerateDriftData
 		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
 		
 		
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, 0.5, 1);
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(changes, driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
 		generator.prepareForUse();
 		
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);

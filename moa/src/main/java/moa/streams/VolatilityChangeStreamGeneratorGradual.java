@@ -12,7 +12,7 @@ import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.tasks.TaskMonitor;
 
-public class VolatilityChangeStreamGenerator extends AbstractOptionHandler implements InstanceStream
+public class VolatilityChangeStreamGeneratorGradual extends AbstractOptionHandler implements InstanceStream
 {
 
 	// input parameters
@@ -28,7 +28,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	private int currentBlockIndex;
 	private int numberInstance;
 	private int maxInstancesCount;
-	private MultipleConceptDriftStreamGenerator3 currentBlock;
+	private MultipleConceptDriftStreamGenerator3Gradual currentBlock;
 	
 	// state the index of current expected algorithm
 	private int currentAlgorithmIndex;
@@ -44,8 +44,8 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		this.changes = changes;
 	}
 	
-	public VolatilityChangeStreamGenerator(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt, int startClassifier, File descriptionFileDir)
+	public VolatilityChangeStreamGeneratorGradual(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
+			int randomSeedInt, int startClassifier, File descriptionFileDir, double mag, int signma)
 	{
 		this.currentBlockIndex = 0;
 		this.numberInstance = 0;
@@ -55,13 +55,15 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		
 		// first block
 //		currentBlock = new MultipleConceptDriftStreamGenerator3();
-		currentBlock = new MultipleConceptDriftStreamGenerator3();
+		currentBlock = new MultipleConceptDriftStreamGenerator3Gradual();
 		currentBlock.getOptions().resetToDefaults();
 		currentBlock.streamLengthOption.setValue(blockLength);
 		currentBlock.numDriftsOption.setValue(changes[currentBlockIndex]);
 		currentBlock.widthOption.setValue(interleavedWindowSize);
 		currentBlock.numDriftAttsOption.setValue(driftAttsNum);
 		currentBlock.driftRandom = random;
+		currentBlock.setSigma(signma);
+		currentBlock.setMag(mag);
 		
 		//special for first block
 		currentBlock.initStream1AndStream2();

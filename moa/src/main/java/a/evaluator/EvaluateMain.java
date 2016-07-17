@@ -27,9 +27,9 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HAT),
-				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
+//				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("test.arff", HAT),
+//				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
 //				buildTask("1,100,1,1,100,1,1.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("1,100,1,1,100,1,1.arff", HAT),
 //				buildTask("1,100,1,1,100,1,1.arff", HOEFFDING_ADWIN),
@@ -37,6 +37,16 @@ public class EvaluateMain
 //				buildTask("normal.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("normal.arff", HAT),
 //				buildTask("normal.arff", HOEFFDING_ADWIN),
+				
+//				buildTask("test3.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("test3.arff", HAT),
+//				buildTask("test3.arff", HOEFFDING_ADWIN),
+				
+				
+				buildTask("test3.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("test5.arff", HAT),
+//				buildTask("test3.arff", HOEFFDING_ADWIN),
+				
 				};
 		
 //		tasks[0].call();
@@ -72,7 +82,7 @@ public class EvaluateMain
 		if(classifierOption==HOEFFDING_ADWIN)
 		{
 			resultFolder = new File(pathname+"/HOEFFDING_ADWIN");
-			classifier = new HoeffdingTreeADWIN(new ADWIN(0.002));
+			classifier = new HoeffdingTreeADWIN(new ADWIN(0.0002));
 			classifier.getOptions().resetToDefaults();
 		}
 		else if (classifierOption==HAT) 
@@ -84,7 +94,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(0.002));
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(0.0002));
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 			
 			classifier = temp;
