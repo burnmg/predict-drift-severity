@@ -2,7 +2,7 @@ package classifiers.selectors;
 
 import com.github.javacliparser.IntOption;
 
-import moa.classifiers.a.other.ClassifierSelector;
+import moa.classifiers.a.VAC.other.ClassifierSelector;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.tasks.TaskMonitor;

@@ -8,7 +8,7 @@ import com.yahoo.labs.samoa.instances.Instance;
 import classifiers.selectors.NaiveClassifierSelector;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.Classifier;
-import moa.classifiers.a.other.ClassifierSelector;
+import moa.classifiers.a.VAC.other.ClassifierSelector;
 import cutpointdetection.ADWIN;
 import moa.core.Measurement;
 import moa.options.ClassOption;

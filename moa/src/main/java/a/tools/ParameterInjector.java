@@ -1,6 +1,6 @@
 package a.tools;
 
-import moa.classifiers.a.other.CurrentVolatilityMeasure;
+import moa.classifiers.a.VAC.other.CurrentVolatilityMeasure;
 
 public class ParameterInjector
 {

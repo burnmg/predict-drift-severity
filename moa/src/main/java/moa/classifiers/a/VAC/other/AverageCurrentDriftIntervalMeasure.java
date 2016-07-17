@@ -1,4 +1,4 @@
-package moa.classifiers.a.other;
+package moa.classifiers.a.VAC.other;
 
 import cutpointdetection.CutPointDetector;
 import volatilityevaluation.Buffer;
