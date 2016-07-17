@@ -20,8 +20,14 @@
  */
 package a.evaluator;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import moa.core.Example;
@@ -93,9 +99,6 @@ public class MyEvaluatePrequential extends MainTask {
             "How many instances between memory bound checks.", 1000000, 0,
             Integer.MAX_VALUE);
 
-    public FileOption dumpFileOption = new FileOption("dumpFile", 'd',
-            "File to append intermediate csv results to.", null, "csv", true);
-
     public FileOption outputPredictionFileOption = new FileOption("outputPredictionFile", 'o',
             "File to append output predictions to.", null, "pred", true);
 
@@ -111,16 +114,30 @@ public class MyEvaluatePrequential extends MainTask {
     private Learner learner;
     private ExampleStream stream;
     private String streamPath;
+    private String resultFolderPath;
     private int driftWidth;
-    
+    private BufferedReader driftReader;
+    private BufferedWriter driftPeriodPerformanceWriter;
   
     
-    public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, int driftWidth)
+    public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, String resultFolderPath, int driftWidth)
     {
     	this.learner = learner;
     	this.stream = stream;
     	this.streamPath = streamPath;
     	this.driftWidth = driftWidth;
+    	this.resultFolderPath = resultFolderPath;
+    	
+    	try
+		{
+			driftReader = new BufferedReader(new FileReader(this.streamPath+"/driftDescription.csv"));
+			driftPeriodPerformanceWriter = new BufferedWriter(new FileWriter(this.resultFolderPath+"/driftPeriodPerformance.csv"));
+			driftPeriodPerformanceWriter.write("InstanceCount,accuracy\n");
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
     }
     
 	public void setLearner(Learner learner)
@@ -145,6 +162,8 @@ public class MyEvaluatePrequential extends MainTask {
         LearningPerformanceEvaluator evaluator = (LearningPerformanceEvaluator) getPreparedClassOption(this.evaluatorOption);
         LearningCurve learningCurve = new LearningCurve(
                 "learning evaluation instances");
+        
+
 
         //New for prequential methods
         if (evaluator instanceof WindowClassificationPerformanceEvaluator) {
@@ -177,7 +196,7 @@ public class MyEvaluatePrequential extends MainTask {
         int secondsElapsed = 0;
         monitor.setCurrentActivity("Evaluating learner...", -1.0);
 
-        File dumpFile = this.dumpFileOption.getFile();
+        File dumpFile = new File(this.resultFolderPath+"/dump.csv");
         PrintStream immediateResultStream = null;
         if (dumpFile != null) {
             try {
@@ -216,6 +235,18 @@ public class MyEvaluatePrequential extends MainTask {
         long totalTime = 0;
         long lastEvaluateStartTime = evaluateStartTime;
         double RAMHours = 0.0;
+        
+        int driftCentre = 0;
+        try
+		{
+			driftReader.readLine();
+			driftCentre =Integer.parseInt(driftReader.readLine());
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+        
+        
         while (stream.hasMoreInstances()
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
                 && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) {
@@ -275,7 +306,43 @@ public class MyEvaluatePrequential extends MainTask {
                     immediateResultStream.println(learningCurve.entryToString(learningCurve.numEntries() - 1));
                     immediateResultStream.flush();
                 }
-               
+                
+                // output performance in drift environment
+                if(instancesProcessed >= driftCentre - driftWidth/2 && instancesProcessed <= driftCentre + driftWidth/2)
+                {
+                	Measurement[] measurements = evaluator.getPerformanceMeasurements();
+                	Measurement measurement = null;
+                	for(int i=0;i<measurements.length;i++)
+                	{
+                		if(measurements[i].getName().equals("classifications correct (percent)"))
+                		{
+                			measurement = measurements[i];
+                		}
+                	}
+                	
+                	try
+					{
+						driftPeriodPerformanceWriter.write(instancesProcessed+","+measurement.getValue()+"\n");
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+                }
+                
+                String line = null;
+                try
+                {
+                	if(instancesProcessed > driftCentre + driftWidth/2 
+                			&& (line = driftReader.readLine())!=null)
+                	{
+                		driftCentre =Integer.parseInt(line);
+                	}
+                } catch (IOException e)
+                {
+                	e.printStackTrace();
+                }
+              
+
                 
             }
             if (instancesProcessed % INSTANCES_BETWEEN_MONITOR_UPDATES == 0) {
@@ -305,6 +372,15 @@ public class MyEvaluatePrequential extends MainTask {
         
         // do after training work
         learner.cleanup();
+        try
+		{
+            driftPeriodPerformanceWriter.close();
+			driftReader.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
         
         if (immediateResultStream != null) {
             immediateResultStream.close();
@@ -315,5 +391,19 @@ public class MyEvaluatePrequential extends MainTask {
         System.out.println("Thread#"+Thread.currentThread().getId()+": "+"Done.");
         return learningCurve;
     }
+    
+//	private void writeToFile(BufferedWriter bw, String str)
+//	{
+//		if (bw != null)
+//		{
+//			try
+//			{
+//				bw.write(str);
+//			} catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 }
