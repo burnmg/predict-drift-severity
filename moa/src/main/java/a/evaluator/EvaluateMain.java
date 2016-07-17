@@ -27,17 +27,17 @@ public class EvaluateMain
 		
 		// tasks
 		Callable[] tasks = {
-//				buildTask("1,100,1,1,100,1,1.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("1,100,1,1,100,1,1.arff", HAT),
-				buildTask("1,100,1,1,100,1,1.arff", HOEFFDING_ADWIN),
+				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HAT),
+				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
 //				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("10,100,10,100.arff", HAT),
 				};
 		
-		tasks[0].call();
+//		tasks[0].call();
 		for(Callable<Integer> task : tasks)
 		{
-//			executorService.submit(task);
+			executorService.submit(task);
 		}
 		
 		executorService.shutdown();

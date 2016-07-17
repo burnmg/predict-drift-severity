@@ -239,9 +239,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 		
 		// if there is no drift in long enough period, switch back to low volatility algorithm
-		if(activeClassifierIndex==2 && noDriftCount > classiferSelector.getMeasure())
+		if(activeClassifierIndex==2 && noDriftCount > (classiferSelector.getMeasure())*5)
 		{
-			System.out.println(1);
 			this.activeClassifier = new HoeffdingTreeADWIN();
 			activeClassifier.getOptions().resetToDefaults();
 			activeClassifier.resetLearning();

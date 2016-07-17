@@ -110,7 +110,18 @@ public class MyEvaluatePrequential extends MainTask {
     
     private Learner learner;
     private ExampleStream stream;
+    private String streamPath;
+    private int driftWidth;
     
+  
+    
+    public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, int driftWidth)
+    {
+    	this.learner = learner;
+    	this.stream = stream;
+    	this.streamPath = streamPath;
+    	this.driftWidth = driftWidth;
+    }
     
 	public void setLearner(Learner learner)
 	{
@@ -128,18 +139,8 @@ public class MyEvaluatePrequential extends MainTask {
         return LearningCurve.class;
     }
     
-
-	
-	private void doSimpleTask()
-	{
-
-
-	}
     @Override
     public Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
-//        Learner learner = (Learner) getPreparedClassOption(this.learnerOption);
-//        ExampleStream stream = (ExampleStream) getPreparedClassOption(this.streamOption);
-    	
     	
         LearningPerformanceEvaluator evaluator = (LearningPerformanceEvaluator) getPreparedClassOption(this.evaluatorOption);
         LearningCurve learningCurve = new LearningCurve(
