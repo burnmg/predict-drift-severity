@@ -44,7 +44,9 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v', "Dir.", null, "csv", true);
 
 	private CutPointDetector cutPointDetector;
-
+	private int switchStartHeatingPeriod = 100000;
+	
+	
 	// private BufferedWriter volatitlityDriftWriter;
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volIntervalDescriptionWriter;
@@ -108,8 +110,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void resetLearningImpl()
 	{
 
-		// classifier 1   .
-		if(true)
+		if(false)
 		{
 			this.activeClassifier = new HoeffdingTreeADWIN();
 			activeClassifier.getOptions().resetToDefaults();
@@ -136,7 +137,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
-		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector);
+		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
 
 		// set writers
 
@@ -204,9 +205,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		//// startTime = System.currentTimeMillis();
 
 		// // if there is a shift.
-		if (currentVolatilityLevel != -1)
+		if (numInstance>switchStartHeatingPeriod && currentVolatilityLevel != -1)
 		{
-			System.out.println(1);
 			
 			if (DEBUG_MODE)
 			{
@@ -220,12 +220,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			{
 				if (decision == 1)
 				{
-					this.activeClassifier = new HoeffdingTreeADWIN();
+					this.activeClassifier = new HoeffdingAdaptiveTree();
 					activeClassifier.getOptions().resetToDefaults();
 					activeClassifier.resetLearning();
 				} else
 				{
-					this.activeClassifier = new HoeffdingAdaptiveTree();
+					this.activeClassifier = new HoeffdingTreeADWIN();
 					activeClassifier.getOptions().resetToDefaults();
 					activeClassifier.resetLearning();
 				}

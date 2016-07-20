@@ -1,5 +1,7 @@
 package moa.classifiers.a.VAC.other;
 
+import com.yahoo.labs.samoa.instances.Instance;
+
 import cutpointdetection.CutPointDetector;
 import volatilityevaluation.Buffer;
 
@@ -9,27 +11,37 @@ public class AverageCurrentDriftIntervalMeasure implements CurrentVolatilityMeas
 	private CutPointDetector cutPointDetector;
 	private boolean isDrifting;
 	private int timestamp;
+	private int coolingPeriod;
+//	private int instanceSeen;
 	
-	public AverageCurrentDriftIntervalMeasure(int bufferSize, CutPointDetector cutPointDetector)
+	public AverageCurrentDriftIntervalMeasure(int bufferSize, CutPointDetector cutPointDetector, int coolingPeriod)
 	{
 		this.buffer = new Buffer(bufferSize);
 		this.cutPointDetector = cutPointDetector;
 		this.isDrifting = false;
 		this.timestamp = 0;
+		this.coolingPeriod = coolingPeriod;
+//		this.instanceSeen = 0;
 	}
 
 	@Override
 	public int setInput(double input)
 	{
-		if(cutPointDetector.setInput(input))
+		
+		if(timestamp > coolingPeriod && cutPointDetector.setInput(input))
 		{
+			
 			buffer.add(this.timestamp);
 			isDrifting = true;
 			this.timestamp = 0;
+//			instanceSeen = 0
+					
 			return (int)buffer.getMean();
 		}
 		else
 		{
+			
+			
 			isDrifting = false;
 			this.timestamp++;
 			return -1;

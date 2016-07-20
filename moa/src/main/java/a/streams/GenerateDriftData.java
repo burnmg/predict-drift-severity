@@ -13,6 +13,7 @@ import moa.DoTask;
 import moa.clusterers.outliers.AbstractC.StreamObj;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.streams.VolatilityChangeStreamGeneratorGradual;
+import moa.streams.generators.CircleGenerator;
 import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 import weka.gui.HierarchyPropertyParser;
@@ -58,11 +59,42 @@ public class GenerateDriftData
 //		generateData(10, 10, 2, 500000, 100, 7, numDrifts, 76, Directory.streamsPath, "test.arff");
 		
 //		int[] numDrifts = {1,500,1,500,1,500};
-//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,500,1,500.arff");
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,500,1,500,1,500.arff");
 		
-		int[] numDrifts = {1,100,1,1,1,100};
-		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,100,1,1,1,100.arff");
+		int[] numDrifts = {10,100,10,100};
+		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,100.arff");
+		
+//		int[] numDrifts = {1};
+//		generateAbruptDriftData2(20, 2, 500000, 1000, 10, numDrifts, 3691, "1.arff");
+		
+//		int[] numDrifts = {1,100,1,1,1,100};
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,100,1,1,1,100.arff");
+		
+//		int[] numDrifts = {10,100,10,10,10,100,10,10};
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,10,10,100,10,10.arff");
+		
+//		int[] numDrifts = {100,100,10,100,100,100,100,10,100};
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "100,100,10,100,100,100,100,10,100.arff");
 
+//		int[] numDrifts = {1};
+//		generateAbruptDriftData2(20, 2, 100000, 10, 10, numDrifts, 3691, "short.arff");
+		
+//		circleData("circle.arff");
+	}
+	
+	public static void circleData(String fileName)
+	{
+		File dir = new File(Directory.root + "Streams/" + fileName);
+		dir.mkdirs();
+		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
+
+		CircleGenerator circleGenerator = new CircleGenerator(12, 3213);
+
+		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(circleGenerator, destFile);
+		task.suppressHeaderOption.unset();
+		task.concatenate.unset();
+		task.prepareForUse();
+		task.doTask();
 	}
 
 	public static void generateData(int numSamples, int numAtt, int numClass, int blockLength, int interleavedWindowSize,

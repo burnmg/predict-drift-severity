@@ -33,9 +33,25 @@ public class EvaluateMain
 //				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("test.arff", HAT),
 //				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
-				buildTask("1,100,1,1,100,1,1.arff", VOL_ADAPTIVE_CLASSIFIER),
-				buildTask("1,100,1,1,100,1,1.arff", HAT),
-				buildTask("1,100,1,1,100,1,1.arff", HOEFFDING_ADWIN),
+				
+				
+//				buildTask("10,100,10,10,10,100,10,10.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("10,100,10,10,10,100,10,10.arff", HAT),
+//				buildTask("10,100,10,10,10,100,10,10.arff", HOEFFDING_ADWIN),
+//				
+//				buildTask("100,100,10,100,100,100,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("100,100,10,100,100,100,100,10,100.arff", HAT),
+//				buildTask("100,100,10,100,100,100,100,10,100.arff", HOEFFDING_ADWIN),
+				
+				
+//				buildTask("short.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("1.arff", HAT),
+//				buildTask("1.arff", HOEFFDING_ADWIN),
+				
+				
+				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("10,100,10,100.arff", HAT),
+				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
 				
 //				buildTask("normal.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("normal.arff", HAT),
@@ -91,8 +107,8 @@ public class EvaluateMain
 		if(classifierOption==HOEFFDING_ADWIN)
 		{
 			resultFolder = new File(pathname+"/HOEFFDING_ADWIN");
-//			classifier = new HoeffdingTreeADWIN(new ADWIN(), 0);
-			classifier = new HoeffdingTreeADWIN(new SlidingWindowMonitor(1000, 0.15, 5000));
+			classifier = new HoeffdingTreeADWIN(new ADWIN());
+//			classifier = new HoeffdingTreeADWIN(new SlidingWindowMonitor(1000, 0.15, 5000));
 			classifier.getOptions().resetToDefaults();
 		}
 		else if (classifierOption==HAT) 
@@ -104,7 +120,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new SlidingWindowMonitor(1000, 0.15, 5000));
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN());
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 			
 			classifier = temp;

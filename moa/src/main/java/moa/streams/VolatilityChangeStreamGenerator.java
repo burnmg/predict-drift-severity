@@ -26,6 +26,8 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volatilityIntervalDescriptionWriter;
 	
+
+	
 	private int currentBlockIndex;
 	private int numberInstance;
 	private int maxInstancesCount;
@@ -53,6 +55,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		
 		this.blockLength = blockLength;
 		this.changes = changes;
+		random = new Random(randomSeedInt);
 		
 		// first block
 //		currentBlock = new MultipleConceptDriftStreamGenerator3();

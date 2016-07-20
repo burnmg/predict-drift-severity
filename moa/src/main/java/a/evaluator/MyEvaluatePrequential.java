@@ -122,6 +122,10 @@ public class MyEvaluatePrequential extends MainTask {
     private BufferedWriter criticalPointWriter;
     
     private int criticalCount;
+    private int meanAccuracy;
+    private int meanMemory;
+    private int maxMemory;
+    private double evaluateTime;
   
     
     public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, String resultFolderPath, int driftWidth)
@@ -258,6 +262,9 @@ public class MyEvaluatePrequential extends MainTask {
 			e.printStackTrace();
 		}
 
+        int numSamples = 0;
+        int sumAcc = 0;
+        int sumMemory = 0;
         
         while (stream.hasMoreInstances()
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
@@ -290,11 +297,15 @@ public class MyEvaluatePrequential extends MainTask {
             instancesProcessed++;
             if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
                     || stream.hasMoreInstances() == false) {
+            	
+            	numSamples++;
+            	
                 long evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
 //                double time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
                 double time = TimingUtils.nanoTimeToSeconds(totalTime);
                 double timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
-                double RAMHoursIncrement = learner.measureByteSize() / (1024.0 * 1024.0 * 1024.0); //GBs
+                int learnerSize = learner.measureByteSize();
+				double RAMHoursIncrement = learnerSize / (1024.0 * 1024.0 * 1024.0); //GBs
                 RAMHoursIncrement *= (timeIncrement / 3600.0); //Hours
                 RAMHours += RAMHoursIncrement;
                 lastEvaluateStartTime = evaluateTime;
@@ -313,6 +324,12 @@ public class MyEvaluatePrequential extends MainTask {
                             RAMHours)
                         },
                         evaluator, learner));
+                
+                // update statistics
+                this.evaluateTime = time;
+                this.maxMemory = learnerSize > maxMemory? learnerSize : maxMemory;
+                sumMemory += learnerSize;
+                
 
                 if (immediateResultStream != null) {
                     if (firstDump) {
@@ -323,15 +340,19 @@ public class MyEvaluatePrequential extends MainTask {
                     immediateResultStream.flush();
                 }
                 
-                //critical ppint
+                //collect accuracy
             	Measurement[] measurements = evaluator.getPerformanceMeasurements();
             	Measurement measurement = null;
-            	for(int i=0;i<measurements.length;i++)
+            	for(int i=0; i<measurements.length;i++)
             	{
             		if(measurements[i].getName().equals("classifications correct (percent)"))
             		{
             			measurement = measurements[i];
+            			 // update statistics
+            			sumAcc += measurement.getValue();
+            			break;
             		}
+            		
             	}
 
             	if(measurement.getValue()<80)
@@ -343,6 +364,8 @@ public class MyEvaluatePrequential extends MainTask {
             				firstCriticalPointWrite = false;
             			}
             			criticalPointWriter.write(learningCurve.entryToString(learningCurve.numEntries() - 1)+"\n");
+            			
+            			criticalCount++;
             		}
             		catch(IOException e)
             		{
@@ -415,6 +438,8 @@ public class MyEvaluatePrequential extends MainTask {
         
         // do after training work
         learner.cleanup();
+        meanAccuracy = sumAcc/numSamples;
+        meanMemory = sumMemory/numSamples;
         
         // close
         try
@@ -441,6 +466,31 @@ public class MyEvaluatePrequential extends MainTask {
         
 
     }
+
+	public double getMeanAcc()
+	{
+		return meanAccuracy;
+	}
+
+	public double getMeanMemory()
+	{
+		return meanMemory;
+	}
+
+	public double getMaxMemory()
+	{
+		return maxMemory;
+	}
+
+	public double getTime()
+	{
+		return evaluateTime;
+	}
+	
+	public int getCriticalCount()
+	{
+		return criticalCount;
+	}
     
 //	private void writeToFile(BufferedWriter bw, String str)
 //	{

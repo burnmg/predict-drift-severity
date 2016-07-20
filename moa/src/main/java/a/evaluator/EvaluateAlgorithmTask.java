@@ -51,14 +51,37 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 	public Integer call()
 	{
 		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
-		evaluateVolIntervalCoverage();
+		double correctIntervalCoverage = evaluateVolIntervalCoverage();
+		double meanAcc = evaluatePrequential.getMeanAcc();
+		double meanMemory = evaluatePrequential.getMeanMemory();
+		double maxMemory = evaluatePrequential.getMaxMemory();
+		double time = evaluatePrequential.getTime();
+		int criticalPointCount = evaluatePrequential.getCriticalCount();
+		
+		// output the result to file. 
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
+			writer.write("mean accuracy:"+meanAcc+"\n");
+			writer.write("mean memory:"+meanMemory+"\n");
+			writer.write("max memory:"+maxMemory+"\n");
+			writer.write("time:"+time+"\n");
+			writer.write("Critical Point Counts:"+criticalPointCount+"\n");
+			writer.write("Correct Mode Coverage:"+correctIntervalCoverage+"\n");
+			
+			writer.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 		return 0;
 	}
 	
 	
-	public void evaluateVolIntervalCoverage()
+	public double evaluateVolIntervalCoverage()
 	{
-		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return;
+		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return -1;
 		
 		
 		//		 evaluate the volatility interval coverage
@@ -91,17 +114,19 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		CorreteModeCoverageEvaluator evaluateCorreteModeCoverage = new CorreteModeCoverageEvaluator();
 		double result = evaluateCorreteModeCoverage.evalutate(expected, actual);
 		
-		// output the result to file. 
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
-			writer.write("VolCoverageRate:"+result);
-			
-			writer.close();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		return result;
+		
+//		// output the result to file. 
+//		try
+//		{
+//			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
+//			writer.write("VolCoverageRate:"+result);
+//			
+//			writer.close();
+//		} catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
 	}
 
 	private int[][] load2DArray(BufferedReader br) throws IOException

@@ -8,7 +8,9 @@ import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.streams.generators.DriftingHyperplaneGenerator;
+import moa.streams.generators.RandomTreeGenerator;
 import moa.tasks.TaskMonitor;
+import weka.classifiers.trees.RandomTree;
 
 
 /**
@@ -61,9 +63,9 @@ InstanceStream{
    
     protected int numberInstance;
     
-    private DriftingHyperplaneGenerator stream1;
+    private InstanceStream stream1;
    
-    private DriftingHyperplaneGenerator stream2;
+    private InstanceStream stream2;
     
     protected int switchPoint; 
     
@@ -97,15 +99,24 @@ InstanceStream{
 //		stream2 = getEvolvedStream(stream1);
 	}
 	
-	private DriftingHyperplaneGenerator getInitStream()
+	private InstanceStream getInitStream()
 	{
 		
-		DriftingHyperplaneGenerator newStream = new DriftingHyperplaneGenerator();
+//		DriftingHyperplaneGenerator newStream = new DriftingHyperplaneGenerator();
+//		newStream.getOptions().resetToDefaults();
+//		newStream.numClassesOption = this.numClassesOption;
+//		newStream.numAttsOption = this.numAttsOption;
+//		newStream.instanceRandomSeedOption.setValue(drifIntOptiontRandomSeedOption.getValue());
+//		newStream.noisePercentageOption = this.noisePercentageOption;
+//		newStream.prepareForUse();
+		
+		RandomTreeGenerator newStream = new RandomTreeGenerator();
 		newStream.getOptions().resetToDefaults();
 		newStream.numClassesOption = this.numClassesOption;
-		newStream.numAttsOption = this.numAttsOption;
-		newStream.instanceRandomSeedOption.setValue(drifIntOptiontRandomSeedOption.getValue());
-		newStream.noisePercentageOption = this.noisePercentageOption;
+		newStream.numNumericsOption = this.numAttsOption;
+		newStream.numNominalsOption.setValue(0);
+		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
 		newStream.prepareForUse();
 		
 		return newStream;
@@ -117,23 +128,32 @@ InstanceStream{
 		this.stream2 = getEvolvedStream(stream1);
 	}
 	
-	public void setStream1(DriftingHyperplaneGenerator newStream1)
+	public void setStream1(InstanceStream newStream1)
 	{
 		this.stream1 = newStream1;
 		this.stream2 = getEvolvedStream(stream1);
 	}
 	
-	public DriftingHyperplaneGenerator getStream2()
+	public InstanceStream getStream2()
 	{
 		return stream2;
 	}
 	
 	
 
-	private DriftingHyperplaneGenerator getEvolvedStream(DriftingHyperplaneGenerator stream)
+	private InstanceStream getEvolvedStream(InstanceStream stream)
 	{
-		DriftingHyperplaneGenerator newStream = (DriftingHyperplaneGenerator) stream.copy();
-		newStream.addPartialDrift(numDriftAttsOption.getValue());
+//		InstanceStream newStream = (InstanceStream) stream.copy();
+//		newStream.addPartialDrift(numDriftAttsOption.getValue());
+		
+		RandomTreeGenerator newStream = new RandomTreeGenerator();
+		newStream.getOptions().resetToDefaults();
+		newStream.numClassesOption = this.numClassesOption;
+		newStream.numNumericsOption = this.numAttsOption;
+		newStream.numNominalsOption.setValue(0);
+		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
+		newStream.prepareForUse();
 		
 		return newStream;
 	}

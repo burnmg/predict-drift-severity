@@ -60,6 +60,7 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	public String getPurposeString()
 	{
 		return "Hoeffding Tree or VFDT.";
+		
 	}
 
 	public IntOption maxByteSizeOption = new IntOption("maxByteSize", 'm', "Maximum memory consumed by the tree.",
@@ -544,19 +545,18 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 		
 		
 		
-		
 //		windowEstimator.add(correctlyClassifies(inst) ? 0.0:1.0);
-		if(cutPointDetector!=null)
+		if(cutPointDetector!=null &&instancesSeen> 3000)
 		{
 			
-//			double oldError = cutPointDetector.getEstimation();
+			double oldError = cutPointDetector.getEstimation();
 			boolean errorChange = cutPointDetector.setInput(correctlyClassifies(inst) ? 0.0:1.0);
 			
-//			if(errorChange && oldError > cutPointDetector.getEstimation())
-//			{
-//				// if error decreasing, do nothing. 
-//				errorChange = false;
-//			}
+			if(errorChange && oldError > cutPointDetector.getEstimation())
+			{
+				// if error decreasing, do nothing. 
+				errorChange = false;
+			}
 			
 			if(errorChange)
 			{
