@@ -108,7 +108,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public void resetLearningImpl()
 	{
 
-		// classifier 1
+		// classifier 1   .
 		if(true)
 		{
 			this.activeClassifier = new HoeffdingTreeADWIN();
