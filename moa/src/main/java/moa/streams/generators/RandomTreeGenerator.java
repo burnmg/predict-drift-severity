@@ -65,7 +65,7 @@ public class RandomTreeGenerator extends AbstractOptionHandler implements
             "The number of classes to generate.", 2, 2, Integer.MAX_VALUE);
 
     public IntOption numNominalsOption = new IntOption("numNominals", 'o',
-            "The number of nominal attributes to generate.", 5, 0,
+            "The number of nominal attributes to generate.", 0, 0,
             Integer.MAX_VALUE);
 
     public IntOption numNumericsOption = new IntOption("numNumerics", 'u',

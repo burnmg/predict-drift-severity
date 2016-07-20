@@ -134,10 +134,10 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
+		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
-		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
+//		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
 
 		// set writers
 
