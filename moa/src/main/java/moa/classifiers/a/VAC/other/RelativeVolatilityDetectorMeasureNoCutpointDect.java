@@ -6,10 +6,9 @@ import a.algorithms.Reservoir;
 import cutpointdetection.CutPointDetector;
 import volatilityevaluation.Buffer;
 
-public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasure
+public class RelativeVolatilityDetectorMeasureNoCutpointDect implements CurrentVolatilityMeasure
 {
 	// private ADWIN cutpointDetector;
-	private CutPointDetector cutpointDetector;
 	private Reservoir reservoir;
 	private Buffer buffer;
 	private double confidence;
@@ -17,19 +16,17 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 	private int timestamp = 0;
 	private boolean conceptDrift;
 
-	public RelativeVolatilityDetectorMeasure(CutPointDetector cutpointDetector, int resSize)
+	public RelativeVolatilityDetectorMeasureNoCutpointDect(int resSize)
 	{
 		this.conceptDrift = false;
-		this.cutpointDetector = cutpointDetector;
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = 0.05;
 	}
 
-	public RelativeVolatilityDetectorMeasure(CutPointDetector cutpointDetector, int resSize, double confidence)
+	public RelativeVolatilityDetectorMeasureNoCutpointDect(int resSize, double confidence)
 	{
 		this.conceptDrift = false;
-		this.cutpointDetector = cutpointDetector;
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = confidence;
@@ -40,18 +37,10 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 		return buffer.getMean();
 	}
 	
-	@Override
-	public int setInput(double inputValue)
+	public int setInput(boolean drift)
 	{
-		double oldError = cutpointDetector.getEstimation();
-		boolean errorChange = cutpointDetector.setInput(inputValue);
-
-		if(errorChange && cutpointDetector.getEstimation() < oldError)
-		{
-			errorChange = false;
-		}
 		
-		if (errorChange)
+		if (drift)
 		{
 			this.conceptDrift = true;
 			if (buffer.isFull())
@@ -89,6 +78,13 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 			return -1;
 		}
 		return -1;
+	}
+	
+	
+	@Override
+	public int setInput(double inputValue)
+	{
+		return 0;
 	}
 
 	public class Mergesort
@@ -174,12 +170,5 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 	{
 		
 		return this.getBufferMean();
-	}
-
-	@Override
-	public int setInput(boolean drift)
-	{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

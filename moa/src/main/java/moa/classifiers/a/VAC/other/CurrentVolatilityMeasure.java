@@ -10,6 +10,8 @@ public interface CurrentVolatilityMeasure {
 	 */
 	public int setInput(double input);
 	
+	public int setInput(boolean drift);
+	
 	public boolean conceptDrift();
 	
 	public double getMeasure();

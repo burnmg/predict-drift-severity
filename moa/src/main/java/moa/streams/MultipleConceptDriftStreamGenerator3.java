@@ -53,7 +53,7 @@ InstanceStream{
             "The number of attributes to generate.", 5, 0, Integer.MAX_VALUE);
     
     public IntOption noisePercentageOption = new IntOption("noisePercentage",
-            'n', "Percentage of noise to add to the data.", 5, 0, 100);
+            'n', "Percentage of noise to add to the data.", 0, 0, 100);
     
     // Options for partial drifting
     public IntOption numDriftAttsOption = new IntOption("numDriftAtts", 'p',

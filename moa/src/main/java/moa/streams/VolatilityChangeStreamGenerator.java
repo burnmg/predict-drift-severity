@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Random;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 
+import java_cup.internal_error;
 import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
@@ -44,7 +45,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		this.changes = changes;
 	}
 	
-	public VolatilityChangeStreamGenerator(int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
+	public VolatilityChangeStreamGenerator(int numAtt, int numClass, int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
 			int randomSeedInt, int startClassifier, File descriptionFileDir)
 	{
 		this.currentBlockIndex = 0;
@@ -57,10 +58,13 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 //		currentBlock = new MultipleConceptDriftStreamGenerator3();
 		currentBlock = new MultipleConceptDriftStreamGenerator3();
 		currentBlock.getOptions().resetToDefaults();
+		currentBlock.numAttsOption.setValue(numAtt);
+		currentBlock.numClassesOption.setValue(numClass);
 		currentBlock.streamLengthOption.setValue(blockLength);
 		currentBlock.numDriftsOption.setValue(changes[currentBlockIndex]);
 		currentBlock.widthOption.setValue(interleavedWindowSize);
 		currentBlock.numDriftAttsOption.setValue(driftAttsNum);
+		currentBlock.drifIntOptiontRandomSeedOption.setValue(randomSeedInt);
 		currentBlock.driftRandom = random;
 		
 		//special for first block
@@ -81,6 +85,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			e.printStackTrace();
 		}
 		writeToFile(driftDesciptionWriter, "DriftInstanceIndex\n"); 
+		writeToFile(driftDesciptionWriter, currentBlock.getDriftPosition()+"\n");
 		
 		
 		// expected switch point Description 

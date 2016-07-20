@@ -1,12 +1,18 @@
 
 package moa.classifiers.a;
 
+import java.awt.Window;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FlagOption;
@@ -30,15 +36,25 @@ import moa.core.Measurement;
 import moa.core.SizeOf;
 import moa.core.StringUtils;
 import moa.core.Utils;
+import moa.evaluation.BasicClassificationPerformanceEvaluator.Estimator;
 import moa.options.ClassOption;
 import com.yahoo.labs.samoa.instances.Instance;
 
 import cutpointdetection.CutPointDetector;
+import meka.events.LogListener;
 
 public class HoeffdingTreeADWIN extends MyAbstractClassifier
 {
+	
+//	public static Logger logger = Logger.getLogger("1");
 
 	private static final long serialVersionUID = 1L;
+	
+	private WindowEstimator windowEstimator = new WindowEstimator(1000);
+	
+//	private BufferedWriter driftWriter;
+	
+	private int timestamp = 0;;
 
 	@Override
 	public String getPurposeString()
@@ -47,7 +63,7 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	}
 
 	public IntOption maxByteSizeOption = new IntOption("maxByteSize", 'm', "Maximum memory consumed by the tree.",
-			33554, 0, Integer.MAX_VALUE);
+			3355400, 0, Integer.MAX_VALUE);
 
 	/*
 	 * public MultiChoiceOption numericEstimatorOption = new MultiChoiceOption(
@@ -95,15 +111,29 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	public FlagOption noPrePruneOption = new FlagOption("noPrePrune", 'p', "Disable pre-pruning.");
 
 	public CutPointDetector cutPointDetector;
+	private int standDownPeriod; 
+	private int instancesSeen;
 
 	public HoeffdingTreeADWIN()
 	{
+//		try
+//		{
+////			driftWriter = new BufferedWriter(new FileWriter("/789/drift.csv"));
+////			driftWriter.write("instance,driftInterval\n");
+//		} catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public HoeffdingTreeADWIN(CutPointDetector cutPointDetector)
 	{
+//		this.standDownPeriod = standDownPeriod; 
 		this.cutPointDetector = cutPointDetector;
+		this.instancesSeen = 0;
 	}
+	
 
 	public static class FoundNode
 	{
@@ -504,10 +534,43 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		if (cutPointDetector != null && cutPointDetector.setInput(correctlyClassifies(inst) ? 0.0 : 1.0))
+//		instancesSeen++;
+//		if (cutPointDetector != null &&instancesSeen>=standDownPeriod && cutPointDetector.setInput(correctlyClassifies(inst) ? 0.0 : 1.0) )
+//		{
+//			instancesSeen = 0;
+//			resetLearning();
+//			cutPointDetector.clear();
+//		}
+		
+		
+		
+		
+//		windowEstimator.add(correctlyClassifies(inst) ? 0.0:1.0);
+		if(cutPointDetector!=null)
 		{
-			resetLearning();
+			
+//			double oldError = cutPointDetector.getEstimation();
+			boolean errorChange = cutPointDetector.setInput(correctlyClassifies(inst) ? 0.0:1.0);
+			
+//			if(errorChange && oldError > cutPointDetector.getEstimation())
+//			{
+//				// if error decreasing, do nothing. 
+//				errorChange = false;
+//			}
+			
+			if(errorChange)
+			{
+//				logger.log(Level.SEVERE, "{0}", cutPointDetector.getEstimation());
+				instancesSeen = 0;
+				resetLearning();
+//				System.out.println(oldError);
+//				System.out.println(cutPointDetector.getEstimation());
+//				System.out.println();
+			}
+			
 		}
+		instancesSeen++;
+		
 
 		if (this.treeRoot == null)
 		{
@@ -986,4 +1049,49 @@ public class HoeffdingTreeADWIN extends MyAbstractClassifier
 	{
 		this.resetLearning();
 	}
+
+	@Override
+	public boolean getIsDrift()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public class WindowEstimator implements Estimator {
+
+        protected double[] window;
+
+        protected int posWindow;
+
+        protected int lenWindow;
+
+        protected int SizeWindow;
+
+        protected double sum;
+
+        public WindowEstimator(int sizeWindow) {
+            window = new double[sizeWindow];
+            SizeWindow = sizeWindow;
+            posWindow = 0;
+            lenWindow = 0;
+        }
+
+        public void add(double value) {
+            sum -= window[posWindow];
+            sum += value;
+            window[posWindow] = value;
+            posWindow++;
+            if (posWindow == SizeWindow) {
+                posWindow = 0;
+            }
+            if (lenWindow < SizeWindow) {
+                lenWindow++;
+            }
+        }
+
+        public double estimation(){
+            return sum/(double) lenWindow;
+        }
+
+    }
 }

@@ -39,9 +39,9 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 		this.streamName = streamName;
 		this.resultFolderPath = resultFolderPath;
 
-		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+streamName, this.resultFolderPath, 2000);
+		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 1000);
 		evaluatePrequential.getOptions().resetToDefaults();
-		evaluatePrequential.sampleFrequencyOption.setValue(50);
+		evaluatePrequential.sampleFrequencyOption.setValue(100);
 		
 
 	}
@@ -74,7 +74,7 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 
 			//load expected
 			readExpected = new BufferedReader(new FileReader(
-					new File(Directory.streamsPath+this.streamName+"/"+"volExpectedIntervalDescription.csv")));
+					new File(Directory.streamsPath +"/"+this.streamName+"/"+"volExpectedIntervalDescription.csv")));
 			expected = load2DArray(readExpected);
 
 			readActual.close();

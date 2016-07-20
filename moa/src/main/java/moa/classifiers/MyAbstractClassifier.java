@@ -34,5 +34,6 @@ public abstract class MyAbstractClassifier extends AbstractClassifier implements
 {
 
 	public abstract void notifyConceptDrift();
+	public abstract boolean getIsDrift();
 
 }

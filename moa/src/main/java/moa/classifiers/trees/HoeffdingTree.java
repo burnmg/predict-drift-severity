@@ -124,7 +124,7 @@ public class HoeffdingTree extends MyAbstractClassifier
 	}
 
 	public IntOption maxByteSizeOption = new IntOption("maxByteSize", 'm', "Maximum memory consumed by the tree.",
-			1335540, 0, Integer.MAX_VALUE);
+			334455, 0, Integer.MAX_VALUE);
 
 	/*
 	 * public MultiChoiceOption numericEstimatorOption = new MultiChoiceOption(
@@ -1036,12 +1036,18 @@ public class HoeffdingTree extends MyAbstractClassifier
 	@Override
 	public void cleanup()
 	{
-		
+
 	}
 
 	@Override
 	public void notifyConceptDrift()
 	{
-		
+
+	}
+
+	@Override
+	public  boolean getIsDrift()
+	{
+		return false;
 	}
 }

@@ -65,7 +65,7 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
             "Magnitude of the change for every example", 0.0, 0.0, 1.0);
 
     public IntOption noisePercentageOption = new IntOption("noisePercentage",
-            'n', "Percentage of noise to add to the data.", 5, 0, 100);
+            'n', "Percentage of noise to add to the data.", 10, 0, 100);
 
     public IntOption sigmaPercentageOption = new IntOption("sigmaPercentage",
             's', "Percentage of probability that the direction of change is reversed.", 10, 0, 100);
@@ -141,6 +141,7 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
     @Override
     public InstanceExample nextInstance() {
 
+    	int numClass = numClassesOption.getValue();
         int numAtts = this.numAttsOption.getValue();
         double[] attVals = new double[numAtts + 1];
         double sum = 0.0;
@@ -150,12 +151,23 @@ public class DriftingHyperplaneGenerator extends AbstractOptionHandler implement
             sum += this.weights[i] * attVals[i];
             sumWeights += this.weights[i];
         }
-        int classLabel;
-        if (sum >= sumWeights * 0.5) {
-            classLabel = 1;
-        } else {
-            classLabel = 0;
+        int classLabel = -1;
+//        if (sum >= sumWeights * 0.5) {
+//            classLabel = 1;
+//        } else {
+//            classLabel = 0;
+//        }
+        
+        for(int i=1;i<=numClass;i++)
+        {
+        	if(sum < sumWeights*(1.0/numClass)*i)
+        	{
+        		classLabel = i-1;
+        		break;
+        	}
         }
+        
+        
         //Add Noise
         if ((1 + (this.instanceRandom.nextInt(100))) <= this.noisePercentageOption.getValue()) {
             classLabel = (classLabel == 0 ? 1 : 0);

@@ -50,4 +50,11 @@ public class AverageCurrentDriftIntervalMeasure implements CurrentVolatilityMeas
 		return 0;
 	}
 
+	@Override
+	public int setInput(boolean drift)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

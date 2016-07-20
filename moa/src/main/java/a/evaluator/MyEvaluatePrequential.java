@@ -40,6 +40,7 @@ import moa.evaluation.FadingFactorClassificationPerformanceEvaluator;
 import moa.evaluation.LearningCurve;
 import moa.evaluation.LearningEvaluation;
 import moa.evaluation.LearningPerformanceEvaluator;
+import moa.evaluation.UnslidingWindowClassificationPerformanceEvaluator;
 import moa.learners.Learner;
 import moa.options.ClassOption;
 
@@ -118,6 +119,7 @@ public class MyEvaluatePrequential extends MainTask {
     private int driftWidth;
     private BufferedReader driftReader;
     private BufferedWriter driftPeriodPerformanceWriter;
+    private BufferedWriter criticalPointWriter;
     
     private int criticalCount;
   
@@ -135,7 +137,7 @@ public class MyEvaluatePrequential extends MainTask {
 		{
 			driftReader = new BufferedReader(new FileReader(this.streamPath+"/driftDescription.csv"));
 			driftPeriodPerformanceWriter = new BufferedWriter(new FileWriter(this.resultFolderPath+"/driftPeriodPerformance.csv"));
-			
+			criticalPointWriter = new BufferedWriter(new FileWriter(this.resultFolderPath+"/criticalPoints.csv"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -162,7 +164,10 @@ public class MyEvaluatePrequential extends MainTask {
     public Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
     	
     	WindowClassificationPerformanceEvaluator windowClassificationPerformanceEvaluator = new WindowClassificationPerformanceEvaluator();
-//    	windowClassificationPerformanceEvaluator.widthOption.setValue(100);
+//    	UnslidingWindowClassificationPerformanceEvaluator windowClassificationPerformanceEvaluator = new UnslidingWindowClassificationPerformanceEvaluator();
+    	windowClassificationPerformanceEvaluator.widthOption.setValue(1000);
+    	
+//    	FadingFactorClassificationPerformanceEvaluator fadingFactorClassificationPerformanceEvaluator = new FadingFactorClassificationPerformanceEvaluator();
         LearningPerformanceEvaluator evaluator = windowClassificationPerformanceEvaluator;
 
         LearningCurve learningCurve = new LearningCurve(
@@ -235,7 +240,8 @@ public class MyEvaluatePrequential extends MainTask {
             }
         }
         boolean firstDump = true;
-		boolean firstWrite = true;
+		boolean firstDriftPeriodWrite = true;
+		boolean firstCriticalPointWrite = true;
         boolean preciseCPUTiming = TimingUtils.enablePreciseTiming();
         long evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
         long totalTime = 0;
@@ -279,16 +285,7 @@ public class MyEvaluatePrequential extends MainTask {
             
             
 
-            
-        	Measurement[] measurements = evaluator.getPerformanceMeasurements();
-        	Measurement measurement = null;
-        	for(int i=0;i<measurements.length;i++)
-        	{
-        		if(measurements[i].getName().equals("classifications correct (percent)"))
-        		{
-        			measurement = measurements[i];
-        		}
-        	}
+
             
             instancesProcessed++;
             if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
@@ -326,26 +323,45 @@ public class MyEvaluatePrequential extends MainTask {
                     immediateResultStream.flush();
                 }
                 
+                //critical ppint
+            	Measurement[] measurements = evaluator.getPerformanceMeasurements();
+            	Measurement measurement = null;
+            	for(int i=0;i<measurements.length;i++)
+            	{
+            		if(measurements[i].getName().equals("classifications correct (percent)"))
+            		{
+            			measurement = measurements[i];
+            		}
+            	}
+
+            	if(measurement.getValue()<80)
+            	{
+            		try{
+            			if(firstCriticalPointWrite)
+            			{
+            				criticalPointWriter.write(learningCurve.headerToString()+"\n");
+            				firstCriticalPointWrite = false;
+            			}
+            			criticalPointWriter.write(learningCurve.entryToString(learningCurve.numEntries() - 1)+"\n");
+            		}
+            		catch(IOException e)
+            		{
+
+            		}
+
+            	}
+                
                 // output performance in drift environment
                 if(instancesProcessed >= driftCentre && instancesProcessed <= driftCentre + driftWidth)
                 {
-//                	Measurement[] measurements = evaluator.getPerformanceMeasurements();
-//                	Measurement measurement = null;
-//                	for(int i=0;i<measurements.length;i++)
-//                	{
-//                		if(measurements[i].getName().equals("classifications correct (percent)"))
-//                		{
-//                			measurement = measurements[i];
-//                		}
-//                	}
                 	
                 	try
     				{
 
-    					if(firstWrite)
+    					if(firstDriftPeriodWrite)
                 		{
                 			driftPeriodPerformanceWriter.write(learningCurve.headerToString()+"\n");
-                			firstWrite = false;
+                			firstDriftPeriodWrite = false;
                 		}
 //    					driftPeriodPerformanceWriter.write(instancesProcessed+","+measurement.getValue()+"\n");
                 		driftPeriodPerformanceWriter.write(learningCurve.entryToString(learningCurve.numEntries() - 1)+"\n");
@@ -405,6 +421,7 @@ public class MyEvaluatePrequential extends MainTask {
 		{
             driftPeriodPerformanceWriter.close();
 			driftReader.close();
+			criticalPointWriter.close();
 		} catch (IOException e)
 		{
 			e.printStackTrace();

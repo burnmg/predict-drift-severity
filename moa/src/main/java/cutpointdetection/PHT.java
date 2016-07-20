@@ -74,4 +74,18 @@ public class PHT implements CutPointDetector
 		 */ return false;
 	}
 
+	@Override
+	public void clear()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public double getEstimation()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

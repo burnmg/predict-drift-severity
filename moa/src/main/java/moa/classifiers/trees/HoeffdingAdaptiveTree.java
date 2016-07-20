@@ -52,6 +52,8 @@ import com.yahoo.labs.samoa.instances.Instance;
 public class HoeffdingAdaptiveTree extends HoeffdingTree {
 
     private static final long serialVersionUID = 1L;
+    
+    private boolean isDrifting = false;
 
     @Override
     public String getPurposeString() {
@@ -200,6 +202,12 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
                 this.alternateTree = ht.newLearningNode();
                 //this.alternateTree.isAlternateTree = true;
                 ht.alternateTrees++;
+                
+                
+                // drift detected
+                ht.setIsDrift(true);
+                
+                
             } // Check condition to replace tree
             else if (this.alternateTree != null && ((NewNode) this.alternateTree).isNullError() == false) {
                 if (this.getErrorWidth() > 300 && ((NewNode) this.alternateTree).getErrorWidth() > 300) {
@@ -210,6 +218,7 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
                     double fN = 1.0 / ((double) ((NewNode) this.alternateTree).getErrorWidth()) + 1.0 / ((double) this.getErrorWidth());
                     double Bound = (double) Math.sqrt((double) 2.0 * oldErrorRate * (1.0 - oldErrorRate) * Math.log(2.0 / fDelta) * fN);
                     if (Bound < oldErrorRate - altErrorRate) {
+                    	
                         // Switch alternate tree
                         ht.activeLeafNodeCount -= this.numberLeaves();
                         ht.activeLeafNodeCount += ((NewNode) this.alternateTree).numberLeaves();
@@ -222,6 +231,12 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
                             ht.treeRoot = ((AdaSplitNode) ht.treeRoot).alternateTree;
                         }
                         ht.switchedAlternateTrees++;
+                        
+                        
+
+                        
+                        
+                        
                     } else if (Bound < altErrorRate - oldErrorRate) {
                         // Erase alternate tree
                         if (this.alternateTree instanceof ActiveLearningNode) {
@@ -264,9 +279,11 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
                     }
                     if (child instanceof ActiveLearningNode) {
                         child = null;
+                        //FIXME
                         ht.activeLeafNodeCount--;
                     } else if (child instanceof InactiveLearningNode) {
                         child = null;
+                        //FIXME
                         ht.inactiveLeafNodeCount--;
                     }
                 }
@@ -459,11 +476,15 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
 
     @Override
     public void trainOnInstanceImpl(Instance inst) {
+    	
+    	this.isDrifting = false;
+    	
         if (this.treeRoot == null) {
             this.treeRoot = newLearningNode();
             this.activeLeafNodeCount = 1;
         }
         ((NewNode) this.treeRoot).learnFromInstance(inst, this, null, -1);
+        
     }
 
     //New for options vote
@@ -505,5 +526,17 @@ public class HoeffdingAdaptiveTree extends HoeffdingTree {
         }
         return new double[0];
     }
+    
+    private void setIsDrift(boolean isDrifting)
+    {
+    	this.isDrifting = isDrifting;
+    }
+    
+	@Override
+	public  boolean getIsDrift()
+	{
+		// TODO
+		return isDrifting;
+	}
     
 }
