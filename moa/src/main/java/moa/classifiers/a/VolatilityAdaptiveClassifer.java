@@ -139,7 +139,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// this.classifier2 = (AbstractClassifier)
 		// getPreparedClassOption(this.classifier2Option);
 
-		classiferSelector = new DoubleReservoirsClassifierSelector(10, 0);
+		classiferSelector = new DoubleReservoirsClassifierSelector(10, 5000);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
@@ -220,7 +220,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			
 			if(DEBUG_MODE)
 			{
-				writeToFile(volMeasureWriter, numInstance+","+classiferSelector.getMeasure());
+				writeToFile(volMeasureWriter, numInstance+","+classiferSelector.getMeasure() +"\n");
 			}
 			
 

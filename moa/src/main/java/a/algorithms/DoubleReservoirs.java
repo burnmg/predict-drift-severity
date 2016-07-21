@@ -97,6 +97,11 @@ public class DoubleReservoirs
 		return sum / getWidth(); 
 		
 	}
+	
+	public boolean isActive()
+	{
+		return (highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > this.lambda;
+	}
 
 
 	// with ADWIN akin approach
