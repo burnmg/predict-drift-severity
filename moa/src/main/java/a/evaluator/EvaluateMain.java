@@ -4,14 +4,10 @@ import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import a.tools.Directory;
 import cutpointdetection.ADWIN;
-import cutpointdetection.ADWINOneDirection;
-import cutpointdetection.CUSUM;
-import cutpointdetection.SlidingWindowMonitor;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
@@ -44,14 +40,14 @@ public class EvaluateMain
 //				buildTask("100,100,10,100,100,100,100,10,100.arff", HOEFFDING_ADWIN),
 				
 				
-//				buildTask("short.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("1.arff", HAT),
-//				buildTask("1.arff", HOEFFDING_ADWIN),
+				buildTask("5,50,5,50.arff", VOL_ADAPTIVE_CLASSIFIER),
+				buildTask("5,50,5,50.arff", HAT),
+				buildTask("5,50,5,50.arff", HOEFFDING_ADWIN),
 				
 				
-				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-				buildTask("10,100,10,100.arff", HAT),
-				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
+//				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
+//				buildTask("10,100,10,100.arff", HAT),
+//				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
 				
 //				buildTask("normal.arff", VOL_ADAPTIVE_CLASSIFIER),
 //				buildTask("normal.arff", HAT),

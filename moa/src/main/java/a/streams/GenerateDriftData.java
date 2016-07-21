@@ -61,14 +61,14 @@ public class GenerateDriftData
 //		int[] numDrifts = {1,500,1,500,1,500};
 //		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,500,1,500,1,500.arff");
 		
-		int[] numDrifts = {10,100,10,100};
-		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,100.arff");
+//		int[] numDrifts = {10,100,10,100};
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,100.arff");
 		
-//		int[] numDrifts = {1};
-//		generateAbruptDriftData2(20, 2, 500000, 1000, 10, numDrifts, 3691, "1.arff");
+		int[] numDrifts = {5,50,5,50};
+		generateAbruptDriftData2(20, 2, 500000, 1000, 10, numDrifts, 23341, "5,50,5,50.arff");
 		
-//		int[] numDrifts = {1,100,1,1,1,100};
-//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,100,1,1,1,100.arff");
+//		int[] numDrifts = {1,100,1,1,1,100,1,1,1};
+//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,100,1,1,1,100,1,1,1.arff");
 		
 //		int[] numDrifts = {10,100,10,10,10,100,10,10};
 //		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,10,10,100,10,10.arff");
@@ -76,10 +76,9 @@ public class GenerateDriftData
 //		int[] numDrifts = {100,100,10,100,100,100,100,10,100};
 //		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "100,100,10,100,100,100,100,10,100.arff");
 
-//		int[] numDrifts = {1};
-//		generateAbruptDriftData2(20, 2, 100000, 10, 10, numDrifts, 3691, "short.arff");
-		
-//		circleData("circle.arff");
+//		int[] numDrifts = {5,50};
+//		generateData(2, 10, 2, 10000, 100, 5, numDrifts, 6572, Directory.streamsPath, "5,50.arff");
+		System.out.println("Done!");
 	}
 	
 	public static void circleData(String fileName)

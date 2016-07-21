@@ -143,17 +143,17 @@ InstanceStream{
 
 	private InstanceStream getEvolvedStream(InstanceStream stream)
 	{
-//		InstanceStream newStream = (InstanceStream) stream.copy();
-//		newStream.addPartialDrift(numDriftAttsOption.getValue());
-		
-		RandomTreeGenerator newStream = new RandomTreeGenerator();
-		newStream.getOptions().resetToDefaults();
-		newStream.numClassesOption = this.numClassesOption;
-		newStream.numNumericsOption = this.numAttsOption;
-		newStream.numNominalsOption.setValue(0);
-		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
-		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
-		newStream.prepareForUse();
+		InstanceStream newStream = (InstanceStream) stream.copy();
+		((RandomTreeGenerator)newStream).addPartialDrift();
+//		
+//		RandomTreeGenerator newStream = new RandomTreeGenerator();
+//		newStream.getOptions().resetToDefaults();
+//		newStream.numClassesOption = this.numClassesOption;
+//		newStream.numNumericsOption = this.numAttsOption;
+//		newStream.numNominalsOption.setValue(0);
+//		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+//		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
+//		newStream.prepareForUse();
 		
 		return newStream;
 	}

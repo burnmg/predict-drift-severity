@@ -17,4 +17,14 @@ public class Directory
 		
 		return stream;
 	}
+	
+	public static ArffFileStream getStreamFromFileByName(String streamName, int id)
+	{
+		String path = Directory.streamsPath + '/' + streamName + "/samples/" + id + ".arff";
+		ArffFileStream stream = new ArffFileStream();
+		stream.arffFileOption.setValue(path);
+		stream.prepareForUse();
+		
+		return stream;
+	}
 }

@@ -12,8 +12,8 @@ public class AverageCurrentDriftIntervalMeasure implements CurrentVolatilityMeas
 	private boolean isDrifting;
 	private int timestamp;
 	private int coolingPeriod;
-//	private int instanceSeen;
-	
+	//	private int instanceSeen;
+
 	public AverageCurrentDriftIntervalMeasure(int bufferSize, CutPointDetector cutPointDetector, int coolingPeriod)
 	{
 		this.buffer = new Buffer(bufferSize);
@@ -21,31 +21,48 @@ public class AverageCurrentDriftIntervalMeasure implements CurrentVolatilityMeas
 		this.isDrifting = false;
 		this.timestamp = 0;
 		this.coolingPeriod = coolingPeriod;
-//		this.instanceSeen = 0;
+		//		this.instanceSeen = 0;
 	}
 
 	@Override
 	public int setInput(double input)
 	{
-		
-		if(timestamp > coolingPeriod && cutPointDetector.setInput(input))
-		{
-			
-			buffer.add(this.timestamp);
-			isDrifting = true;
-			this.timestamp = 0;
-//			instanceSeen = 0
-					
-			return (int)buffer.getMean();
+
+		if(timestamp > coolingPeriod){
+
+			double oldError = cutPointDetector.getEstimation();
+			boolean errorChange = cutPointDetector.setInput(input);
+
+			if(oldError > cutPointDetector.getEstimation())
+			{
+				errorChange = false;
+			}
+
+			if(errorChange)
+			{
+				buffer.add(this.timestamp);
+				isDrifting = true;
+				this.timestamp = 0;
+				//				instanceSeen = 0
+
+				return (int)buffer.getMean();
+			}
+			else
+			{
+				isDrifting = false;
+				this.timestamp++;
+				return -1;
+
+			}
 		}
-		else
-		{
-			
-			
+		else{
 			isDrifting = false;
 			this.timestamp++;
 			return -1;
 		}
+
+
+
 
 	}
 

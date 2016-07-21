@@ -19,7 +19,7 @@ public class StreamGeneratorTaskSamplePool
 		
 		for(int i=0;i<numSamples;i++)
 		{
-			String fileAbsPath = streamPath + "/" + fileName + "/" + i + ".arff";
+			String fileAbsPath = streamPath + "/" + fileName + "/samples/" + i + ".arff";
 			StreamGenerateTask task = new StreamGenerateTask(numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, changes, random.nextInt(), fileAbsPath);
 			this.list.add(task);
 		}

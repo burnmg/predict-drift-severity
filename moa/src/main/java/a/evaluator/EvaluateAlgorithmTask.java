@@ -32,17 +32,16 @@ public class EvaluateAlgorithmTask implements Callable<Integer>
 //		this.resultFolderPath = resultFolderPath;
 //	}
 	
-	public EvaluateAlgorithmTask(AbstractClassifier classifier, String streamName, String resultFolderPath)
+	public EvaluateAlgorithmTask(AbstractClassifier classifier, String streamName , String sampleResultFolderPath)
 	{
 		this.classifier = classifier;
 		ExampleStream stream = Directory.getStreamFromFileByName(streamName);
 		this.streamName = streamName;
-		this.resultFolderPath = resultFolderPath;
+		this.resultFolderPath = sampleResultFolderPath;
 
 		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 1000);
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.sampleFrequencyOption.setValue(100);
-		
 
 	}
 

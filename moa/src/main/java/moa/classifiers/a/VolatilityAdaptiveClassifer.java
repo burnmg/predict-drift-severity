@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.security.PrivilegedActionException;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
@@ -51,11 +52,14 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volIntervalDescriptionWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
+	private BufferedWriter volMeasureWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	// currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(50,
 	// cutPointDetector);
 
 	private MyAbstractClassifier activeClassifier;
+	private MyAbstractClassifier classifier1;
+	private MyAbstractClassifier classifier2;
 
 	private ClassifierSelector classiferSelector;
 
@@ -109,19 +113,24 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void resetLearningImpl()
 	{
-
-		if(false)
+		
+		classifier1 = new HoeffdingTreeADWIN();
+		classifier1.getOptions().resetToDefaults();
+		classifier1.resetLearning();
+		
+		classifier2 = new HoeffdingAdaptiveTree();
+		classifier2.getOptions().resetToDefaults();
+		classifier2.resetLearning();
+		if(true)
 		{
-			this.activeClassifier = new HoeffdingTreeADWIN();
-			activeClassifier.getOptions().resetToDefaults();
-			activeClassifier.resetLearning();
+			activeClassifier = classifier1;
+			activeClassifierIndex = 1;
 		}
 		else
 		{
 
-			this.activeClassifier = new HoeffdingAdaptiveTree();
-			activeClassifier.getOptions().resetToDefaults();
-			activeClassifier.resetLearning();
+			activeClassifier = classifier1;
+			activeClassifierIndex = 2;
 			
 		}
 
@@ -130,14 +139,14 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// this.classifier2 = (AbstractClassifier)
 		// getPreparedClassOption(this.classifier2Option);
 
-		classiferSelector = new DoubleReservoirsClassifierSelector(10, 3000);
+		classiferSelector = new DoubleReservoirsClassifierSelector(10, 0);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
-		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
+//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
-//		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
+		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
 
 		// set writers
 
@@ -159,7 +168,9 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 			currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(dir + "/currentVolLevelDesc.csv"));
 			currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval\n");
-
+			
+			volMeasureWriter = new BufferedWriter(new FileWriter(dir + "/measuresDesc.csv"));
+			volMeasureWriter.write("Instance Index, measure\n");
 			//
 
 			// volIntervalDescriptionWriter
@@ -174,8 +185,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		numInstance = 0;
 		intervalStart = 0;
 
-		activeClassifierIndex = 1;
-
 	}
 
 	// EVAL
@@ -186,8 +195,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
-		// // EVALUATE block 1 7300
-		// long startTime = System.currentTimeMillis();
 		int currentVolatilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
 		
 		if (currentVolatilityMeasure.conceptDrift())
@@ -198,13 +205,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		{
 			noDriftCount++;
 		}
-		// // EVALUATE
-		//// time1 += System.currentTimeMillis() - startTime;
-		//
-		// // EVALUATE block 2 222
-		//// startTime = System.currentTimeMillis();
 
-		// // if there is a shift.
+		// if there is a shift.
 		if (numInstance>switchStartHeatingPeriod && currentVolatilityLevel != -1)
 		{
 			
@@ -214,20 +216,24 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			}
 
 			int decision = classiferSelector.makeDecision(currentVolatilityLevel);
-//			 int decision = 2;
+//			 int decision = 1;
+			
+			if(DEBUG_MODE)
+			{
+				writeToFile(volMeasureWriter, numInstance+","+classiferSelector.getMeasure());
+			}
+			
 
 			if (activeClassifierIndex != decision)
 			{
 				if (decision == 1)
 				{
-					this.activeClassifier = new HoeffdingAdaptiveTree();
-					activeClassifier.getOptions().resetToDefaults();
-					activeClassifier.resetLearning();
+					classifier2.resetLearning();
+					this.activeClassifier = classifier1;
 				} else
 				{
-					this.activeClassifier = new HoeffdingTreeADWIN();
-					activeClassifier.getOptions().resetToDefaults();
-					activeClassifier.resetLearning();
+					classifier1.resetLearning();
+					this.activeClassifier = classifier2;
 				}
 
 				int previousClassifierIndex = activeClassifierIndex;
@@ -265,16 +271,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 		
 		numInstance++;
-
-		// time2 += System.currentTimeMillis() - startTime;
-
-		// EVALUATE block 3 28430
-		// startTime = System.currentTimeMillis();
 		activeClassifier.trainOnInstance(inst);
-		// time3 += System.currentTimeMillis() - startTime;
-		// totalTime += System.currentTimeMillis() - startTime;
-
-		// System.out.println(((ADWIN)cutPointDetector).getEstimation());
 	}
 	
 //	@Override
@@ -393,6 +390,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			switchPointDescriptionWriter.close();
 			volIntervalDescriptionWriter.close();
 			currentVolatilityLevelDumpWriter.close();
+			volMeasureWriter.close();
 		} catch (IOException e)
 		{
 			e.printStackTrace();

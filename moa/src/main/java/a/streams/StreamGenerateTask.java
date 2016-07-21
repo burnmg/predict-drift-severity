@@ -50,7 +50,7 @@ public class StreamGenerateTask implements Callable<Integer>
 		dir.mkdirs();
 
 		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
-				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
+				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir.getParentFile());
 		generator.prepareForUse();
 
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, file);

@@ -136,7 +136,8 @@ public class MyEvaluatePrequential extends MainTask {
     	this.driftWidth = driftWidth;
     	this.resultFolderPath = resultFolderPath;
     	this.criticalCount = 0;
-    	
+    	File resultFolder = new File(resultFolderPath);
+    	resultFolder.mkdirs();
     	try
 		{
 			driftReader = new BufferedReader(new FileReader(this.streamPath+"/driftDescription.csv"));
@@ -270,7 +271,9 @@ public class MyEvaluatePrequential extends MainTask {
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
                 && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) {
         	
-        	if(instancesProcessed%50000==0) System.out.println("Thread#"+Thread.currentThread().getId()+": "+(float)instancesProcessed*100/(stream.estimatedRemainingInstances()+instancesProcessed)+"%");
+        	if(instancesProcessed%50000==0) System.out.println(
+        			"Thread#"+Thread.currentThread().getId()+": "
+        	+(float)instancesProcessed*100/(stream.estimatedRemainingInstances()+instancesProcessed)+"%");
         	
             Example trainInst = stream.nextInstance();
             Example testInst = (Example) trainInst; //.copy();
