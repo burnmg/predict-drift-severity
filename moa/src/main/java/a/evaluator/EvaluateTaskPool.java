@@ -33,7 +33,7 @@ public class EvaluateTaskPool
 		
 		for(int i=0;i<numSamples;i++)
 		{
-			list.add(new EvaluateAlgorithmTask(newClassifier, streamName, i, resultFolderPath + "/" + i));
+			list.add(new EvaluateTask(newClassifier, streamName, i, resultFolderPath + "/" + i));
 		}
 		
 		

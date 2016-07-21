@@ -331,7 +331,6 @@ public class MyEvaluatePrequential extends MainTask {
                 // update statistics
                 this.evaluateTime = time;
                 this.maxMemory = learnerSize > maxMemory? learnerSize : maxMemory;
-                sumMemory += learnerSize;
                 
 
                 if (immediateResultStream != null) {
@@ -357,6 +356,19 @@ public class MyEvaluatePrequential extends MainTask {
             		}
             		
             	}
+            	for(int i=0; i<measurements.length;i++)
+            	{
+            		if(measurements[i].getName().equals("model serialized size (bytes)"))
+            		{
+            			measurement = measurements[i];
+            			 // update statistics
+            			sumMemory += measurement.getValue();
+            			break;
+            		}
+            		
+            	}
+            	
+            	
 
             	if(measurement.getValue()<80)
             	{

@@ -45,7 +45,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v', "Dir.", null, "csv", true);
 
 	private CutPointDetector cutPointDetector;
-	private int switchStartHeatingPeriod = 100000;
+	private int switchStartHeatingPeriod = 1000000;
 	
 	
 	// private BufferedWriter volatitlityDriftWriter;
@@ -207,7 +207,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 
 		// if there is a shift.
-		if (numInstance>switchStartHeatingPeriod && currentVolatilityLevel != -1)
+		if (numInstance > switchStartHeatingPeriod && currentVolatilityLevel != -1)
 		{
 			
 			if (DEBUG_MODE)

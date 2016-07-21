@@ -1,10 +1,13 @@
 package a.streams;
 
 import java.io.File;
+import java.util.Random;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.experimental.ParallelComputer;
 import org.junit.experimental.theories.Theories;
 
 import a.tools.Directory;
@@ -23,7 +26,47 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-		doWork();
+//		generateDataParallel("5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 10);
+//		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
+//		generateDataParallel("5,100,5,5,5,100,5,5,5,100,5,5,5,100", new int[]{5,100,5,5,5,100,5,5,5,100,5,5,5,100}, 1);
+		generateDataParallel("10", new int[]{10}, 1);
+	}
+	
+	public static void generateDataParallel(String name, int[] numDrifts, int numSamples)
+	{
+		
+		
+		
+		
+		ExecutorService executorService = Executors.newFixedThreadPool(8);
+
+		Random ran = new Random();
+		
+		StreamGenerateTask[] tasks = new StreamGenerateTask[numSamples];
+		
+		for(int i=0;i<tasks.length;i++)
+		{
+			String streamName = name +"_"+ i +".arff";
+			tasks[i] = new StreamGenerateTask(10, 2, 5000, 100, 5, numDrifts, ran.nextInt(), 
+					Directory.streamsPath+"/" +streamName+"/" +streamName );
+		}
+		
+		for(Callable<Integer> task : tasks)
+		{
+			executorService.submit(task);
+		}
+		
+		executorService.shutdown();
+		try
+		{
+			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		};
+		
+		System.out.println("Done");
+				
 	}
 
 	public static void doWork()
@@ -65,36 +108,12 @@ public class GenerateDriftData
 //		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,100.arff");
 		
 		int[] numDrifts = {5,50,5,50};
-		generateAbruptDriftData2(20, 2, 500000, 1000, 10, numDrifts, 23341, "5,50,5,50.arff");
+	
 		
-//		int[] numDrifts = {1,100,1,1,1,100,1,1,1};
-//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "1,100,1,1,1,100,1,1,1.arff");
 		
-//		int[] numDrifts = {10,100,10,10,10,100,10,10};
-//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "10,100,10,10,10,100,10,10.arff");
-		
-//		int[] numDrifts = {100,100,10,100,100,100,100,10,100};
-//		generateAbruptDriftData2(20, 2, 500000, 10, 10, numDrifts, 3691, "100,100,10,100,100,100,100,10,100.arff");
-
-//		int[] numDrifts = {5,50};
-//		generateData(2, 10, 2, 10000, 100, 5, numDrifts, 6572, Directory.streamsPath, "5,50.arff");
 		System.out.println("Done!");
 	}
 	
-	public static void circleData(String fileName)
-	{
-		File dir = new File(Directory.root + "Streams/" + fileName);
-		dir.mkdirs();
-		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
-
-		CircleGenerator circleGenerator = new CircleGenerator(12, 3213);
-
-		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(circleGenerator, destFile);
-		task.suppressHeaderOption.unset();
-		task.concatenate.unset();
-		task.prepareForUse();
-		task.doTask();
-	}
 
 	public static void generateData(int numSamples, int numAtt, int numClass, int blockLength, int interleavedWindowSize,
 			int driftAttsNum, int[] changes, int randomSeedInt, String streamPath, String fileName)
@@ -223,5 +242,8 @@ public class GenerateDriftData
 
 		System.out.print("Done");
 	}
+
+
+	
 
 }

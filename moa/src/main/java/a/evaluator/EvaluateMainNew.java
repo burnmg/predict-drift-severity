@@ -122,7 +122,7 @@ public class EvaluateMainNew
 		//streamName format: name/id TODO
 		
 		
-		return new EvaluateAlgorithmTask(classifier, streamName, resultFolder.getAbsolutePath());
+		return new EvaluateTask(classifier, streamName, resultFolder.getAbsolutePath());
 		
 	}
 	

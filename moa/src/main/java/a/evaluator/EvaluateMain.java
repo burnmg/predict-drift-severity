@@ -1,10 +1,13 @@
 package a.evaluator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.omg.CORBA.INTERNAL;
 
 import a.tools.Directory;
 import cutpointdetection.ADWIN;
@@ -19,63 +22,33 @@ public class EvaluateMain
 	final static int VOL_ADAPTIVE_CLASSIFIER = 0;
 	final static int HOEFFDING_ADWIN = 1;
 	final static int HAT = 2;
-	
+
 	public static void main(String[] args) throws Exception
 	{
 		ExecutorService executorService = Executors.newFixedThreadPool(8);
+
 		
-		// tasks
-		Callable[] tasks = {
-//				buildTask("10,100,10,100,10,100,10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("test.arff", HAT),
-//				buildTask("10,100,10,100,10,100,10,100,10,100.arff", HOEFFDING_ADWIN),
-				
-				
-//				buildTask("10,100,10,10,10,100,10,10.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("10,100,10,10,10,100,10,10.arff", HAT),
-//				buildTask("10,100,10,10,10,100,10,10.arff", HOEFFDING_ADWIN),
-//				
-//				buildTask("100,100,10,100,100,100,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("100,100,10,100,100,100,100,10,100.arff", HAT),
-//				buildTask("100,100,10,100,100,100,100,10,100.arff", HOEFFDING_ADWIN),
-				
-				
-				buildTask("5,50,5,50.arff", VOL_ADAPTIVE_CLASSIFIER),
-				buildTask("5,50,5,50.arff", HAT),
-				buildTask("5,50,5,50.arff", HOEFFDING_ADWIN),
-				
-				
-//				buildTask("10,100,10,100.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("10,100,10,100.arff", HAT),
-//				buildTask("10,100,10,100.arff", HOEFFDING_ADWIN),
-				
-//				buildTask("normal.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("normal.arff", HAT),
-//				buildTask("normal.arff", HOEFFDING_ADWIN),
-				
-//				buildTask("normal3.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("rotating.arff", HAT),
-//				buildTask("rotating.arff", HOEFFDING_ADWIN),
-				
-				
-//				buildTask("1drift,500window,4of9drifts.arff", HOEFFDING_ADWIN)
-				
-//				buildTask("1drift,500window,4of9drifts.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("normal3.arff", HAT),
-//				buildTask("3.arff", HOEFFDING_ADWIN),
-//				
-//				buildTask("g10,1000,10,1000,10,1000.arff", VOL_ADAPTIVE_CLASSIFIER),
-//				buildTask("g10,1000,10,1000,10,1000.arff", HAT),
-//				buildTask("g10,1000,10,1000,10,1000.arff", HOEFFDING_ADWIN),
-				
-				};
+		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
-//		tasks[0].call();
-		for(Callable<Integer> task : tasks)
+		// List the tasks here
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HAT, 1));
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
+
+//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HAT, 1));
+//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", VOL_ADAPTIVE_CLASSIFIER, 1));
+		
+//		list.addAll(buildTasksList("10", HAT, 1));
+//		list.addAll(buildTasksList("10", HOEFFDING_ADWIN, 1));
+		list.addAll(buildTasksList("10", VOL_ADAPTIVE_CLASSIFIER, 1));
+		
+		list.get(0).call();
+		for(Callable<Integer> task : list)
 		{
 			executorService.submit(task);
 		}
-		
+
 		executorService.shutdown();
 		try
 		{
@@ -84,8 +57,29 @@ public class EvaluateMain
 		{
 			e.printStackTrace();
 		};
+		
+		
+		//TODO analyse statistics
 	}
-	
+
+	private static ArrayList<Callable<Integer>> buildTasksList(String streamPrefix, int classifierOption, int numSamples)
+	{
+		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>(numSamples);
+		
+		for(int i=0;i<numSamples;i++)
+		{
+			try
+			{
+				list.add(buildTask(streamPrefix+"_"+i+".arff", classifierOption));
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+
 	/**
 	 * 
 	 * @param streamName: give a streamName, it will generate a evaluation task for this stream.
@@ -94,17 +88,17 @@ public class EvaluateMain
 	 */
 	private static Callable<Integer> buildTask(String streamName, int classifierOption) throws Exception
 	{
-		
+
 		File resultFolder = null;
 		AbstractClassifier classifier = null;
-		
+
 		String pathname = Directory.root+"/Results/"+streamName;
-		
+
 		if(classifierOption==HOEFFDING_ADWIN)
 		{
 			resultFolder = new File(pathname+"/HOEFFDING_ADWIN");
 			classifier = new HoeffdingTreeADWIN(new ADWIN());
-//			classifier = new HoeffdingTreeADWIN(new SlidingWindowMonitor(1000, 0.15, 5000));
+			//			classifier = new HoeffdingTreeADWIN(new SlidingWindowMonitor(1000, 0.15, 5000));
 			classifier.getOptions().resetToDefaults();
 		}
 		else if (classifierOption==HAT) 
@@ -118,23 +112,23 @@ public class EvaluateMain
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
 			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN());
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
-			
+
 			classifier = temp;
 		}
 		else 
 		{
 			throw new Exception("Wrong classifier option");
 		}
-		
+
 		resultFolder.mkdirs();
-		
-		
+
+
 		classifier.resetLearning();
-		
-		return new EvaluateAlgorithmTask(classifier, streamName, resultFolder.getAbsolutePath());
-		
+
+		return new EvaluateTask(classifier, streamName, resultFolder.getAbsolutePath());
+
 	}
-	
+
 
 
 }
