@@ -26,10 +26,19 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-//		generateDataParallel("5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 10);
+//		generateDataParallel("100mblock_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 1);
 //		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
-//		generateDataParallel("5,100,5,5,5,100,5,5,5,100,5,5,5,100", new int[]{5,100,5,5,5,100,5,5,5,100,5,5,5,100}, 1);
-		generateDataParallel("10", new int[]{10}, 1);
+//		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
+//		generateDataParallel("10", new int[]{10}, 1);
+//		generateDataParallel("100,100,50,100,100,100,100,50,100,100,100", new int[]{100,100,50,100,100,100,100,50,100,100,100}, 1);
+//		generateDataParallel("5,100", new int[]{5,100},1);
+		
+//		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
+		
+		generateDataParallel("100mblock_200,10,200,200,200,10,200,200,200,200,10", new int[]{200,10,200,200,200,10,200,200,200,200,10}, 1);
+		
+		
+		System.out.println("Done");
 	}
 	
 	public static void generateDataParallel(String name, int[] numDrifts, int numSamples)
@@ -47,7 +56,7 @@ public class GenerateDriftData
 		for(int i=0;i<tasks.length;i++)
 		{
 			String streamName = name +"_"+ i +".arff";
-			tasks[i] = new StreamGenerateTask(10, 2, 5000, 100, 5, numDrifts, ran.nextInt(), 
+			tasks[i] = new StreamGenerateTask(10, 2, 1000000, 100, 5, numDrifts, ran.nextInt(), 
 					Directory.streamsPath+"/" +streamName+"/" +streamName );
 		}
 		
@@ -65,7 +74,7 @@ public class GenerateDriftData
 			e.printStackTrace();
 		};
 		
-		System.out.println("Done");
+		
 				
 	}
 

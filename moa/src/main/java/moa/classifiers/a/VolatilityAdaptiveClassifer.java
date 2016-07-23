@@ -52,7 +52,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private BufferedWriter switchPointDescriptionWriter;
 	private BufferedWriter volIntervalDescriptionWriter;
 	private BufferedWriter currentVolatilityLevelDumpWriter;
-	private BufferedWriter volMeasureWriter;
 	private CurrentVolatilityMeasure currentVolatilityMeasure;
 	// currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(50,
 	// cutPointDetector);
@@ -71,18 +70,17 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	private int intervalStart;
 
+	private int allowableVolFluctuation;
+
 	// private ParameterInjector parameterInjector;
 
 	static final boolean DEBUG_MODE = true;
 
-	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector)
+	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, int allowableVolFluctuation)
 	{
 		this.cutPointDetector = cutPointDetector;
+		this.allowableVolFluctuation = allowableVolFluctuation;
 	}
-	// public VolatilityAdaptiveClassifer(ParameterInjector p)
-	// {
-	// this.parameterInjector = p;
-	// }
 
 	@Override
 	public boolean isRandomizable()
@@ -139,7 +137,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// this.classifier2 = (AbstractClassifier)
 		// getPreparedClassOption(this.classifier2Option);
 
-		classiferSelector = new DoubleReservoirsClassifierSelector(10, 5000);
+		classiferSelector = new DoubleReservoirsClassifierSelector(10, allowableVolFluctuation);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
@@ -167,10 +165,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			volIntervalDescriptionWriter.write("Head,Tail,Mode\n");
 
 			currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(dir + "/currentVolLevelDesc.csv"));
-			currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval\n");
+			currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval,Classifier Selector Threshold\n");
 			
-			volMeasureWriter = new BufferedWriter(new FileWriter(dir + "/measuresDesc.csv"));
-			volMeasureWriter.write("Instance Index, measure\n");
 			//
 
 			// volIntervalDescriptionWriter
@@ -212,16 +208,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			
 			if (DEBUG_MODE)
 			{
-				writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "\n");
+				writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "," + classiferSelector.getThreshold() + "\n");
 			}
 
 			int decision = classiferSelector.makeDecision(currentVolatilityLevel);
 //			 int decision = 1;
 			
-			if(DEBUG_MODE)
-			{
-				writeToFile(volMeasureWriter, numInstance+","+classiferSelector.getMeasure() +"\n");
-			}
 			
 
 			if (activeClassifierIndex != decision)
@@ -252,7 +244,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 					
 					
 				}
-				if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getMeasure()))
+				if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getThreshold()))
 				{
 					this.activeClassifier = new HoeffdingTreeADWIN();
 					activeClassifier.getOptions().resetToDefaults();
@@ -390,7 +382,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			switchPointDescriptionWriter.close();
 			volIntervalDescriptionWriter.close();
 			currentVolatilityLevelDumpWriter.close();
-			volMeasureWriter.close();
 		} catch (IOException e)
 		{
 			e.printStackTrace();

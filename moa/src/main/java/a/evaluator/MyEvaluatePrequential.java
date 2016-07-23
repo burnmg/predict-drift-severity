@@ -70,18 +70,6 @@ public class MyEvaluatePrequential extends MainTask {
 
     private static final long serialVersionUID = 1L;
 
-//    public ClassOption learnerOption = new ClassOption("learner", 'l',
-//            "Learner to train.", Classifier.class, "moa.classifiers.bayes.NaiveBayes");
-
-//    public ClassOption streamOption = new ClassOption("stream", 's',
-//            "Stream to learn from.", ExampleStream.class,
-//            "generators.RandomTreeGenerator");
-
-//    public ClassOption evaluatorOption = new ClassOption("evaluator", 'e',
-//            "Classification performance evaluation method.",
-//            LearningPerformanceEvaluator.class,
-//            "WindowClassificationPerformanceEvaluator");
-
     public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i',
             "Maximum number of instances to test/train on  (-1 = no limit).",
             100000000, -1, Integer.MAX_VALUE);

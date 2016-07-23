@@ -26,12 +26,12 @@ public class EvaluateTask implements Callable<Integer>
 	private String streamName;
 
 
-//	public EvaluateAlgorithmTask(String streamName, String resultFolderPath)
-//	{
-//		this.streamName = streamName;
-//		this.resultFolderPath = resultFolderPath;
-//	}
-	
+	//	public EvaluateAlgorithmTask(String streamName, String resultFolderPath)
+	//	{
+	//		this.streamName = streamName;
+	//		this.resultFolderPath = resultFolderPath;
+	//	}
+
 	public EvaluateTask(AbstractClassifier classifier, String streamName , String sampleResultFolderPath)
 	{
 		this.classifier = classifier;
@@ -45,65 +45,80 @@ public class EvaluateTask implements Callable<Integer>
 
 	}
 
-	
+
 	@Override
 	public Integer call()
 	{
-		evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
-		double[] coverageEvaluateResults = evaluateVolIntervalCoverage();
-		double overallCovergage = 0;
-		double highCoverage = 0;
-		double lowCoverage = 0;
 		
-		if(coverageEvaluateResults!=null)
-		{
-			overallCovergage = coverageEvaluateResults[0];
-			lowCoverage = coverageEvaluateResults[1];
-			highCoverage = coverageEvaluateResults[2];
-		}
-		else
-		{
-			overallCovergage = -1;
-			lowCoverage = -1;
-			highCoverage = -1;
-		}
-		
-		double meanAcc = evaluatePrequential.getMeanAcc();
-		double meanMemory = evaluatePrequential.getMeanMemory();
-		double maxMemory = evaluatePrequential.getMaxMemory();
-		double time = evaluatePrequential.getTime();
-		int criticalPointCount = evaluatePrequential.getCriticalCount();
-		
-		// output the result to summary file. 
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
-			writer.write("mean accuracy:"+meanAcc);
-			writer.newLine();
-			writer.write("mean memory:"+meanMemory);
-			writer.newLine();
-			writer.write("max memory:"+maxMemory);
-			writer.newLine();
-			writer.write("time:"+time);
-			writer.newLine();
-			writer.write("Critical Point Counts:"+criticalPointCount);
-			writer.newLine();
-			writer.write("Overall Correct Coverage:"+overallCovergage);
-			writer.newLine();
-			writer.write("Low Correct Coverage:"+lowCoverage);
-			writer.newLine();
-			writer.write("High Correct Coverage:"+highCoverage);
-			writer.newLine();
+		try{
 			
-			writer.close();
-		} catch (IOException e)
+			evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
+			double[] coverageEvaluateResults = evaluateVolIntervalCoverage();
+			double overallCovergage = 0;
+			double highCoverage = 0;
+			double lowCoverage = 0;
+			double simpleEvaluateCoverage = 0;
+
+			if(coverageEvaluateResults!=null)
+			{
+				overallCovergage = coverageEvaluateResults[0];
+				lowCoverage = coverageEvaluateResults[1];
+				highCoverage = coverageEvaluateResults[2];
+				simpleEvaluateCoverage = coverageEvaluateResults[3];
+			}
+			else
+			{
+				overallCovergage = -1;
+				lowCoverage = -1;
+				highCoverage = -1;
+				simpleEvaluateCoverage = -1;
+			}
+
+			double meanAcc = evaluatePrequential.getMeanAcc();
+			double meanMemory = evaluatePrequential.getMeanMemory();
+			double maxMemory = evaluatePrequential.getMaxMemory();
+			double time = evaluatePrequential.getTime();
+			int criticalPointCount = evaluatePrequential.getCriticalCount();
+
+			// output the result to summary file. 
+			try
+			{
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
+				writer.write("mean accuracy:"+meanAcc);
+				writer.newLine();
+				writer.write("mean memory:"+meanMemory);
+				writer.newLine();
+				writer.write("max memory:"+maxMemory);
+				writer.newLine();
+				writer.write("time:"+time);
+				writer.newLine();
+				writer.write("Critical Point Counts:"+criticalPointCount);
+				writer.newLine();
+				writer.write("Overall Correct Coverage:"+overallCovergage);
+				writer.newLine();
+				writer.write("Simple Evaluate:"+simpleEvaluateCoverage);
+				writer.newLine();
+				writer.write("Low Correct Coverage:"+lowCoverage);
+				writer.newLine();
+				writer.write("High Correct Coverage:"+highCoverage);
+				writer.newLine();
+
+				writer.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+		}
+		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+
+
 		return 0;
 	}
-	
+
 	/**
 	 * 
 	 * @return [0] overall measure [1] low measures [2] high measure
@@ -111,8 +126,8 @@ public class EvaluateTask implements Callable<Integer>
 	public double[] evaluateVolIntervalCoverage()
 	{
 		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return null;
-		
-		
+
+
 		//		 evaluate the volatility interval coverage
 		BufferedReader readActual;
 		BufferedReader readExpected;
@@ -143,8 +158,9 @@ public class EvaluateTask implements Callable<Integer>
 		CorreteModeCoverageEvaluator evaluateCorreteModeCoverage = new CorreteModeCoverageEvaluator();
 		double result1 = evaluateCorreteModeCoverage.evalutate(expected, actual);
 		double[] result23 = evaluateCorreteModeCoverage.evalutateLowAndHigh(expected, actual);
-		
-		return new double[]{result1, result23[0], result23[1]};
+		double simpleEvaluateResult = evaluateCorreteModeCoverage.simpleEvalutate(expected, actual);
+
+		return new double[]{result1, result23[0], result23[1], simpleEvaluateResult};
 	}
 
 	private int[][] load2DArray(BufferedReader br) throws IOException

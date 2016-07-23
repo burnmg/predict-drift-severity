@@ -33,7 +33,7 @@ public class DoubleReservoirsClassifierSelector implements ClassifierSelector {
 	}
 
 	@Override
-	public double getMeasure()
+	public double getThreshold()
 	{
 
 		return doubleReservoirs.getMean();

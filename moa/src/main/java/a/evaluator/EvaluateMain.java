@@ -25,7 +25,7 @@ public class EvaluateMain
 
 	public static void main(String[] args) throws Exception
 	{
-		ExecutorService executorService = Executors.newFixedThreadPool(8);
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
@@ -33,17 +33,38 @@ public class EvaluateMain
 		// List the tasks here
 //		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HAT, 1));
 //		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		list.addAll(buildTasksList("", "5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
 
 //		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HAT, 1));
 //		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HOEFFDING_ADWIN, 1));
 //		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		
+//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", HAT, 1));
+//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HAT, 1));
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
 		
-//		list.addAll(buildTasksList("10", HAT, 1));
-//		list.addAll(buildTasksList("10", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("10", VOL_ADAPTIVE_CLASSIFIER, 1));
+		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HAT, 1));
+		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
+		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
 		
-		list.get(0).call();
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
+		
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
+		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
+		
+		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HAT, 1));
+		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
+		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", VOL_ADAPTIVE_CLASSIFIER, 1));
+
+		
+//		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{
 			executorService.submit(task);
@@ -58,11 +79,13 @@ public class EvaluateMain
 			e.printStackTrace();
 		};
 		
+		System.out.println("EvaluateMain End!");
+		
 		
 		//TODO analyse statistics
 	}
 
-	private static ArrayList<Callable<Integer>> buildTasksList(String streamPrefix, int classifierOption, int numSamples)
+	private static ArrayList<Callable<Integer>> buildTasksList(String resultPathPrefix, String streamPrefix, int classifierOption, int numSamples)
 	{
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>(numSamples);
 		
@@ -70,7 +93,7 @@ public class EvaluateMain
 		{
 			try
 			{
-				list.add(buildTask(streamPrefix+"_"+i+".arff", classifierOption));
+				list.add(buildTask(resultPathPrefix, streamPrefix+"_"+i+".arff", classifierOption));
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -86,13 +109,13 @@ public class EvaluateMain
 	 * @return
 	 * @throws Exception 
 	 */
-	private static Callable<Integer> buildTask(String streamName, int classifierOption) throws Exception
+	private static Callable<Integer> buildTask(String resultPathPrefix, String streamName, int classifierOption) throws Exception
 	{
 
 		File resultFolder = null;
 		AbstractClassifier classifier = null;
 
-		String pathname = Directory.root+"/Results/"+streamName;
+		String pathname = Directory.root+"/Results/"+ resultPathPrefix + streamName;
 
 		if(classifierOption==HOEFFDING_ADWIN)
 		{
@@ -110,7 +133,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN());
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), 5000);
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 
 			classifier = temp;

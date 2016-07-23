@@ -65,6 +65,33 @@ public class CorreteModeCoverageEvaluator
 		
 		return (double)numOverlaps/streamLength;
 	}
+	
+	public double simpleEvalutate(int[][] expected, int[][] actual)
+	{
+		int numOverlaps = 0;
+		int streamLength = 0;
+		for(int i=0;i<expected.length;i++)
+		{
+			streamLength += expected[i][1] - expected[i][0] + 1;
+			for(int j=0;j<actual.length;j++)
+			{
+				if((!(actual[j][0] < expected[i][0] && actual[j][1] < expected[i][1])
+						|| 
+						!(actual[j][0] > expected[i][0] && actual[j][1] > expected[i][1]))
+						&& actual[j][2] == expected[i][2]
+						)
+				{
+					int overlapStart = actual[j][0] < expected[i][0] ? expected[i][0] : actual[j][0];
+					int overlapEnd = actual[j][1] > expected[i][1] ? expected[i][1] : actual[j][1];
+					
+					numOverlaps += overlapEnd - overlapStart + 1;
+				}
+			}
+		}
+		
+		return (double) numOverlaps/streamLength;
+	}
+	
 	/**
 	 * Evaluate percentage of using the right volatility mode. 
 	 * 
@@ -151,8 +178,8 @@ public class CorreteModeCoverageEvaluator
 		}
 		
 		
-		return new double[] {lowStreamLength!=0 ? lowOverlaps/lowStreamLength:-1, 
-				highStreamLength!=0 ? highOverlaps/highStreamLength:-1};
+		return new double[] {lowStreamLength!=0 ? (double)lowOverlaps/lowStreamLength:-1, 
+				highStreamLength!=0 ? (double)highOverlaps/highStreamLength:-1};
 	}
 
 }
