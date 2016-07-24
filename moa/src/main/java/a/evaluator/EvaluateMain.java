@@ -7,8 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.omg.CORBA.INTERNAL;
-
 import a.tools.Directory;
 import cutpointdetection.ADWIN;
 import moa.classifiers.AbstractClassifier;
@@ -31,39 +29,26 @@ public class EvaluateMain
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
 		// List the tasks here
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HAT, 1));
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
-
-//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HAT, 1));
-//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("5,100,5,5,5,100,5,5,5,100,5,5,5,100", VOL_ADAPTIVE_CLASSIFIER, 1));
+		
+//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HAT, 1));
+//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
 //		
-//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", HAT, 1));
-//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("100,100,50,100,100,100,100,50,100,100,100", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
 //		
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HAT, 1));
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
+//		
+//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HAT, 1));
+//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
 		
-		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HAT, 1));
-		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
-		
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-		
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-		
-		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HAT, 1));
-		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", VOL_ADAPTIVE_CLASSIFIER, 1));
-
-		
+		list.addAll(buildTasksList("", "test", VOL_ADAPTIVE_CLASSIFIER, 5));
+		list.addAll(buildTasksList("", "test", HOEFFDING_ADWIN, 5));
+		list.addAll(buildTasksList("", "test", HAT, 5));
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{

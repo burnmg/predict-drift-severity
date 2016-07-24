@@ -35,7 +35,9 @@ public class GenerateDriftData
 		
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 		
-		generateDataParallel("100mblock_200,10,200,200,200,10,200,200,200,200,10", new int[]{200,10,200,200,200,10,200,200,200,200,10}, 1);
+//		generateDataParallel("100mblock_200,10,200,200,200,10,200,200,200,200,10", new int[]{200,10,200,200,200,10,200,200,200,200,10}, 1);
+		
+		generateDataParallel("test", new int[]{1}, 5);
 		
 		
 		System.out.println("Done");
@@ -56,7 +58,7 @@ public class GenerateDriftData
 		for(int i=0;i<tasks.length;i++)
 		{
 			String streamName = name +"_"+ i +".arff";
-			tasks[i] = new StreamGenerateTask(10, 2, 1000000, 100, 5, numDrifts, ran.nextInt(), 
+			tasks[i] = new StreamGenerateTask(10, 2, 100000, 100, 5, numDrifts, ran.nextInt(), 
 					Directory.streamsPath+"/" +streamName+"/" +streamName );
 		}
 		
