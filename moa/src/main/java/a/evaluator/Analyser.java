@@ -89,6 +89,14 @@ public class Analyser
 				
 			}
 		}
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		
 		for(String key : algorithmStatsSummaries.keySet())
 		{
 			String algorihtmName = key;
