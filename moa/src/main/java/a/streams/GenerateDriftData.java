@@ -26,7 +26,7 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 1);
+		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 100);
 //		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 //		generateDataParallel("10", new int[]{10}, 1);

@@ -66,6 +66,8 @@ public class EvaluateMain
 		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
 		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
 		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HAT, 1));
+		
+		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{
