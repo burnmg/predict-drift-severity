@@ -26,7 +26,7 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-//		generateDataParallel("100mblock_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 1);
+		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 1);
 //		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 //		generateDataParallel("10", new int[]{10}, 1);
@@ -37,7 +37,7 @@ public class GenerateDriftData
 		
 //		generateDataParallel("100noise", new int[]{1}, 1);
 		
-		generateDataParallel("50noise", new int[]{1}, 1);
+//		generateDataParallel("50noise", new int[]{}, 1);
 		
 		System.out.println("Done");
 	}
@@ -45,10 +45,10 @@ public class GenerateDriftData
 	public static void generateDataParallel(String name, int[] numDrifts, int numSamples)
 	{
 		
-		int noisePercentage = 50;
+		int noisePercentage = 5;
 		int numAtt = 10;
 		int numClass = 2;
-		int blockLength = 500000;
+		int blockLength = 1000000;
 		int interleavedWindowSize = 100;
 		int driftAttsNum = 5;
 		

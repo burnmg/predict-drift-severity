@@ -23,7 +23,7 @@ public class Analyser
 
 	public static void main(String[] args)
 	{
-		new Analyser().analyse(Directory.resultFolderPath, "", "test");
+		new Analyser().analyse(Directory.resultFolderPath, "", "100mblock_5noise_5,50,5,50,5,50,5,50");
 
 	}
 	
@@ -73,7 +73,7 @@ public class Analyser
 						String[] pair = line.split(":");
 						
 						algorithmStatsSummaries.get(algorithmsResultFolders[j].getName()).add(pair[0], Double.parseDouble(pair[1]));
-						// TODO
+					
 					}
 					
 					reader.close();

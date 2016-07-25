@@ -52,6 +52,8 @@ import moa.tasks.MainTask;
 import moa.tasks.TaskMonitor;
 
 import com.yahoo.labs.samoa.instances.Instance;
+
+import meka.core.M;
 import moa.core.Utils;
 
 /**
@@ -114,6 +116,7 @@ public class MyEvaluatePrequential extends MainTask {
     private int meanMemory;
     private int maxMemory;
     private double evaluateTime;
+    private double meanAccuracyInDrift;
   
     
     public MyEvaluatePrequential(Learner learner, ExampleStream stream, String streamPath, String resultFolderPath, int driftWidth)
@@ -190,8 +193,8 @@ public class MyEvaluatePrequential extends MainTask {
                 return learningCurve;
             }
         }
-        //End New for prequential methods
-
+        //End New for prequential methods0;
+        
         learner.setModelContext(stream.getHeader());
         int maxInstances = this.instanceLimitOption.getValue();
         long instancesProcessed = 0;
@@ -254,6 +257,8 @@ public class MyEvaluatePrequential extends MainTask {
         int numSamples = 0;
         int sumAcc = 0;
         int sumMemory = 0;
+        int sumAccInDrift = 0;
+        int numDriftSamples = 0;
         
         while (stream.hasMoreInstances()
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
@@ -332,14 +337,16 @@ public class MyEvaluatePrequential extends MainTask {
                 
                 //collect accuracy
             	Measurement[] measurements = evaluator.getPerformanceMeasurements();
-            	Measurement measurement = null;
+            	Measurement modelSizeMeasurement = null;
+            	Measurement classificationCorrectMeasurement = null;
+            	
             	for(int i=0; i<measurements.length;i++)
             	{
             		if(measurements[i].getName().equals("classifications correct (percent)"))
             		{
-            			measurement = measurements[i];
+            			classificationCorrectMeasurement = measurements[i];
             			 // update statistics
-            			sumAcc += measurement.getValue();
+            			sumAcc += classificationCorrectMeasurement.getValue();
             			break;
             		}
             		
@@ -348,9 +355,9 @@ public class MyEvaluatePrequential extends MainTask {
             	{
             		if(measurements[i].getName().equals("model serialized size (bytes)"))
             		{
-            			measurement = measurements[i];
+            			modelSizeMeasurement = measurements[i];
             			 // update statistics
-            			sumMemory += measurement.getValue();
+            			sumMemory += modelSizeMeasurement.getValue();
             			break;
             		}
             		
@@ -358,7 +365,7 @@ public class MyEvaluatePrequential extends MainTask {
             	
             	
 
-            	if(measurement.getValue()<80)
+            	if(classificationCorrectMeasurement.getValue()<80)
             	{
             		try{
             			if(firstCriticalPointWrite)
@@ -381,6 +388,7 @@ public class MyEvaluatePrequential extends MainTask {
                 if(instancesProcessed >= driftCentre && instancesProcessed <= driftCentre + driftWidth)
                 {
                 	
+                	
                 	try
     				{
 
@@ -395,6 +403,9 @@ public class MyEvaluatePrequential extends MainTask {
     				{
     					e.printStackTrace();
     				}
+                	
+                	sumAccInDrift += classificationCorrectMeasurement.getValue();
+                	numDriftSamples++;
                 }
                 String line = null;
                 try
@@ -443,6 +454,7 @@ public class MyEvaluatePrequential extends MainTask {
         learner.cleanup();
         meanAccuracy = sumAcc/numSamples;
         meanMemory = sumMemory/numSamples;
+        meanAccuracyInDrift = sumAccInDrift/numDriftSamples;
         
         // close
         try
@@ -493,6 +505,11 @@ public class MyEvaluatePrequential extends MainTask {
 	public int getCriticalCount()
 	{
 		return criticalCount;
+	}
+	
+	public double getMeanAccInDrifts()
+	{
+		return meanAccuracyInDrift;
 	}
     
 //	private void writeToFile(BufferedWriter bw, String str)

@@ -78,6 +78,7 @@ public class EvaluateTask implements Callable<Integer>
 			double meanMemory = evaluatePrequential.getMeanMemory();
 			double maxMemory = evaluatePrequential.getMaxMemory();
 			double time = evaluatePrequential.getTime();
+			double meanAccInDrifts = evaluatePrequential.getMeanAccInDrifts();
 			int criticalPointCount = evaluatePrequential.getCriticalCount();
 
 			// output the result to summary file. 
@@ -85,6 +86,8 @@ public class EvaluateTask implements Callable<Integer>
 			{
 				BufferedWriter writer = new BufferedWriter(new FileWriter(this.resultFolderPath+"/summary.txt", false));
 				writer.write("mean accuracy:"+meanAcc);
+				writer.newLine();
+				writer.write("mean accuracy in drift periods:"+meanAccInDrifts);
 				writer.newLine();
 				writer.write("mean memory:"+meanMemory);
 				writer.newLine();
@@ -102,6 +105,8 @@ public class EvaluateTask implements Callable<Integer>
 				writer.newLine();
 				writer.write("High Correct Coverage:"+highCoverage);
 				writer.newLine();
+				
+				
 
 				writer.close();
 			} catch (IOException e)
