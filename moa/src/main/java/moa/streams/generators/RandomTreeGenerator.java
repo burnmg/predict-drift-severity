@@ -100,6 +100,13 @@ InstanceStream {
 			'm',
 			"",
 			0.2, 0.0, 1.0);
+	
+	public IntOption noiseOption = new IntOption("noise",
+			'n',
+			"In percentage",
+			0, 0, 100);
+	
+	
 
 	//    public IntOption partialDriftRandomSeedOption = new IntOption(
 	//            "instanceRandomSeed", 't',
@@ -175,8 +182,15 @@ InstanceStream {
 					: this.instanceRandom.nextDouble();
 			inst.setValue(i, attVals[i]);
 		}
+		int classLabel = classifyInstance(this.treeRoot, attVals);
 		inst.setDataset(header);
-		inst.setClassValue(classifyInstance(this.treeRoot, attVals));
+		
+		//noise
+        if ((1 + (this.instanceRandom.nextInt(100))) <= this.noiseOption.getValue()) {
+            classLabel = (classLabel == 0 ? 1 : 0);
+        }
+        inst.setClassValue(classLabel);
+		
 		return new InstanceExample(inst);
 	}
 

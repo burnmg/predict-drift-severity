@@ -7,7 +7,7 @@ import a.tools.Directory;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 
-public class StreamGenerateTask implements Callable<Integer>
+public class GenerateStreamTask implements Callable<Integer>
 {
 
 
@@ -19,11 +19,12 @@ public class StreamGenerateTask implements Callable<Integer>
 	private int[] changes;
 	private int randomSeedInt;
 	private String fileAbsPath;
+	private int noisePercentage;
 	
 
 
-	public StreamGenerateTask(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
-			int driftAttsNum, int[] changes, int randomSeedInt, String fileAbsPath)
+	public GenerateStreamTask(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
+			int driftAttsNum, int[] changes, int randomSeedInt, String fileAbsPath, int noisePercentage)
 	{
 		this.numAtt = numAtt;
 		this.numClass = numClass;
@@ -33,6 +34,7 @@ public class StreamGenerateTask implements Callable<Integer>
 		this.changes = changes;
 		this.randomSeedInt = randomSeedInt;
 		this.fileAbsPath = fileAbsPath;
+		this.noisePercentage = noisePercentage;
 	}
 
 	@Override
@@ -50,7 +52,7 @@ public class StreamGenerateTask implements Callable<Integer>
 		dir.mkdirs();
 
 		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
-				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
+				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, noisePercentage);
 		generator.prepareForUse();
 
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, file);

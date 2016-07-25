@@ -48,7 +48,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	}
 	
 	public VolatilityChangeStreamGenerator(int numAtt, int numClass, int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt, int startClassifier, File descriptionFileDir)
+			int randomSeedInt, int startClassifier, File descriptionFileDir, int noisePercentage)
 	{
 		this.currentBlockIndex = 0;
 		this.numberInstance = 0;
@@ -69,6 +69,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		currentBlock.numDriftAttsOption.setValue(driftAttsNum);
 		currentBlock.drifIntOptiontRandomSeedOption.setValue(randomSeedInt);
 		currentBlock.driftRandom = random;
+		currentBlock.noisePercentageOption.setValue(noisePercentage);
 		
 		//special for first block
 		currentBlock.initStream1AndStream2();

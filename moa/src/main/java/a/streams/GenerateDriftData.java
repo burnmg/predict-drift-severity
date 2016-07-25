@@ -35,8 +35,9 @@ public class GenerateDriftData
 		
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 		
-		generateDataParallel("100mblock_200,10,200,200,200,10,200,200,200,200,10", new int[]{200,10,200,200,200,10,200,200,200,200,10}, 1);
+//		generateDataParallel("100noise", new int[]{1}, 1);
 		
+		generateDataParallel("50noise", new int[]{1}, 1);
 		
 		System.out.println("Done");
 	}
@@ -44,20 +45,26 @@ public class GenerateDriftData
 	public static void generateDataParallel(String name, int[] numDrifts, int numSamples)
 	{
 		
-		
+		int noisePercentage = 50;
+		int numAtt = 10;
+		int numClass = 2;
+		int blockLength = 500000;
+		int interleavedWindowSize = 100;
+		int driftAttsNum = 5;
 		
 		
 		ExecutorService executorService = Executors.newFixedThreadPool(8);
 
 		Random ran = new Random();
 		
-		StreamGenerateTask[] tasks = new StreamGenerateTask[numSamples];
+		GenerateStreamTask[] tasks = new GenerateStreamTask[numSamples];
 		
 		for(int i=0;i<tasks.length;i++)
 		{
 			String streamName = name +"_"+ i +".arff";
-			tasks[i] = new StreamGenerateTask(10, 2, 1000000, 100, 5, numDrifts, ran.nextInt(), 
-					Directory.streamsPath+"/" +streamName+"/" +streamName );
+
+			tasks[i] = new GenerateStreamTask(numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, numDrifts, ran.nextInt(), 
+					Directory.streamsPath+"/" +streamName+"/" +streamName, noisePercentage);
 		}
 		
 		for(Callable<Integer> task : tasks)
@@ -148,24 +155,24 @@ public class GenerateDriftData
 		
 	}
 	
-	public static void generateAbruptDriftData2(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
-			int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
-	{
-		File dir = new File(Directory.root + "Streams/" + fileName);
-		dir.mkdirs();
-		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
-
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
-				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir);
-		generator.prepareForUse();
-
-		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
-		task.suppressHeaderOption.unset();
-		task.concatenate.unset();
-		task.prepareForUse();
-		task.doTask();
-
-	}
+//	public static void generateAbruptDriftData2(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
+//			int driftAttsNum, int[] changes, int randomSeedInt, String fileName)
+//	{
+//		File dir = new File(Directory.root + "Streams/" + fileName);
+//		dir.mkdirs();
+//		File destFile = new File(dir.getAbsolutePath() + '/' + fileName);
+//
+//		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
+//				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, 1, dir, 5);
+//		generator.prepareForUse();
+//
+//		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, destFile);
+//		task.suppressHeaderOption.unset();
+//		task.concatenate.unset();
+//		task.prepareForUse();
+//		task.doTask();
+//
+//	}
 	
 	public static void generateGradualDriftData(int blockLength, int interleavedWindowSize, int driftAttsNum,
 			int[] changes, int randomSeedInt, String fileName, double mag, int sigma)

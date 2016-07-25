@@ -102,13 +102,6 @@ InstanceStream{
 	private InstanceStream getInitStream()
 	{
 		
-//		DriftingHyperplaneGenerator newStream = new DriftingHyperplaneGenerator();
-//		newStream.getOptions().resetToDefaults();
-//		newStream.numClassesOption = this.numClassesOption;
-//		newStream.numAttsOption = this.numAttsOption;
-//		newStream.instanceRandomSeedOption.setValue(drifIntOptiontRandomSeedOption.getValue());
-//		newStream.noisePercentageOption = this.noisePercentageOption;
-//		newStream.prepareForUse();
 		
 		RandomTreeGenerator newStream = new RandomTreeGenerator();
 		newStream.getOptions().resetToDefaults();
@@ -117,6 +110,7 @@ InstanceStream{
 		newStream.numNominalsOption.setValue(0);
 		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
 		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
+		newStream.noiseOption = noisePercentageOption;
 		newStream.prepareForUse();
 		
 		return newStream;
@@ -145,15 +139,6 @@ InstanceStream{
 	{
 		InstanceStream newStream = (InstanceStream) stream.copy();
 		((RandomTreeGenerator)newStream).addPartialDrift();
-//		
-//		RandomTreeGenerator newStream = new RandomTreeGenerator();
-//		newStream.getOptions().resetToDefaults();
-//		newStream.numClassesOption = this.numClassesOption;
-//		newStream.numNumericsOption = this.numAttsOption;
-//		newStream.numNominalsOption.setValue(0);
-//		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
-//		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
-//		newStream.prepareForUse();
 		
 		return newStream;
 	}
