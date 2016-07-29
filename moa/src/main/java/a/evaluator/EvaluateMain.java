@@ -36,9 +36,13 @@ public class EvaluateMain
 //		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 50, 0));
 //		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HAT, 50, 0));
 		
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HOEFFDING_ADWIN, 50, 0));
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HAT, 50, 0));		
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HOEFFDING_ADWIN, 50, 0));
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HAT, 50, 0));		
+		
+		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", HOEFFDING_ADWIN, 50, 0));
+		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", HAT, 50, 0));		
 		
 //		list.addAll(buildTasksList("", "test", HOEFFDING_ADWIN, 1, 0));
 		

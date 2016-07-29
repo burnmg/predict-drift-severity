@@ -2,7 +2,7 @@ package a.evaluator;
 
 import a.streams.GenerateDriftData;
 
-public class CMD
+public class Main
 {
 	public static void main(String args[]) throws Exception
 	{

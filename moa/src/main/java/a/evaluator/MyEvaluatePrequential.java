@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigInteger;
 
 import moa.core.Example;
 import moa.core.Measurement;
@@ -323,8 +324,7 @@ public class MyEvaluatePrequential extends MainTask {
                 
                 // update statistics
                 this.evaluateTime = time;
-                this.maxMemory = learnerSize > maxMemory ? learnerSize : maxMemory;
-                
+
 
                 if (immediateResultStream != null) {
                     if (firstDump) {
@@ -350,14 +350,14 @@ public class MyEvaluatePrequential extends MainTask {
 //            		}
 //            		
 //            	}
-                System.out.println(learningCurve.getMeasurement(learningCurve.numEntries() - 1, 4));
                 sumAcc += learningCurve.getMeasurement(learningCurve.numEntries() - 1, 4);
             	
-            	sumMemory += learningCurve.getMeasurement(learningCurve.numEntries() - 1, 9);
-            	
+                int memory = (int)learningCurve.getMeasurement(learningCurve.numEntries() - 1, 9);
+            	sumMemory += memory;
+                this.maxMemory = memory > maxMemory ? memory : maxMemory;
             	
 
-            	if(learningCurve.getMeasurement(0, 4)<80)
+            	if(learningCurve.getMeasurement(learningCurve.numEntries() -1, 4)<80)
             	{
             		try{
             			if(firstCriticalPointWrite)
