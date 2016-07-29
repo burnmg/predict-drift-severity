@@ -323,7 +323,7 @@ public class MyEvaluatePrequential extends MainTask {
                 
                 // update statistics
                 this.evaluateTime = time;
-                this.maxMemory = learnerSize > maxMemory? learnerSize : maxMemory;
+                this.maxMemory = learnerSize > maxMemory ? learnerSize : maxMemory;
                 
 
                 if (immediateResultStream != null) {
@@ -336,36 +336,28 @@ public class MyEvaluatePrequential extends MainTask {
                 }
                 
                 //collect accuracy
-            	Measurement[] measurements = evaluator.getPerformanceMeasurements();
-            	Measurement modelSizeMeasurement = null;
-            	Measurement classificationCorrectMeasurement = null;
+//            	Measurement[] measurements = evaluator.getPerformanceMeasurements();
+//            	Measurement classificationCorrectMeasurement = null;
+//            	
+//            	for(int i=0; i<measurements.length;i++)
+//            	{
+//            		if(measurements[i].getName().equals("classifications correct (percent)"))
+//            		{
+//            			classificationCorrectMeasurement = measurements[i];
+//            			 // update statistics
+//            			sumAcc += classificationCorrectMeasurement.getValue();
+//            			break;
+//            		}
+//            		
+//            	}
+                System.out.println(learningCurve.getMeasurement(learningCurve.numEntries() - 1, 4));
+                sumAcc += learningCurve.getMeasurement(learningCurve.numEntries() - 1, 4);
             	
-            	for(int i=0; i<measurements.length;i++)
-            	{
-            		if(measurements[i].getName().equals("classifications correct (percent)"))
-            		{
-            			classificationCorrectMeasurement = measurements[i];
-            			 // update statistics
-            			sumAcc += classificationCorrectMeasurement.getValue();
-            			break;
-            		}
-            		
-            	}
-            	for(int i=0; i<measurements.length;i++)
-            	{
-            		if(measurements[i].getName().equals("model serialized size (bytes)"))
-            		{
-            			modelSizeMeasurement = measurements[i];
-            			 // update statistics
-            			sumMemory += modelSizeMeasurement.getValue();
-            			break;
-            		}
-            		
-            	}
+            	sumMemory += learningCurve.getMeasurement(learningCurve.numEntries() - 1, 9);
             	
             	
 
-            	if(classificationCorrectMeasurement.getValue()<80)
+            	if(learningCurve.getMeasurement(0, 4)<80)
             	{
             		try{
             			if(firstCriticalPointWrite)
@@ -404,7 +396,7 @@ public class MyEvaluatePrequential extends MainTask {
     					e.printStackTrace();
     				}
                 	
-                	sumAccInDrift += classificationCorrectMeasurement.getValue();
+                	sumAccInDrift += learningCurve.getMeasurement(learningCurve.numEntries()-1, 4);
                 	numDriftSamples++;
                 }
                 String line = null;

@@ -39,7 +39,7 @@ public class EvaluateTask implements Callable<Integer>
 		this.streamName = streamName;
 		this.resultFolderPath = sampleResultFolderPath;
 
-		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 1000);
+		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 20000);
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.sampleFrequencyOption.setValue(100);
 
@@ -105,8 +105,6 @@ public class EvaluateTask implements Callable<Integer>
 				writer.newLine();
 				writer.write("High Correct Coverage:"+highCoverage);
 				writer.newLine();
-				
-				
 
 				writer.close();
 			} catch (IOException e)

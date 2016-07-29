@@ -2,6 +2,7 @@ package a.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,50 +24,23 @@ public class EvaluateMain
 
 	public static void main(String[] args) throws Exception
 	{
-		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		long start = System.currentTimeMillis();
+		ExecutorService executorService = Executors.newFixedThreadPool(20);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
 		// List the tasks here
 		
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 50, 0));
+//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HAT, 50, 0));
 		
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", VOL_ADAPTIVE_CLASSIFIER, 1));
-//		
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HAT, 1));
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", HOEFFDING_ADWIN, 1));
-//		list.addAll(buildTasksList("", "100mblock_200,10,200,200,200,10,200,200,200,200,10", VOL_ADAPTIVE_CLASSIFIER, 1));
+		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HOEFFDING_ADWIN, 50, 0));
+		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HAT, 50, 0));		
 		
-		
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 1));
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 1));
-		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HAT, 1));
-		
+//		list.addAll(buildTasksList("", "test", HOEFFDING_ADWIN, 1, 0));
 		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
@@ -85,11 +59,14 @@ public class EvaluateMain
 		
 		System.out.println("EvaluateMain End!");
 		
+		long elapsedTimeMillis = System.currentTimeMillis()-start;
+		
+		System.out.print("Time Cost in millis: "+elapsedTimeMillis);;
 		
 		//TODO analyse statistics
 	}
 
-	private static ArrayList<Callable<Integer>> buildTasksList(String resultPathPrefix, String streamPrefix, int classifierOption, int numSamples)
+	private static ArrayList<Callable<Integer>> buildTasksList(String resultPathPrefix, String streamPrefix, int classifierOption, int numSamples, int startIndex)
 	{
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>(numSamples);
 		
@@ -97,7 +74,7 @@ public class EvaluateMain
 		{
 			try
 			{
-				list.add(buildTask(resultPathPrefix, streamPrefix+"_"+i+".arff", classifierOption));
+				list.add(buildTask(resultPathPrefix, streamPrefix+"_"+(i+startIndex)+".arff", classifierOption));
 			} catch (Exception e)
 			{
 				e.printStackTrace();

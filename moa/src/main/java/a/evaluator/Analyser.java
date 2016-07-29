@@ -24,7 +24,8 @@ public class Analyser
 	public static void main(String[] args)
 	{
 		new Analyser().analyse(Directory.resultFolderPath, "", "100mblock_5noise_5,50,5,50,5,50,5,50");
-
+//		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\Results", "", "100mblock_5noise_5,50,5,50,5,50,5,50");
+		
 	}
 	
 	public void analyse(String resultFolderPath, String pathPrefix, String streamId)

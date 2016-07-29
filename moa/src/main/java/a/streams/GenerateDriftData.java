@@ -26,7 +26,12 @@ public class GenerateDriftData
 
 	public static void main(String[] args)
 	{
-		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 100);
+		// experiment data
+//		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 100);
+		generateDataParallel("100mblock_5noise_5,50,5,5,5,50,5,5", new int[]{5,50,5,50,5,50,5,50}, 100);
+		
+		
+		// generator test data
 //		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 //		generateDataParallel("10", new int[]{10}, 1);
@@ -37,7 +42,8 @@ public class GenerateDriftData
 		
 //		generateDataParallel("100noise", new int[]{1}, 1);
 		
-//		generateDataParallel("50noise", new int[]{}, 1);
+		
+		generateDataParallel("test", new int[]{1}, 1);
 		
 		System.out.println("Done");
 	}
