@@ -9,7 +9,7 @@ import java.io.IOException;
 import cutpointdetection.ADWIN;
 import inputstream.*;
 import volatilityevaluation.RelativeVolatilityDetector;
-public class Main {
+public class TestMain {
 
 	public static void main(String[] args) throws IOException 
 	{

@@ -45,7 +45,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v', "Dir.", null, "csv", true);
 
 	private CutPointDetector cutPointDetector;
-	private int switchStartHeatingPeriod = 1000000;
+	private int switchStartHeatingPeriod = 100000;
 	
 	
 	// private BufferedWriter volatitlityDriftWriter;
@@ -159,7 +159,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			// volatitlityDriftWriter.write("VolatilityDriftInstance,CurrentAvgIntervals\n");
 
 			switchPointDescriptionWriter = new BufferedWriter(new FileWriter(dir + "/switchPointDesc.csv"));
-			switchPointDescriptionWriter.write("ClassifierChangePoint,ClassifierIndex\n");
+			switchPointDescriptionWriter.write("ClassifierChangePoint,ClassifierIndex,IsForceSwitch\n");
 
 			volIntervalDescriptionWriter = new BufferedWriter(new FileWriter(dir + "/volSwitchIntervalDesc.csv"));
 			volIntervalDescriptionWriter.write("Head,Tail,Mode\n");
@@ -195,7 +195,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		
 		if (currentVolatilityMeasure.conceptDrift())
 		{
-			noDriftCount = 0;
 			activeClassifier.notifyConceptDrift();
 		} else
 		{
@@ -236,7 +235,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				if (DEBUG_MODE)
 				{
 					// switch point dump
-					writeToFile(switchPointDescriptionWriter, numInstance + "," + decision + "\n");
+					writeToFile(switchPointDescriptionWriter, numInstance + "," + decision + "," +"FALSE\n");
 					// interval dump
 					writeToFile(volIntervalDescriptionWriter,
 							intervalStart + "," + numInstance + "," + previousClassifierIndex + "\n");
@@ -246,19 +245,20 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				}
 				if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getThreshold()))
 				{
-					this.activeClassifier = new HoeffdingTreeADWIN();
-					activeClassifier.getOptions().resetToDefaults();
-					activeClassifier.resetLearning();
+					classifier2.resetLearning();
+					this.activeClassifier = classifier1;
 					activeClassifierIndex = 1;
+					
 		
 					if (DEBUG_MODE)
 					{
 						// switch point dump
-						writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "\n");
+						writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
 						// interval dump
 						writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n");
 					}
 				}
+				noDriftCount = 0;
 			}
 		}
 		

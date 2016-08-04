@@ -27,9 +27,27 @@ public class GenerateDriftData
 	public static void main(String[] args)
 	{
 		// experiment data
-//		generateDataParallel("100mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 100);
-//		generateDataParallel("100mblock_5noise_5,50,5,5,5,50,5,5", new int[]{5,50,5,50,5,50,5,50}, 100);
-		generateDataParallel("100mblock_5noise_50,5,50,50,50,5,50,50", new int[]{5,50,5,50,5,50,5,50}, 100);
+		/**
+		 * 100m
+		 * normal blocks
+		 */
+		generateDataParallel("100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50}, 50);
+		generateDataParallel("100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", new int[]{50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5}, 50);
+		generateDataParallel("100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50", new int[]{5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50}, 50);
+		
+		/**
+		 * 100m
+		 * more blocks
+		 */
+//		generateDataParallel("100mblock_5noise_5,50,5,5,5,50,5,5,5,50,5,5,5,5,50,5,5,5,5,50,5,5,5", new int[]{5,50,5,5,5,50,5,5,5,50,5,5,5,5,50,5,5,5,5,50,5,5,5}, 20);
+		
+		/**
+		 * 200m
+		 * normall blocks
+		 */	
+//		generateDataParallel("200mblock_5noise_5,50,5,50,5,50,5,50", new int[]{5,50,5,50,5,50,5,50}, 20);
+//		generateDataParallel("200mblock_5noise_5,50,5,5,5,50,5,5", new int[]{5,50,5,50,5,50,5,50}, 20);
+		
 		
 		// generator test data
 //		generateDataParallel("5,100,5,100,5,100,5,100", new int[]{5,100,5,100,5,100,5,100}, 10);
@@ -40,10 +58,10 @@ public class GenerateDriftData
 		
 //		generateDataParallel("100mblock_10,200,10,10,10,200,10,10,10,200,10,10,10,200", new int[]{10,200,10,10,10,200,10,10,10,200,10,10,10,200}, 1);
 		
-//		generateDataParallel("100noise", new int[]{1}, 1);
+		generateDataParallel("100mblock_5,100", new int[]{5,100}, 1);
 		
 		
-//		generateDataParallel("test", new int[]{1}, 1);
+		generateDataParallel("test", new int[]{1}, 2);
 		
 		System.out.println("Done");
 	}

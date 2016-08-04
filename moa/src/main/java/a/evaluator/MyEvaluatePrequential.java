@@ -34,6 +34,7 @@ import java.math.BigInteger;
 import moa.core.Example;
 import moa.core.Measurement;
 import moa.core.ObjectRepository;
+import moa.core.SizeOf;
 import moa.core.TimingUtils;
 import moa.evaluation.WindowClassificationPerformanceEvaluator;
 import moa.evaluation.EWMAClassificationPerformanceEvaluator;
@@ -44,6 +45,7 @@ import moa.evaluation.LearningPerformanceEvaluator;
 import moa.evaluation.UnslidingWindowClassificationPerformanceEvaluator;
 import moa.learners.Learner;
 import moa.options.ClassOption;
+import java.lang.instrument.Instrumentation;
 
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
@@ -113,9 +115,9 @@ public class MyEvaluatePrequential extends MainTask {
     private BufferedWriter criticalPointWriter;
     
     private int criticalCount;
-    private int meanAccuracy;
-    private int meanMemory;
-    private int maxMemory;
+    private double meanAccuracy;
+    private double meanMemory;
+    private long maxMemory;
     private double evaluateTime;
     private double meanAccuracyInDrift;
   
@@ -130,6 +132,9 @@ public class MyEvaluatePrequential extends MainTask {
     	this.criticalCount = 0;
     	File resultFolder = new File(resultFolderPath);
     	resultFolder.mkdirs();
+    	
+    	
+    	
     	try
 		{
 			driftReader = new BufferedReader(new FileReader(this.streamPath+"/driftDescription.csv"));
@@ -255,11 +260,11 @@ public class MyEvaluatePrequential extends MainTask {
 			e.printStackTrace();
 		}
 
-        int numSamples = 0;
-        int sumAcc = 0;
-        int sumMemory = 0;
-        int sumAccInDrift = 0;
-        int numDriftSamples = 0;
+        long numSamples = 0;
+        long sumAcc = 0;
+        long sumMemory = 0;
+        long sumAccInDrift = 0;
+        long numDriftSamples = 0;
         
         while (stream.hasMoreInstances()
                 && ((maxInstances < 0) || (instancesProcessed < maxInstances))
@@ -300,12 +305,17 @@ public class MyEvaluatePrequential extends MainTask {
                 long evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
 //                double time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
                 double time = TimingUtils.nanoTimeToSeconds(totalTime);
-                double timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
-                int learnerSize = learner.measureByteSize();
-				double RAMHoursIncrement = learnerSize / (1024.0 * 1024.0 * 1024.0); //GBs
-                RAMHoursIncrement *= (timeIncrement / 3600.0); //Hours
-                RAMHours += RAMHoursIncrement;
+//                double timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
+//                int learnerSize = learner.measureByteSize();
+//				double RAMHoursIncrement = learnerSize / (1024.0 * 1024.0 * 1024.0); //GBs
+//                RAMHoursIncrement *= (timeIncrement / 3600.0); //Hours
+//                RAMHours += RAMHoursIncrement;
                 lastEvaluateStartTime = evaluateTime;
+                
+                // memory
+//                long memory = (int)learningCurve.getMeasurement(learningCurve.numEntries() - 1, 9);
+                long memory = SizeOf.fullSizeOf(learner);
+                
                 learningCurve.insertEntry(new LearningEvaluation(
                         new Measurement[]{
                             new Measurement(
@@ -316,9 +326,11 @@ public class MyEvaluatePrequential extends MainTask {
                             + (preciseCPUTiming ? "cpu "
                             : "") + "seconds)",
                             time),
+//                            new Measurement(
+//                            "model cost (RAM-Hours)",
                             new Measurement(
-                            "model cost (RAM-Hours)",
-                            RAMHours)
+                                  "Memory",
+                            memory)
                         },
                         evaluator, learner));
                 
@@ -352,8 +364,9 @@ public class MyEvaluatePrequential extends MainTask {
 //            	}
                 sumAcc += learningCurve.getMeasurement(learningCurve.numEntries() - 1, 4);
             	
-                int memory = (int)learningCurve.getMeasurement(learningCurve.numEntries() - 1, 9);
-            	sumMemory += memory;
+                
+//            	sumMemory += memory;
+                updateMeanMemory(memory, numSamples);
                 this.maxMemory = memory > maxMemory ? memory : maxMemory;
             	
 
@@ -444,8 +457,8 @@ public class MyEvaluatePrequential extends MainTask {
         
         // do after training work
         learner.cleanup();
-        meanAccuracy = sumAcc/numSamples;
-        meanMemory = sumMemory/numSamples;
+        meanAccuracy = (double)sumAcc/numSamples;
+//        meanMemory = (double)sumMemory/numSamples;
         meanAccuracyInDrift = sumAccInDrift/numDriftSamples;
         
         // close
@@ -472,6 +485,11 @@ public class MyEvaluatePrequential extends MainTask {
         return learningCurve;
         
 
+    }
+    
+    private void updateMeanMemory(long value, long samplesProcessed)
+    {
+    	meanMemory = (double)(meanMemory*(samplesProcessed-1) + value) / samplesProcessed;
     }
 
 	public double getMeanAcc()

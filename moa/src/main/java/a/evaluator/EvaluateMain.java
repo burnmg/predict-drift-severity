@@ -2,7 +2,7 @@ package a.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Timer;
+//import java.util.Timer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,26 +25,15 @@ public class EvaluateMain
 	public static void main(String[] args) throws Exception
 	{
 		long start = System.currentTimeMillis();
-		ExecutorService executorService = Executors.newFixedThreadPool(20);
+		ExecutorService executorService = Executors.newFixedThreadPool(30);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
 		// List the tasks here
-		
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 50, 0));
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,50,5,50,5,50", HAT, 50, 0));
-		
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HOEFFDING_ADWIN, 50, 0));
-//		list.addAll(buildTasksList("", "100mblock_5noise_5,50,5,5,5,50,5,5", HAT, 50, 0));		
-		
-		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", HOEFFDING_ADWIN, 50, 0));
-		list.addAll(buildTasksList("", "100mblock_5noise_50,5,50,50,50,5,50,50", HAT, 50, 0));		
-		
-//		list.addAll(buildTasksList("", "test", HOEFFDING_ADWIN, 1, 0));
+	
+	
+		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
 		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)

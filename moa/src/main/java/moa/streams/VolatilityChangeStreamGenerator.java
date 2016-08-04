@@ -243,8 +243,6 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 
 	@Override
 	protected void prepareForUseImpl(TaskMonitor monitor, ObjectRepository repository)
-	{
-		
-	}
+	{}
 
 }
