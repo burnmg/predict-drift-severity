@@ -44,7 +44,7 @@ public class WriteStreamToARFFFile3 extends MainTask {
     private static final long serialVersionUID = 1L;
 
     public IntOption maxInstancesOption = new IntOption("maxInstances", 'm',
-            "Maximum number of instances to write to file.", 10000000, 0,
+            "Maximum number of instances to write to file.", 100000000, 0,
             Integer.MAX_VALUE);
 
     public FlagOption suppressHeaderOption = new FlagOption("suppressHeader",

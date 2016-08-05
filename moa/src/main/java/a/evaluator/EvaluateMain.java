@@ -25,7 +25,7 @@ public class EvaluateMain
 	public static void main(String[] args) throws Exception
 	{
 		long start = System.currentTimeMillis();
-		ExecutorService executorService = Executors.newFixedThreadPool(30);
+		ExecutorService executorService = Executors.newFixedThreadPool(8);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
@@ -33,7 +33,7 @@ public class EvaluateMain
 		// List the tasks here
 	
 	
-		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", VOL_ADAPTIVE_CLASSIFIER, 1, 0));
 		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)

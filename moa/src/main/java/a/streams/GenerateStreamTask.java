@@ -41,11 +41,11 @@ public class GenerateStreamTask implements Callable<Integer>
 	public Integer call() throws Exception
 	{
 
-		generateAbruptDriftData2();
+		generateAbruptDriftData();
 		return 0;
 	}
 	
-	public void generateAbruptDriftData2()
+	public void generateAbruptDriftData()
 	{
 		File file = new File(fileAbsPath);
 		File dir = file.getParentFile();

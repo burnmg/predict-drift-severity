@@ -243,23 +243,24 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 					
 					
 				}
-				if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getThreshold()))
-				{
-					classifier2.resetLearning();
-					this.activeClassifier = classifier1;
-					activeClassifierIndex = 1;
-					
-		
-					if (DEBUG_MODE)
-					{
-						// switch point dump
-						writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
-						// interval dump
-						writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n");
-					}
-				}
 				noDriftCount = 0;
 			}
+			else if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getThreshold()))
+			{
+				classifier2.resetLearning();
+				this.activeClassifier = classifier1;
+				activeClassifierIndex = 1;
+				
+	
+				if (DEBUG_MODE)
+				{
+					// switch point dump
+					writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
+					// interval dump
+					writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n");
+				}
+			}
+			
 		}
 		
 		numInstance++;
