@@ -74,7 +74,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	// private ParameterInjector parameterInjector;
 
-	static final boolean DEBUG_MODE = true;
+	static final boolean DEBUG_MODE = false;
 
 	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, int allowableVolFluctuation)
 	{

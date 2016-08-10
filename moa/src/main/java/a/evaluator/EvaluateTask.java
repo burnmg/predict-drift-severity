@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import javax.sound.sampled.Line;
+import javax.swing.text.Highlighter.Highlight;
+
+import org.apache.poi.ss.formula.functions.Sumif;
 
 import a.tools.Directory;
 
@@ -17,6 +21,7 @@ import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
 import moa.streams.ExampleStream;
 import moa.tasks.StandardTaskMonitor;
+import weka.gui.beans.Startable;
 
 public class EvaluateTask implements Callable<Integer>
 {
@@ -54,10 +59,10 @@ public class EvaluateTask implements Callable<Integer>
 			
 			evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
 			double[] coverageEvaluateResults = evaluateVolIntervalCoverage();
-			double overallCovergage = 0;
-			double highCoverage = 0;
-			double lowCoverage = 0;
-			double simpleEvaluateCoverage = 0;
+			double overallCovergage = =1;
+			double highCoverage = -1;
+			double lowCoverage = -1;
+			double simpleEvaluateCoverage = -1;
 
 			if(coverageEvaluateResults!=null)
 			{
@@ -66,12 +71,16 @@ public class EvaluateTask implements Callable<Integer>
 				highCoverage = coverageEvaluateResults[2];
 				simpleEvaluateCoverage = coverageEvaluateResults[3];
 			}
-			else
+			
+			double[] lowModeAndHighModePercentage = lowModeAndHighModePercentage();
+			
+			double lowModePercentage = -1;
+			double highModePercentage = -1;
+			
+			if(lowModeAndHighModePercentage!=null)
 			{
-				overallCovergage = -1;
-				lowCoverage = -1;
-				highCoverage = -1;
-				simpleEvaluateCoverage = -1;
+				lowModePercentage = lowModeAndHighModePercentage[0];
+				highModePercentage = lowModeAndHighModePercentage[1];
 			}
 
 			double meanAcc = evaluatePrequential.getMeanAcc();
@@ -105,7 +114,11 @@ public class EvaluateTask implements Callable<Integer>
 				writer.newLine();
 				writer.write("High Correct Coverage:"+highCoverage);
 				writer.newLine();
-
+				writer.write("Low Vol Mode Percentage:"+lowModePercentage);
+				writer.newLine();
+				writer.write("High Vol Mode Percentage:"+highModePercentage);
+				writer.newLine();
+				
 				writer.close();
 			} catch (IOException e)
 			{
@@ -121,9 +134,55 @@ public class EvaluateTask implements Callable<Integer>
 
 		return 0;
 	}
-
 	/**
 	 * 
+	 * @return [0] percentage of low. [1] percentage of high
+	 */
+	public double[] lowModeAndHighModePercentage()
+	{
+		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return null;
+		
+		int streamLength = 0;
+		int sumLowVol = 0;
+		int sumHighVol = 0;
+		
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(this.resultFolderPath+"/"+"volSwitchIntervalDesc.csv"));
+			String line = null;
+			reader.readLine();
+			
+			while((line = reader.readLine())!=null)
+			{
+				String[] strs = line.split(",");
+				int start = Integer.parseInt(strs[0]);
+				int end = Integer.parseInt(strs[1]);
+				int mode = Integer.parseInt(strs[2]);
+				
+				if(mode==1)
+				{
+					sumLowVol += start-end+1;
+				}
+				else
+				{
+					sumHighVol += start-end+1;
+				}
+			}
+			streamLength = sumLowVol + sumHighVol;
+			
+			reader.close();
+			
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return new double[]{(double)sumLowVol/streamLength, (double)sumHighVol/streamLength};
+	}
+	
+	/**
 	 * @return [0] overall measure [1] low measures [2] high measure
 	 */ 
 	public double[] evaluateVolIntervalCoverage()

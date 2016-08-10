@@ -523,18 +523,5 @@ public class MyEvaluatePrequential extends MainTask {
 		return meanAccuracyInDrift;
 	}
     
-//	private void writeToFile(BufferedWriter bw, String str)
-//	{
-//		if (bw != null)
-//		{
-//			try
-//			{
-//				bw.write(str);
-//			} catch (IOException e)
-//			{
-//				e.printStackTrace();
-//			}
-//		}
-//	}
 
 }

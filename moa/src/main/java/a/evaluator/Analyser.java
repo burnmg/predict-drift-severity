@@ -24,7 +24,7 @@ public class Analyser
 	public static void main(String[] args)
 	{
 //		new Analyser().analyse(Directory.resultFolderPath, "", "200mblock_5noise_5,50,5,5,5,50,5,5");
-		new Analyser().analyse(Directory.resultFolderPath, "", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5");
+		new Analyser().analyse(Directory.resultFolderPath, "", "100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50");
 //		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\Results archive", "", "100mblock_5noise_50,5,50,50,50,5,50,50,50");
 		
 	}
