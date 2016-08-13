@@ -42,17 +42,7 @@ public class DoubleReservoirs
 	 */
 	public boolean setInput(double input)
 	{
-//		if (highReservoir.getWidth() == 0)
-//		{
-//			highReservoir.addElement(input);
-//			return false;
-//		}
-//		
-//		if (lowReservoir.getWidth() == 0)
-//		{
-//			lowReservoir.addElement(input);
-//			return false;
-//		}
+
 
 		double mean = this.getMean();
 		if (input > mean)
@@ -67,13 +57,6 @@ public class DoubleReservoirs
 			return false;
 		}
 		
-		// update variance incrementally
-//		double incVariance = 0;
-//		if(getWidth()>1)
-//		{
-//			incVariance = (getWidth() - 1) * (input - getTotal() / (getWidth() - 1)) * (input - getTotal() / (getWidth() - 1)) / getWidth();
-//		}	
-//		variance += incVariance;
 
 	}
 	
