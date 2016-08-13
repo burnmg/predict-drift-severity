@@ -53,6 +53,19 @@ public class Buffer
 			return total / slidingIndex;
 		}
 	}
+	
+	public double getMax()
+	{
+		double max = buffer[0];
+		for(int i=1;i<buffer.length;i++)
+		{
+			if(buffer[i] > max)
+			{
+				max = buffer[i];
+			}
+		}
+		return max;
+	}
 
 	public Boolean isFull()
 	{

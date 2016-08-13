@@ -8,17 +8,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.jfree.chart.renderer.category.StatisticalBarRenderer;
+
 import a.tools.Directory;
 import cutpointdetection.ADWIN;
 import moa.classifiers.AbstractClassifier;
 import moa.classifiers.a.HoeffdingTreeADWIN;
 import moa.classifiers.a.VolatilityAdaptiveClassifer;
+import moa.classifiers.a.VAC.other.AverageCurrentDriftIntervalMeasure;
+import moa.classifiers.a.VAC.other.RelativeVolatilityDetectorMeasureNoCutpointDect;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 
 public class EvaluateMain
 {
 
-	final static int VOL_ADAPTIVE_CLASSIFIER = 0;
+	final static int VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure = 0;
+	final static int VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect = -1;
+	final static int VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasuret = -2;
 	final static int HOEFFDING_ADWIN = 1;
 	final static int HAT = 2;
 
@@ -48,22 +54,33 @@ public class EvaluateMain
 //		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 50, 0));
 		
 		
-		/**
-		 * increasing vol
-		 * 3 blocks
-		 */
-		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HAT, 50, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HOEFFDING_ADWIN, 50, 0));
+//		/**
+//		 * increasing vol
+//		 * 3 blocks
+//		 */
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HAT, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HOEFFDING_ADWIN, 50, 0));
+//		
+//		/**
+//		 * decreasing vol
+//		 * 3 blocks
+//		 */
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HAT, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HOEFFDING_ADWIN, 50, 0));
 		
-		/**
-		 * decreasing vol
-		 * 3 blocks
-		 */
-		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HAT, 50, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HOEFFDING_ADWIN, 50, 0));
+
 		
+		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect, 1, 0));
+		
+//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", HAT, 2, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", HOEFFDING_ADWIN, 2, 0));
+		
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", HAT, 50, 0));
+//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", HOEFFDING_ADWIN, 50, 0));
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{
@@ -133,15 +150,31 @@ public class EvaluateMain
 			classifier = new HoeffdingAdaptiveTree();
 			classifier.getOptions().resetToDefaults();
 		}
-		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER)
+		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure)
 		{
-			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), 5000);
+			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure");
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentDriftIntervalMeasure(10, new ADWIN(), 2000), 5000);
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 
 			classifier = temp;
 		}
-		else 
+		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect)
+		{
+			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect");
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new RelativeVolatilityDetectorMeasureNoCutpointDect(32), 5000);
+			
+			classifier = temp;
+			temp.dumpFileDirOption.setValue(resultFolder.getPath());
+		}
+		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasuret)
+		{
+			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasuret");
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentDriftIntervalMeasure(5, new ADWIN(), 2000), 5000);
+			
+			classifier = temp;
+			temp.dumpFileDirOption.setValue(resultFolder.getPath());
+		}
+		else
 		{
 			throw new Exception("Wrong classifier option");
 		}

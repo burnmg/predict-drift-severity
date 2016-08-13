@@ -44,7 +44,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v', "Dir.", null, "csv", true);
 
-	private CutPointDetector cutPointDetector;
+	// private CutPointDetector cutPointDetector;
 	private int switchStartHeatingPeriod = 100000;
 	
 	
@@ -74,12 +74,17 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	// private ParameterInjector parameterInjector;
 
-	static final boolean DEBUG_MODE = false;
+	static final boolean DEBUG_MODE = true;
 
-	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, int allowableVolFluctuation)
+	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, CurrentVolatilityMeasure currentVolatilityMeasure, int allowableVolFluctuation)
 	{
-		this.cutPointDetector = cutPointDetector;
+		// this.cutPointDetector = cutPointDetector;
 		this.allowableVolFluctuation = allowableVolFluctuation;
+		this.currentVolatilityMeasure = currentVolatilityMeasure;
+		// currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
+//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
+//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
+//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
 	}
 
 	@Override
@@ -141,10 +146,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
-//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
-		 currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
+
+		 
 
 		// set writers
 
@@ -257,7 +260,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 					// switch point dump
 					writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
 					// interval dump
-					writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n");
+					writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n" );
 				}
 			}
 			
@@ -408,7 +411,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	// return classiferSelector.makeDecision(currentVoaltilityLevel);
 	// }
 
-	private void writeToFile(BufferedWriter bw, String str)
+	private void writeToFile(BufferedWriter bw, String str) 
 	{
 		if (bw != null)
 		{

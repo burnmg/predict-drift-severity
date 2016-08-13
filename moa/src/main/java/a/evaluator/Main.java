@@ -6,7 +6,9 @@ public class Main
 {
 	public static void main(String args[]) throws Exception
 	{
-		GenerateDriftData.main(args);
+		GenerateDriftData generateDriftData = new GenerateDriftData();
+		generateDriftData.main(args);
+		generateDriftData = null;
 		EvaluateMain.main(args);
 	}
 }
