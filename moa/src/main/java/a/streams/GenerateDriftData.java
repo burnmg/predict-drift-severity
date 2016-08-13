@@ -24,7 +24,7 @@ import weka.gui.HierarchyPropertyParser;
 public class GenerateDriftData
 {
 
-	public static void main(String[] args)
+	public void main(String[] args)
 	{
 		// experiment data
 //		/**
@@ -45,17 +45,31 @@ public class GenerateDriftData
 //		 */
 //		generateDataParallel("100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50", new int[]{5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50}, 50);
 		
-		/**
-		 * increasing vol
-		 * 3 blocks
-		 */
-		generateDataParallel("100wblock_5noise_5,50,100", new int[]{5,50,100}, 50);
+//		/**
+//		 * increasing vol
+//		 * 3 blocks
+//		 */
+//		generateDataParallel("100wblock_5noise_5,50,100", new int[]{5,50,100}, 50);
+//		
+//		/**
+//		 * decreasing vol
+//		 * 3 blocks
+//		 */
+//		generateDataParallel("100wblock_5noise_100,50,5", new int[]{100,50,5}, 50);
 		
 		/**
-		 * decreasing vol
-		 * 3 blocks
+		 * 100m very long high vol 
+		 * 16 blocks
 		 */
-		generateDataParallel("100wblock_5noise_100,50,5", new int[]{100,50,5}, 50);
+		generateDataParallel("100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", new int[]{50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5}, 50);
+		
+		/**
+		 * 100m very long low vol 
+		 * 16 blocks
+		 */
+//		generateDataParallel("100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", new int[]{5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50}, 50);
+		
+//		generateDataParallel("test_5,50,5,50", new int[]{5,50,5,50}, 1);
 		
 		
 		System.out.println("Done");
