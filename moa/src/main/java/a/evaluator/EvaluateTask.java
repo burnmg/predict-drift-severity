@@ -59,7 +59,7 @@ public class EvaluateTask implements Callable<Integer>
 			
 			evaluatePrequential.doMainTask(new StandardTaskMonitor(), null);
 			double[] coverageEvaluateResults = evaluateVolIntervalCoverage();
-			double overallCovergage = =1;
+			double overallCovergage =1;
 			double highCoverage = -1;
 			double lowCoverage = -1;
 			double simpleEvaluateCoverage = -1;
