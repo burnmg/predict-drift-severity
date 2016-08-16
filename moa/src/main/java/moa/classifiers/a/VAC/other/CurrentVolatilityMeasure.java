@@ -16,5 +16,7 @@ public interface CurrentVolatilityMeasure {
 	
 	public double getMeasure();
 	
+	public double getMaxWindowSize();
+	
 
 }

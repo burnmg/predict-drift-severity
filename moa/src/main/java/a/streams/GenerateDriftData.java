@@ -61,7 +61,7 @@ public class GenerateDriftData
 		 * 100m very long high vol 
 		 * 16 blocks
 		 */
-		generateDataParallel("100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", new int[]{50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5}, 50);
+//		generateDataParallel("100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", new int[]{50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5}, 50);
 		
 		/**
 		 * 100m very long low vol 
@@ -69,8 +69,12 @@ public class GenerateDriftData
 		 */
 //		generateDataParallel("100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", new int[]{5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50}, 50);
 		
-//		generateDataParallel("test_5,50,5,50", new int[]{5,50,5,50}, 1);
+		generateDataParallel("100wblock_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100", new int[]{5,5,100,100,100,100,100,5,5,100,100,100,100,100}, 1);
+		generateDataParallel("100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 1);
+		generateDataParallel("100wblock_5noise_100,5,100,5,100,5,100,5,100,5,100,5,100,5", new int[]{100,5,100,5,100,5,100,5,100,5,100,5,100,5}, 1);
 		
+//		generateDataParallel("test_5,50,5,50", new int[]{5,50,5,50}, 1);
+//		generateDataParallel("test", new int[]{5,50,5,50}, 1);
 		
 		System.out.println("Done");
 	}

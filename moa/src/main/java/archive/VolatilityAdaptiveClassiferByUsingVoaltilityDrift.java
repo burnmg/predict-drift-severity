@@ -157,7 +157,7 @@ public class VolatilityAdaptiveClassiferByUsingVoaltilityDrift extends AbstractC
 			double avgInterval = volatilityDriftDetector.getBufferMean();
 			writeToFile(volatitlityDriftWriter, instanceCount+","+avgInterval+"\n");
 			
-			int decision = classiferSelector.makeDecision(avgInterval);
+			int decision = classiferSelector.getDecision(avgInterval);
 
 			if (activeClassifierIndex != decision)
 			{	

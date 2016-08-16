@@ -9,6 +9,6 @@ public class Main
 		GenerateDriftData generateDriftData = new GenerateDriftData();
 		generateDriftData.main(args);
 		generateDriftData = null;
-		EvaluateMain.main(args);
+//		EvaluateMain.main(args);
 	}
 }

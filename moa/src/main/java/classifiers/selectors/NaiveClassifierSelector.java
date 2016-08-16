@@ -22,7 +22,7 @@ public class NaiveClassifierSelector extends AbstractOptionHandler implements Cl
 	}
 
 	@Override
-	public int makeDecision(double avgInterval)
+	public int getDecision(double avgInterval)
 	{
 		// if the avgInterval is greater than the threshold, use classifier 1. Otherwise, use 2. 
 		return (avgInterval>threshold)?1:2;

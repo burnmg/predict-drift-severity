@@ -42,17 +42,6 @@ public class DoubleReservoirs
 	 */
 	public boolean setInput(double input)
 	{
-//		if (highReservoir.getWidth() == 0)
-//		{
-//			highReservoir.addElement(input);
-//			return false;
-//		}
-//		
-//		if (lowReservoir.getWidth() == 0)
-//		{
-//			lowReservoir.addElement(input);
-//			return false;
-//		}
 
 		double mean = this.getMean();
 		if (input > mean)
@@ -77,30 +66,26 @@ public class DoubleReservoirs
 
 	}
 	
-	public double getVariance()
+	public boolean getDecision(double input)
 	{
 		double mean = this.getMean();
-		double sum = 0;
-	
-		double[] highElements = highReservoir.getElements();
-		for(int i=0; i<highReservoir.getWidth(); i++)
+		if (input > mean)
 		{
-			sum += Math.pow(highElements[i] - mean, 2);
-		}
-		
-		double[] lowElements = lowReservoir.getElements();
-		for(int i=0; i<lowReservoir.getWidth(); i++)
+			return true;
+
+		} else
 		{
-			sum += Math.pow(lowElements[i] - mean, 2);
+			return false;
 		}
-		
-		return sum / getWidth(); 
-		
 	}
+	
+
 	
 	public boolean isActive()
 	{
-		return (highReservoir.getReservoirMean() - lowReservoir.getReservoirMean()) > this.lambda;
+		double highMean = highReservoir.getWidth() == 0 ? 0 : highReservoir.getReservoirMean();
+		double lowMean = lowReservoir.getWidth() == 0 ? 0 : lowReservoir.getReservoirMean();
+		return (highMean - lowMean) >= this.lambda;
 	}
 
 
@@ -153,7 +138,14 @@ public class DoubleReservoirs
 			return 0;
 
 		return (highReservoir.getTotal() + lowReservoir.getTotal()) / (highReservoir.getWidth() + lowReservoir.getWidth());
-//		return (highReservoir.getReservoirMean() + lowReservoir.getReservoirMean())/2;
 	}
-
+	
+	public double getMiddleMean()
+	{
+		double highMean = highReservoir.getWidth() == 0 ? 0 : highReservoir.getReservoirMean();
+		double lowMean = lowReservoir.getWidth() == 0 ? 0 : lowReservoir.getReservoirMean();
+		
+		return (highMean+lowMean) / 2;
+		
+	}
 }

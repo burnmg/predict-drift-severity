@@ -6,7 +6,7 @@ public class AlwaysFirstClassifierSelector implements ClassifierSelector
 {
 
 	@Override
-	public int makeDecision(double avgInterval)
+	public int getDecision(double avgInterval)
 	{
 		return 1;
 	}

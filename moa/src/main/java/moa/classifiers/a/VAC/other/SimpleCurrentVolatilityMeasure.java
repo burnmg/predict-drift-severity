@@ -1,34 +1,78 @@
 package moa.classifiers.a.VAC.other;
 
-import moa.classifiers.core.driftdetection.ADWIN;
+import cutpointdetection.CutPointDetector;
+import volatilityevaluation.Buffer;
 
-public class SimpleCurrentVolatilityMeasure implements CurrentVolatilityMeasure {
-
+public class SimpleCurrentVolatilityMeasure implements CurrentVolatilityMeasure
+{
+	private CutPointDetector cutPointDetector;
+	private boolean isDrifting;
 	private int timestamp;
-	private ADWIN cutpointDetector;
-	private boolean conceptDrift;
-	
-	public SimpleCurrentVolatilityMeasure(double d) {
-		cutpointDetector = new ADWIN(d);
-		timestamp = 0;
+	private int coolingPeriod;
+	//	private int instanceSeen;
+
+	public SimpleCurrentVolatilityMeasure(int bufferSize, CutPointDetector cutPointDetector, int coolingPeriod)
+	{
+		this.cutPointDetector = cutPointDetector;
+		this.isDrifting = false;
+		this.timestamp = 0;
+		this.coolingPeriod = coolingPeriod;
+		//		this.instanceSeen = 0;
 	}
-	
+
 	@Override
-	
-	public int setInput(double input) {
-		timestamp++;
-		if(cutpointDetector.setInput(input))
-		{
-			this.conceptDrift = true;
-			int temp = timestamp;
-			timestamp = 0;
-			return temp;
+	public int setInput(double input)
+	{
+
+		if(timestamp > coolingPeriod){
+
+			double oldError = cutPointDetector.getEstimation();
+			boolean errorChange = cutPointDetector.setInput(input);
+
+			if(oldError > cutPointDetector.getEstimation())
+			{
+				errorChange = false;
+			}
+
+			if(errorChange)
+			{
+				double result = this.timestamp;
+				isDrifting = true;
+				this.timestamp = 0;
+				//				instanceSeen = 0
+
+				return (int)result;
+			}
+			else
+			{
+				isDrifting = false;
+				this.timestamp++;
+				return -1;
+
+			}
 		}
 		else{
-			this.conceptDrift = false;
+			isDrifting = false;
+			this.timestamp++;
+			return -1;
 		}
-		
-		return -1;
+
+
+
+
+	}
+
+	@Override
+	public boolean conceptDrift()
+	{
+		return isDrifting;
+	}
+
+	@Override
+	public double getMeasure()
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
@@ -36,20 +80,6 @@ public class SimpleCurrentVolatilityMeasure implements CurrentVolatilityMeasure 
 	{
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	public boolean conceptDrift()
-	{
-		// TODO Auto-generated method stub
-		return conceptDrift;
-	}
-
-	@Override
-	public double getMeasure()
-	{
-		// TODO Auto-generated method stub
-		return timestamp;
 	}
 
 }

@@ -16,7 +16,7 @@ public class DoubleReservoirsClassifierSelector implements ClassifierSelector {
 	}
 	
 	@Override
-	public int makeDecision(double avgInterval) {
+	public int getDecision(double avgInterval) {
 		
 		if(doubleReservoirs.setInput(avgInterval))
 		{
@@ -37,6 +37,12 @@ public class DoubleReservoirsClassifierSelector implements ClassifierSelector {
 	{
 
 		return doubleReservoirs.getMean();
+	}
+
+	@Override
+	public boolean getIsActive()
+	{
+		return doubleReservoirs.isActive();
 	}
 
 }

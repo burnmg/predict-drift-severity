@@ -161,11 +161,11 @@ public class EvaluateTask implements Callable<Integer>
 				
 				if(mode==1)
 				{
-					sumLowVol += start-end+1;
+					sumLowVol += end-start+1;
 				}
 				else
 				{
-					sumHighVol += start-end+1;
+					sumHighVol += end-start+1;
 				}
 			}
 			streamLength = sumLowVol + sumHighVol;

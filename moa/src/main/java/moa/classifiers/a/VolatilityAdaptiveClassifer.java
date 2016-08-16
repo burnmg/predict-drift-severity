@@ -23,6 +23,7 @@ import moa.classifiers.a.VAC.other.AverageCurrentDriftIntervalMeasure;
 import moa.classifiers.a.VAC.other.ClassifierSelector;
 import moa.classifiers.a.VAC.other.CurrentVolatilityMeasure;
 import moa.classifiers.a.VAC.other.DoubleReservoirsClassifierSelector;
+import moa.classifiers.a.VAC.other.DoubleReservoirsHighForHighLowForLow;
 import moa.classifiers.a.VAC.other.RelativeVolatilityDetectorMeasure;
 import moa.classifiers.a.VAC.other.RelativeVolatilityDetectorMeasureNoCutpointDect;
 import moa.classifiers.a.VAC.other.SimpleCurrentVolatilityMeasure;
@@ -45,7 +46,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	public FileOption dumpFileDirOption = new FileOption("dumpFileDirOption", 'v', "Dir.", null, "csv", true);
 
 	// private CutPointDetector cutPointDetector;
-	private int switchStartHeatingPeriod = 100000;
+	private int switchStartHeatingPeriod = 0;
 	
 	
 	// private BufferedWriter volatitlityDriftWriter;
@@ -63,24 +64,27 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	private ClassifierSelector classiferSelector;
 
 	private int activeClassifierIndex;
-	private int numInstance;
+	private long numInstance;
 	private int noDriftCount;
 
 	// private int decisionMode;
 
-	private int intervalStart;
+	private long intervalStart;
 
 	private int allowableVolFluctuation;
+
+	private int measurePeriod;
 
 	// private ParameterInjector parameterInjector;
 
 	static final boolean DEBUG_MODE = true;
 
-	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, CurrentVolatilityMeasure currentVolatilityMeasure, int allowableVolFluctuation)
+	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, CurrentVolatilityMeasure currentVolatilityMeasure, int allowableVolFluctuation, int measurePeriod)
 	{
 		// this.cutPointDetector = cutPointDetector;
 		this.allowableVolFluctuation = allowableVolFluctuation;
 		this.currentVolatilityMeasure = currentVolatilityMeasure;
+		this.measurePeriod = measurePeriod;
 		// currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
 //		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
 //		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
@@ -142,7 +146,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// this.classifier2 = (AbstractClassifier)
 		// getPreparedClassOption(this.classifier2Option);
 
-		classiferSelector = new DoubleReservoirsClassifierSelector(10, allowableVolFluctuation);
+//		classiferSelector = new DoubleReservoirsClassifierSelector(10, allowableVolFluctuation);
+		classiferSelector = new DoubleReservoirsHighForHighLowForLow(200, 0);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
@@ -168,7 +173,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			volIntervalDescriptionWriter.write("Head,Tail,Mode\n");
 
 			currentVolatilityLevelDumpWriter = new BufferedWriter(new FileWriter(dir + "/currentVolLevelDesc.csv"));
-			currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval,Classifier Selector Threshold\n");
+			currentVolatilityLevelDumpWriter.write("Instance Index, CurrentVolatilityInterval,Classifier Selector Threshold,Input\n");
 			
 			//
 
@@ -205,31 +210,39 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		}
 
 		// if there is a shift.
-		if (numInstance > switchStartHeatingPeriod && currentVolatilityLevel != -1)
-		{
-			
+		if (numInstance > switchStartHeatingPeriod && (currentVolatilityMeasure.conceptDrift() || numInstance % measurePeriod==0))
+		{	
+
 			if (DEBUG_MODE)
 			{
-				writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "," + classiferSelector.getThreshold() + "\n");
+				if(currentVolatilityMeasure.conceptDrift())
+				{
+					writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "," + classiferSelector.getThreshold() + ",TRUE" + "\n");
+				}
+				else
+				{
+					writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "," + classiferSelector.getThreshold() + ",FALSE" + "\n");
+				}
+				
 			}
 
-			int decision = classiferSelector.makeDecision(currentVolatilityLevel);
-//			 int decision = 1;
-			
-			
+//			int decision = currentVolatilityMeasure.conceptDrift() ? classiferSelector.input(currentVolatilityLevel) : classiferSelector.getDecision(currentVolatilityLevel);
+			int decision = classiferSelector.input(currentVolatilityLevel);
 
-			if (activeClassifierIndex != decision)
+
+			if (activeClassifierIndex != decision && classiferSelector.getIsActive())
 			{
 				if (decision == 1)
 				{
 					classifier2.resetLearning();
 					this.activeClassifier = classifier1;
-				} else
+				} 
+				else
 				{
 					classifier1.resetLearning();
 					this.activeClassifier = classifier2;
 				}
-
+				
 				int previousClassifierIndex = activeClassifierIndex;
 
 				activeClassifierIndex = decision;
@@ -248,21 +261,21 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				}
 				noDriftCount = 0;
 			}
-			else if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getThreshold()))
-			{
-				classifier2.resetLearning();
-				this.activeClassifier = classifier1;
-				activeClassifierIndex = 1;
-				
-	
-				if (DEBUG_MODE)
-				{
-					// switch point dump
-					writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
-					// interval dump
-					writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n" );
-				}
-			}
+//			else if (activeClassifierIndex == 2 && classiferSelector.getThreshold() > 0.00001 && noDriftCount > (currentVolatilityMeasure.getMaxWindowSize() / classiferSelector.getThreshold()))
+//			{
+//				classifier2.resetLearning();
+//				this.activeClassifier = classifier1;
+//				activeClassifierIndex = 1;
+//				
+//	
+//				if (DEBUG_MODE)
+//				{
+//					// switch point dump
+//					writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "," + "TRUE\n");
+//					// interval dump
+//					writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n" );
+//				}
+//			}
 			
 		}
 		
@@ -270,112 +283,12 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		activeClassifier.trainOnInstance(inst);
 	}
 	
-//	@Override
-//	public void trainOnInstanceImpl(Instance inst)
-//	{
-//		// // EVALUATE block 1 7300
-//		// long startTime = System.currentTimeMillis();
-//		int currentVolatilityLevel = currentVolatilityMeasure.setInput(activeClassifier.getIsDrift());
-//		
-//		
-////		if (currentVolatilityMeasure.conceptDrift())
-////		{
-////			noDriftCount = 0;
-////			activeClassifier.notifyConceptDrift();
-////		} else
-////		{
-////			noDriftCount++;
-////		}
-//		// // EVALUATE
-//		//// time1 += System.currentTimeMillis() - startTime;
-//		//
-//		// // EVALUATE block 2 222
-//		//// startTime = System.currentTimeMillis();
-//
-//		// // if there is a shift.
-//		if (currentVolatilityLevel != -1)
-//		{
-//			if (DEBUG_MODE)
-//			{
-//				writeToFile(currentVolatilityLevelDumpWriter, numInstance + "," + currentVolatilityLevel + "\n");
-//			}
-//
-////			int decision = classiferSelector.makeDecision(currentVolatilityLevel);
-//			 int decision = 2;
-//
-//			if (activeClassifierIndex != decision)
-//			{
-//				if (decision == 1)
-//				{
-//					this.activeClassifier = new HoeffdingTreeADWIN();
-//					activeClassifier.getOptions().resetToDefaults();
-//					activeClassifier.resetLearning();
-//				} else
-//				{
-//					this.activeClassifier = new HoeffdingAdaptiveTree();
-//					activeClassifier.getOptions().resetToDefaults();
-//					activeClassifier.resetLearning();
-//				}
-//
-//				int previousClassifierIndex = activeClassifierIndex;
-//
-//				activeClassifierIndex = decision;
-////				activeClassifierIndex = 2;
-//
-//				if (DEBUG_MODE)
-//				{
-//					// switch point dump
-//					writeToFile(switchPointDescriptionWriter, numInstance + "," + decision + "\n");
-//					// interval dump
-//					writeToFile(volIntervalDescriptionWriter,
-//							intervalStart + "," + numInstance + "," + previousClassifierIndex + "\n");
-//					intervalStart = numInstance + 1;
-//				}
-//			}
-//		}
-//
-//		// if there is no drift in long enough period, switch back to low
-//		// volatility algorithm
-//		if (activeClassifierIndex == 2 && noDriftCount > (classiferSelector.getMeasure()) * 10)
-//		{
-//			this.activeClassifier = new HoeffdingTreeADWIN();
-//			activeClassifier.getOptions().resetToDefaults();
-//			activeClassifier.resetLearning();
-//			activeClassifierIndex = 1;
-//
-//			if (DEBUG_MODE)
-//			{
-//				// switch point dump
-//				writeToFile(switchPointDescriptionWriter, numInstance + "," + 1 + "\n");
-//				// interval dump
-//				writeToFile(volIntervalDescriptionWriter, intervalStart + "," + numInstance + "," + 2 + "\n");
-//			}
-//		}
-//		numInstance++;
-//
-//		// time2 += System.currentTimeMillis() - startTime;
-//
-//		// EVALUATE block 3 28430
-//		// startTime = System.currentTimeMillis();
-//		activeClassifier.trainOnInstance(inst);
-//		// time3 += System.currentTimeMillis() - startTime;
-//		// totalTime += System.currentTimeMillis() - startTime;
-//
-//		// System.out.println(((ADWIN)cutPointDetector).getEstimation());
-//	}
-
 	/**
 	 * Call this method after training complete.
 	 */
 	@Override
 	public void cleanup()
 	{
-		// EVAL
-		// System.out.println("block1: "+time1);
-		// System.out.println("block2: "+time2);
-		// System.out.println("block3: "+time3);
-		//
-		// System.out.println("total: "+(time1+time2+time3));
 		writeToFile(volIntervalDescriptionWriter,
 				intervalStart + "," + numInstance + "," + activeClassifierIndex + "\n");
 		intervalStart = numInstance + 1;
@@ -391,25 +304,8 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 			e.printStackTrace();
 		}
 
-		// EVALUATE
-		// System.out.println(innerrun);
-		// System.out.println(outterrun);
-		// System.out.println(partialTime);
-		// System.out.println(totalTime);
 	}
 
-	// in optimised version, this method should be removed.
-	// private int getDecision(int currentVoaltilityLevel)
-	// {
-	// if(this.decisionMode==DecisionMode.AWALYS_1)
-	// {
-	// return 1;
-	// }else if(this.decisionMode==DecisionMode.AWALYS_2)
-	// {
-	// return 2;
-	// }
-	// return classiferSelector.makeDecision(currentVoaltilityLevel);
-	// }
 
 	private void writeToFile(BufferedWriter bw, String str) 
 	{
