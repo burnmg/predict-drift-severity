@@ -47,62 +47,33 @@ public class EvaluateMain
 	
 	
 //		// long low volatility period 
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", HAT, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,50,5,5,5,50,5,5,5,50,5,5,5", HOEFFDING_ADWIN, 50, 0));
-//		
+
 //		// long high volatility period 
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50", HAT, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,5,50,50,50,5,50,50,50,5,50,50,50", HOEFFDING_ADWIN, 50, 0));
+
 //		// regular
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", HAT, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 50, 0));
-		
-		
+
 //		/**
 //		 * increasing vol
 //		 * 3 blocks
 //		 */
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HAT, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,100", HOEFFDING_ADWIN, 50, 0));
-//		
+
 //		/**
 //		 * decreasing vol
 //		 * 3 blocks
 //		 */
-//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", VOL_ADAPTIVE_CLASSIFIER, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HAT, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_100,50,5", HOEFFDING_ADWIN, 50, 0));
-		
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_SimpleCurrentVolatilityMeasure, 1, 0));
-//		list.addAll(buildTasksList("buffersize20_", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasure, 1, 0));
-//		list.addAll(buildTasksList("buffersize30_", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure, 2, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure, 2, 0));
-		
-		list.addAll(buildTasksList("", "100wblock_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 1, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", HOEFFDING_ADWIN, 20, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", HAT, 20, 0));
+	
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
+
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 20, 0));
 //		
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 1, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", HOEFFDING_ADWIN, 20, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", HAT, 20, 0));
-//		
-		list.addAll(buildTasksList("", "100wblock_5noise_100,5,100,5,100,5,100,5,100,5,100,5,100,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 1, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", HOEFFDING_ADWIN, 20, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "test_5,50,5,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 1, 0));
-//		list.addAll(buildTasksList("", "test_5,50,5,50", HOEFFDING_ADWIN, 1, 0));
-//		list.addAll(buildTasksList("", "test_5,50,5,50", HAT, 1, 0));
-		
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasure, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_50,5,5,5,5,5,5,5,50,5,5,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure, 50, 0));
-//		
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasure, 50, 0));
-//		list.addAll(buildTasksList("", "100wblock_5noise_5,50,5,50,5,50,5,50,5,50,5,50,5,50,5,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure, 50, 0));
-		
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
+
 		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
