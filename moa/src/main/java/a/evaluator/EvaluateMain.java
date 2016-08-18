@@ -62,19 +62,19 @@ public class EvaluateMain
 //		 * 3 blocks
 //		 */
 	
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 10, 0));
 
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 20, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 10, 0));
+	
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 10, 0));
+		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 10, 0));
+
 //		
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 20, 0));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
-
-		
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{
@@ -186,7 +186,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalTimeStampMeasure(500000, new ADWIN(), 2000), 0, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalTimeStampMeasure(300000, new ADWIN(), 2000), 0, 10000);
 			
 			classifier = temp;
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
