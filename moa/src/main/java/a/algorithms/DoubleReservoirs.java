@@ -5,8 +5,8 @@ public class DoubleReservoirs
 	public Reservoir highReservoir;
 	public Reservoir lowReservoir;
 	
-	private double variance;
-	private double delta = 0.002; 
+//	private double variance;
+//	private double delta = 0.002; 
 	private double lambda; // allowable fluctuation
 
 	/**
@@ -18,7 +18,7 @@ public class DoubleReservoirs
 	{
 		this.highReservoir = new Reservoir(size);
 		this.lowReservoir = new Reservoir(size);
-		this.variance = 0;
+//		this.variance = 0;
 		this.lambda = lambda; 
 	}
 	
@@ -47,7 +47,6 @@ public class DoubleReservoirs
 		double mean = this.getMean();
 		if (input > mean)
 		{
-			
 			highReservoir.addElement(input);
 			return true;
 
