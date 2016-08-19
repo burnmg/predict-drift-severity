@@ -56,13 +56,6 @@ public class DoubleReservoirs
 			return false;
 		}
 		
-		// update variance incrementally
-//		double incVariance = 0;
-//		if(getWidth()>1)
-//		{
-//			incVariance = (getWidth() - 1) * (input - getTotal() / (getWidth() - 1)) * (input - getTotal() / (getWidth() - 1)) / getWidth();
-//		}	
-//		variance += incVariance;
 
 	}
 	
