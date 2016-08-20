@@ -42,18 +42,6 @@ public class AverageCurrentIntervalTimeStampMeasure implements CurrentVolatility
 
 			if(errorChange)
 			{
-//				queue.
-//				queue.add(this.numInstances);
-//				queueSum += this.timestamp;
-//				isDrifting = true;
-//				this.timestamp = 0;
-//
-//				while(this.queueSum > this.windowSize)
-//				{
-//					queueSum -= queue.poll(); 
-//				}
-////				return queueSum!=0?this.queue.size()*this.windowSize / queueSum : 0;
-//				return this.queue.size();
 				queue.add(numInstances);
 				isDrifting = true;
 				while(queue.peek()!=null && queue.peek() < this.numInstances - this.windowSize) queue.poll();
