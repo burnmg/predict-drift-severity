@@ -40,6 +40,8 @@ import moa.options.AbstractOptionHandler;
 import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
+
+import moa.streams.DriftingStream;
 import moa.streams.InstanceStream;
 import moa.tasks.TaskMonitor;
 
@@ -50,7 +52,7 @@ import moa.tasks.TaskMonitor;
  * @version $Revision: 7 $
  */
 public class RandomTreeGenerator extends AbstractOptionHandler implements
-InstanceStream {
+DriftingStream {
 
 	@Override
 	public String getPurposeString() {
@@ -291,6 +293,7 @@ InstanceStream {
 		return node;
 	}
 
+	@Override
 	public void addPartialDrift()
 	{
 		int numChildren = this.treeRoot.children.length;
@@ -313,6 +316,7 @@ InstanceStream {
 		
 	}
 
+	
 	private Node addPartialDriftToNode(Node node, int currentDepth, ArrayList<Integer> nominalAttCandidates, double[] minNumericVals,
 			double[] maxNumericVals, Random driftRandom)
 	{
@@ -427,7 +431,7 @@ InstanceStream {
 	//    }
 
 
-
+	@Override
 	public void addFullDirft()
 	{
 		ArrayList<Integer> nominalAttCandidates = new ArrayList<Integer>(

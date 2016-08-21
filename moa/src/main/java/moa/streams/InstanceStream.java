@@ -31,6 +31,4 @@ import com.yahoo.labs.samoa.instances.Instance;
 public interface InstanceStream extends ExampleStream<Example<Instance>> {
 
 
-
-
 }

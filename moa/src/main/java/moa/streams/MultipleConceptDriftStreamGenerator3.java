@@ -1,6 +1,8 @@
 package moa.streams;
 
 import java.util.Random;
+
+import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
@@ -60,12 +62,14 @@ InstanceStream{
     // Options for partial drifting
     public IntOption numDriftAttsOption = new IntOption("numDriftAtts", 'p',
             "Number of drifting atts", 3);
-   
+    
+    public FlagOption isFullDriftOption = new FlagOption("isFullDrift", 'o', "isFullDrift");
+    
     protected int numberInstance;
     
-    private InstanceStream stream1;
+    private DriftingStream stream1;
    
-    private InstanceStream stream2;
+    private DriftingStream stream2;
     
     protected int switchPoint; 
     
@@ -94,15 +98,10 @@ InstanceStream{
 		previousSwitchPoint = 0;
 		driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);
 		
-		// set stream options. 
-//		stream1 = getInitStream();
-//		stream2 = getEvolvedStream(stream1);
 	}
 	
-	private InstanceStream getInitStream()
+	private DriftingStream getInitStream()
 	{
-		
-		
 		RandomTreeGenerator newStream = new RandomTreeGenerator();
 		newStream.getOptions().resetToDefaults();
 		newStream.numClassesOption = this.numClassesOption;
@@ -119,29 +118,53 @@ InstanceStream{
 	public void initStream1AndStream2()
 	{
 		this.stream1 = getInitStream();
-		this.stream2 = getEvolvedStream(stream1);
+		if(isFullDriftOption.isSet())
+		{
+			this.stream2 = getFullyEvolvedStream(stream1);
+		}
+		else
+		{
+			this.stream2 = getPartiallyEvolvedStream(stream1);
+		}	
 	}
 	
-	public void setStream1(InstanceStream newStream1)
+	public void setStream1(DriftingStream newStream1)
 	{
 		this.stream1 = newStream1;
-		this.stream2 = getEvolvedStream(stream1);
+		if(isFullDriftOption.isSet())
+		{
+			this.stream2 = getFullyEvolvedStream(stream1);
+		}
+		else
+		{
+			this.stream2 = getPartiallyEvolvedStream(stream1);
+		}	
 	}
 	
-	public InstanceStream getStream2()
+	public DriftingStream getStream2()
 	{
 		return stream2;
 	}
 	
 	
 
-	private InstanceStream getEvolvedStream(InstanceStream stream)
+	private DriftingStream getPartiallyEvolvedStream(DriftingStream stream)
 	{
-		InstanceStream newStream = (InstanceStream) stream.copy();
-		((RandomTreeGenerator)newStream).addPartialDrift();
+		DriftingStream newStream = (DriftingStream) stream.copy();
+		newStream.addPartialDrift();
 		
 		return newStream;
 	}
+	
+	private DriftingStream getFullyEvolvedStream(DriftingStream stream)
+	{
+		DriftingStream newStream = (DriftingStream) stream.copy();
+		newStream.addFullDirft();
+		
+		return newStream;
+	}
+	
+	
 	@Override
 	public long estimatedRemainingInstances() {
 		return streamLengthOption.getValue() - numberInstance;
@@ -167,7 +190,14 @@ InstanceStream{
 		
 		if(numberInstance >= switchPoint){
 			stream1 = stream2;
-			stream2 = getEvolvedStream(stream1);
+			if(isFullDriftOption.isSet())
+			{
+				this.stream2 = getFullyEvolvedStream(stream1);
+			}
+			else
+			{
+				this.stream2 = getPartiallyEvolvedStream(stream1);
+			}	
 			previousSwitchPoint = switchPoint;
 			switchPoint += streamLengthOption.getValue() / numDriftsOption.getValue();
 			driftPosition = computeNextDriftPosition(switchPoint, previousSwitchPoint);

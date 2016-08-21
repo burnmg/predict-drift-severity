@@ -22,11 +22,12 @@ public class GenerateStreamTask implements Callable<Integer>
 	private int randomSeedInt;
 	private String fileAbsPath;
 	private int noisePercentage;
+	private boolean isFullDrift;
 	
 
 
 	public GenerateStreamTask(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
-			int driftAttsNum, int[] changes, int randomSeedInt, String fileAbsPath, int noisePercentage)
+			int driftAttsNum, int[] changes, int randomSeedInt, String fileAbsPath, int noisePercentage, boolean isFullDrift)
 	{
 		this.numAtt = numAtt;
 		this.numClass = numClass;
@@ -37,6 +38,7 @@ public class GenerateStreamTask implements Callable<Integer>
 		this.randomSeedInt = randomSeedInt;
 		this.fileAbsPath = fileAbsPath;
 		this.noisePercentage = noisePercentage;
+		this.isFullDrift = isFullDrift;
 	}
 
 	@Override
@@ -61,7 +63,7 @@ public class GenerateStreamTask implements Callable<Integer>
 		}
 		
 		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
-				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, startIsLow?1:2, dir, noisePercentage);
+				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, startIsLow?1:2, dir, noisePercentage, this.isFullDrift);
 		generator.prepareForUse();
 
 		WriteStreamToARFFFile3 task = new WriteStreamToARFFFile3(generator, file);

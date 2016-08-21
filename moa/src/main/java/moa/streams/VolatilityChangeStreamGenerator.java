@@ -48,7 +48,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 	}
 	
 	public VolatilityChangeStreamGenerator(int numAtt, int numClass, int[] changes, int driftAttsNum, int blockLength, int interleavedWindowSize, 
-			int randomSeedInt, int startClassifier, File descriptionFileDir, int noisePercentage)
+			int randomSeedInt, int startClassifier, File descriptionFileDir, int noisePercentage, boolean isFullDrift)
 	{
 		this.currentBlockIndex = 0;
 		this.numberInstance = 0;
@@ -70,6 +70,7 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 		currentBlock.drifIntOptiontRandomSeedOption.setValue(randomSeedInt);
 		currentBlock.driftRandom = random;
 		currentBlock.noisePercentageOption.setValue(noisePercentage);
+		currentBlock.isFullDriftOption.setValue(isFullDrift);
 		
 		//special for first block
 		currentBlock.initStream1AndStream2();
@@ -201,22 +202,14 @@ public class VolatilityChangeStreamGenerator extends AbstractOptionHandler imple
 			
 			if(switchTo!=currentAlgorithmIndex)
 			{
-				// output expected interval TODO
+				// output expected interval 
 				writeToFile(volatilityIntervalDescriptionWriter, intervalHead + "," + (numberInstance - 1) + "," + currentAlgorithmIndex + "\n");
 				intervalHead = numberInstance;
-
 				
 				// output expected switch point
 				writeToFile(switchPointDescriptionWriter, numberInstance+","+switchTo +"\n");
-				currentAlgorithmIndex = switchTo;
-				
+				currentAlgorithmIndex = switchTo;	
 			}
-			
-
-			
-
-			
-			
 			
 			return inst;
 		}

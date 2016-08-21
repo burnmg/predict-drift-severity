@@ -43,38 +43,24 @@ public class EvaluateMain
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
-		// List the tasks here
-	
-	
-//		// long low volatility period 
 
-//		// long high volatility period 
+		/**
+		 * My 3 experiments
+		 */
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
+//
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 10, 10));
+//	
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 10, 10));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
 
-//		// regular
-
-//		/**
-//		 * increasing vol
-//		 * 3 blocks
-//		 */
-
-//		/**
-//		 * decreasing vol
-//		 * 3 blocks
-//		 */
-	
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
-
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 10, 10));
-	
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 10, 10));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
-
-//		
+		list.addAll(buildTasksList("", "fulldrifttest_5", HOEFFDING_ADWIN, 1, 0));
+		list.addAll(buildTasksList("", "partialdrifttest_5", HOEFFDING_ADWIN, 1, 0));
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{

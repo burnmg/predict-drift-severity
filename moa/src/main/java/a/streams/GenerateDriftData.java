@@ -24,7 +24,7 @@ import weka.gui.HierarchyPropertyParser;
 public class GenerateDriftData
 {
 
-	public void main(String[] args)
+	public static void main(String[] args)
 	{
 		// experiment data
 //		/**
@@ -69,21 +69,25 @@ public class GenerateDriftData
 		 */
 //		generateDataParallel("100wblock_5noise_5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50", new int[]{5,50,50,50,50,50,50,50,5,50,50,50,50,50,50,50}, 50);
 		
-		generateDataParallel("100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 20);
-		generateDataParallel("100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 20);
-		generateDataParallel("100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20);
+//		generateDataParallel("100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 20);
+//		generateDataParallel("100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 20);
+//		generateDataParallel("100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20);
+
+		generateDataParallel("fullD_100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 20, true);
+		generateDataParallel("fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 20, true);
+		generateDataParallel("fullD_block_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20, true);
 
 		
 		System.out.println("Done");
 	}
 	
-	public static void generateDataParallel(String name, int[] numDrifts, int numSamples)
+	public static void generateDataParallel(String name, int[] numDrifts, int numSamples, boolean isFullDrift)
 	{
 		
 		int noisePercentage = 5;
 		int numAtt = 10;
 		int numClass = 2;
-		int blockLength = 1000000;
+		int blockLength = 500000;
 		int interleavedWindowSize = 100;
 		int driftAttsNum = 5;
 		
@@ -99,7 +103,7 @@ public class GenerateDriftData
 			String streamName = name +"_"+ i +".arff";
 
 			tasks[i] = new GenerateStreamTask(numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, numDrifts, ran.nextInt(), 
-					Directory.streamsPath+"/" +streamName+"/" +streamName, noisePercentage);
+					Directory.streamsPath+"/" +streamName+"/" +streamName, noisePercentage, isFullDrift);
 		}
 		
 		for(Callable<Integer> task : tasks)
