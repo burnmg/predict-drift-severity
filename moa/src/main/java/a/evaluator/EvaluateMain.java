@@ -59,8 +59,21 @@ public class EvaluateMain
 //		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 10, 10));
 //		list.addAll(buildTasksList("", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
 
-		list.addAll(buildTasksList("", "fulldrifttest_5", HOEFFDING_ADWIN, 1, 0));
-		list.addAll(buildTasksList("", "partialdrifttest_5", HOEFFDING_ADWIN, 1, 0));
+		/**
+		 * My 3 exeriments Full Drift
+		 */
+		list.addAll(buildTasksList("", "fullD_100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+		list.addAll(buildTasksList("", "fullD_100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HAT, 10, 10));
+		list.addAll(buildTasksList("", "fullD_100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
+
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HAT, 10, 10));
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", HOEFFDING_ADWIN, 10, 10));
+	
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 10, 10));
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 10, 10));
+		list.addAll(buildTasksList("", "fullD_block_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 10, 10));
+
 //		list.get(0).call();
 		for(Callable<Integer> task : list)
 		{
