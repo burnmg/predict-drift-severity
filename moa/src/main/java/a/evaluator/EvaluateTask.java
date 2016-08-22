@@ -85,6 +85,15 @@ public class EvaluateTask implements Callable<Integer>
 			double time = evaluatePrequential.getTime();
 			double meanAccInDrifts = evaluatePrequential.getMeanAccInDrifts();
 			int criticalPointCount = evaluatePrequential.getCriticalCount();
+			
+			// count numbers of switch points. 
+			String switchPointDescFile = this.resultFolderPath+"/switchPointDesc.csv";
+			int numSwitchPoints = -1;
+			if(new File(switchPointDescFile).exists())
+			{
+				numSwitchPoints = countLines(switchPointDescFile) - 1;
+			}
+			
 
 			// output the result to summary file. 
 			try
@@ -114,6 +123,9 @@ public class EvaluateTask implements Callable<Integer>
 				writer.newLine();
 				writer.write("High Vol Mode Percentage:"+highModePercentage);
 				writer.newLine();
+				writer.write("Number of Switch Points:"+numSwitchPoints);
+				writer.newLine();
+				
 				
 				writer.close();
 			} catch (IOException e)
@@ -185,8 +197,7 @@ public class EvaluateTask implements Callable<Integer>
 	{
 		if(!this.classifier.getClass().isAssignableFrom(VolatilityAdaptiveClassifer.class)) return null;
 
-
-		//		 evaluate the volatility interval coverage
+		//	evaluate the volatility interval coverage
 		BufferedReader readActual;
 		BufferedReader readExpected;
 		int[][] actual = null;
