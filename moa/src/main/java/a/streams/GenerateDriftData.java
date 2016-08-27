@@ -35,25 +35,23 @@ public class GenerateDriftData
 		/**
 		 * Compose two high and low stream. 
 		 */
-//		generateDataParallel("composed_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,1000", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,100}, 20, false);
-//				
-//		generateDataParallel("fullD_block_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100", new int[]{5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100}, 20, true);
-//		generateDataParallel("fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 20, true);
-//		generateDataParallel("fullD_block_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20, true);
-		generateDataParallel("test", new int[]{5,100}, 1, true);
+//		generateDataParallel("composed_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,1000", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,100}, 20, false, 100);
+
+		
+		generateDataParallel("fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true, 100);
+		
 
 		
 		System.out.println("Done");
 	}
 	
-	public static void generateDataParallel(String name, int[] numDrifts, int numSamples, boolean isFullDrift)
+	public static void generateDataParallel(String name, int[] numDrifts, int numSamples, boolean isFullDrift, int interleavedWindowSize)
 	{
 		
 		int noisePercentage = 5;
 		int numAtt = 10;
 		int numClass = 2;
-		int blockLength = 500000;
-		int interleavedWindowSize = 100;
+		int blockLength = 1000000;
 		int driftAttsNum = 5;
 		
 		
@@ -64,7 +62,7 @@ public class GenerateDriftData
 		GenerateStreamTask[] tasks = new GenerateStreamTask[numSamples];
 		
 		for(int i=0;i<tasks.length;i++)
-		{
+		{ 
 			String streamName = name +"_"+ i +".arff";
 
 			tasks[i] = new GenerateStreamTask(numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, numDrifts, ran.nextInt(), 

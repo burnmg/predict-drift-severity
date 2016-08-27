@@ -24,9 +24,9 @@ public class Analyser
 	public static void main(String[] args)
 	{
 //		new Analyser().analyse(Directory.resultFolderPath, "", "200mblock_5noise_5,50,5,5,5,50,5,5");
-		new Analyser().analyse(Directory.resultFolderPath, "", "fullD_block_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5");
-//		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\Results archive", "", "100mblock_5noise_50,5,50,50,50,5,50,50,50");
+//		new Analyser().analyse(Directory.resultFolderPath, "", "100,50,5");
 		
+		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\composed drift", "", "composed_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,1000");
 	}
 	
 	public void analyse(String resultFolderPath, String pathPrefix, String streamId)
@@ -77,9 +77,7 @@ public class Analyser
 						if(pair.length==2)
 						{
 							algorithmStatsSummaries.get(algorithmsResultFolders[j].getName()).add(pair[0], Double.parseDouble(pair[1]));
-						}
-						
-						
+						}						
 					
 					}
 					

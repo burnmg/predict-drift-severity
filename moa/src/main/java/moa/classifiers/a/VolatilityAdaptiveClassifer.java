@@ -147,7 +147,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// getPreparedClassOption(this.classifier2Option);
 
 //		classiferSelector = new DoubleReservoirsClassifierSelector(10, allowableVolFluctuation);
-		classiferSelector = new DoubleReservoirsHighForHighLowForLow(200, 0);
+		classiferSelector = new DoubleReservoirsHighForHighLowForLow(200, allowableVolFluctuation);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
