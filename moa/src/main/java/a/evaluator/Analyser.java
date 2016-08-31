@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -14,7 +15,10 @@ import java.util.function.DoublePredicate;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.poi.ss.formula.functions.Value;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import a.tools.Directory;
 
@@ -24,9 +28,150 @@ public class Analyser
 	public static void main(String[] args)
 	{
 //		new Analyser().analyse(Directory.resultFolderPath, "", "200mblock_5noise_5,50,5,5,5,50,5,5");
-//		new Analyser().analyse(Directory.resultFolderPath, "", "100,50,5");
+//		new Analyser().analyse(Directory.resultFolderPath, "", "fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50");
+		new Analyser().analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\fulldrift\\regular", true);
+		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\completed experiment\\fulldrift\\regular", "", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5");
+	}
+	
+	public void analyseToExcel(String resultFolderPath, boolean roundResult)
+	{
 		
-		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\composed drift", "", "composed_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,5,5,100,100,100,100,100,5,5,100,100,100,100,1000");
+		File resultFolder = new File(resultFolderPath);
+		File[] fileList = resultFolder.listFiles(new FilenameFilter()
+		{
+			
+			@Override
+			public boolean accept(File dir, String name)
+			{
+				return new File(dir, name).isDirectory();
+			}
+		});
+		
+		// Algorithm name, AlgorithmStatisticsOverall
+		Map<String, AlgorithmStatisticsOverall> algorithmStatsSummaries = new HashMap<String, Analyser.AlgorithmStatisticsOverall>();
+		
+		for(int i=0;i<fileList.length;i++)
+		{
+			System.out.println(fileList[i].getPath());
+			
+			File[] algorithmsResultFolders = fileList[i].listFiles();
+			
+			// HAT, HT, VAC
+			// for each algorithm
+			for(int j=0;j<algorithmsResultFolders.length;j++)
+			{
+				if(!algorithmStatsSummaries.containsKey(algorithmsResultFolders[j].getName()))
+				{
+					algorithmStatsSummaries.put(algorithmsResultFolders[j].getName(), new AlgorithmStatisticsOverall());
+				}
+				// read from the file
+				BufferedReader reader;
+				try
+				{
+					reader = new BufferedReader(new FileReader(algorithmsResultFolders[j].getPath() + "/summary.txt"));
+					
+					String line = null;
+					while((line = reader.readLine())!=null)
+					{
+						String[] pair = line.split(":");
+						
+						if(pair.length==2)
+						{
+							algorithmStatsSummaries.get(algorithmsResultFolders[j].getName()).add(pair[0], Double.parseDouble(pair[1]));
+						}						
+					
+					}
+					
+					reader.close();
+					
+				} catch (FileNotFoundException e)
+				{
+					System.out.println("escape file: "+e.getMessage());
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+				// Excel
+				XSSFWorkbook  wb = new XSSFWorkbook();
+				XSSFSheet sheet =  wb.createSheet("sheet");
+			    int algorithmIndex = 0;
+			    sheet.createRow(0); // top row
+
+			    
+				for(String key : algorithmStatsSummaries.keySet())
+				{
+					String algorihtmName = key;
+					// write algorithm name & abbreviate name
+					if(algorihtmName.equals("VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure"))
+					{
+						algorihtmName = "VACS";
+					}
+					else if(algorihtmName.equals("HOEFFDING_ADWIN"))
+					{
+						algorihtmName = "HRT";
+					}
+					sheet.getRow(0).createCell(2*algorithmIndex+1).setCellValue(algorihtmName+":Mean");
+					sheet.getRow(0).createCell(2*algorithmIndex+2).setCellValue(algorihtmName+":SD"); // change to SD
+					AlgorithmStatisticsOverall oneAlgorithmOverall = algorithmStatsSummaries.get(key);
+					
+				    int rowCount = 1;
+					for(String item : oneAlgorithmOverall.getOverallStatistics())
+					{
+						System.out.println(item);
+						String[] strings = item.split(":");
+						if(algorithmIndex==0)
+						{
+							// write left column
+							sheet.createRow(rowCount).createCell(0).setCellValue(strings[0]);
+						}
+						
+						if(!roundResult)
+						{
+							// write Mean
+							sheet.getRow(rowCount).createCell(2*algorithmIndex+1).setCellValue(Double.parseDouble(strings[1]));
+							// write Var
+							sheet.getRow(rowCount).createCell(2*algorithmIndex+2).setCellValue(Math.sqrt(Double.parseDouble(strings[2])));// compute SD from variance
+						}
+						else
+						{
+							// write Mean
+							double mean = Double.parseDouble(strings[1]);
+							mean = (double)Math.round(mean*100)/100;
+							sheet.getRow(rowCount).createCell(2*algorithmIndex+1).setCellValue(mean);
+							
+							// write Var
+							double var = Math.sqrt(Double.parseDouble(strings[2]));
+							var = (double)Math.round(var*100)/100;
+							sheet.getRow(rowCount).createCell(2*algorithmIndex+2).setCellValue(var);// compute SD from variance
+						}
+					
+						rowCount++;
+					}
+					
+					algorithmIndex++;
+					
+				}
+				
+			    FileOutputStream fileOut;
+				try
+				{
+					String fileName = roundResult? "workbook_rounded.xlsx": "workbook.xlsx";
+					fileOut = new FileOutputStream(resultFolderPath+"\\" + fileName);
+				    wb.write(fileOut);
+				    fileOut.close();
+				    fileOut.close();
+				} catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+
+				
+			}
+		}
 	}
 	
 	public void analyse(String resultFolderPath, String pathPrefix, String streamId)
@@ -149,7 +294,7 @@ public class Analyser
 				AlgorithmStatistics statistics = dict.get(key);
 				String mean = statistics.getMean() + "";
 				String var = statistics.getVariance() + "";
-				list.add(key+":"+mean+"   "+var);
+				list.add(key+":"+mean+":"+var);
 			}
 			
 			return list;

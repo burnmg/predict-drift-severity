@@ -38,7 +38,7 @@ public class EvaluateMain
 	public static void main(String[] args) throws Exception
 	{
 		long start = System.currentTimeMillis();
-		ExecutorService executorService = Executors.newFixedThreadPool(12);
+		ExecutorService executorService = Executors.newFixedThreadPool(30);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
@@ -73,11 +73,29 @@ public class EvaluateMain
 		/**
 		 * full drift, regular
 		 */
-		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", HAT, 20, 0));
-		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", HOEFFDING_ADWIN, 20, 0));
-		
-		
+//		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", HAT, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", HOEFFDING_ADWIN, 20, 0));
+		/**
+		 * full drift, large low vol
+		 */
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50", HAT, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50", HOEFFDING_ADWIN, 20, 0));
+
+		/**
+		 * full drift, large high vol
+		 */
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HAT, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HOEFFDING_ADWIN, 20, 0));
+
+		/**
+		 * full drift, composed
+		 */
+		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HAT, 20, 0));
+		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HOEFFDING_ADWIN, 20, 0));
 
 		
 //		list.get(0).call();

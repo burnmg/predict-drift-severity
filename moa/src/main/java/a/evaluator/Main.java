@@ -7,7 +7,7 @@ public class Main
 	public static void main(String args[]) throws Exception
 	{
 		GenerateDriftData.main(args);
-		System.gc();
+//		System.gc();
 		EvaluateMain.main(args);
 	}
 }
