@@ -64,9 +64,9 @@ public class EvaluateMain
 //		list.addAll(buildTasksList("", "100,50,5", HAT, 20, 0));
 //		list.addAll(buildTasksList("", "100,50,5", HOEFFDING_ADWIN, 20, 0));
 //		
-//		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-//		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
+		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 20, 0));
+		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
 
 		
 		
@@ -93,9 +93,9 @@ public class EvaluateMain
 		/**
 		 * full drift, composed
 		 */
-		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HAT, 20, 0));
-		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HOEFFDING_ADWIN, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HAT, 20, 0));
+//		list.addAll(buildTasksList("", "fullD_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", HOEFFDING_ADWIN, 20, 0));
 
 		
 //		list.get(0).call();

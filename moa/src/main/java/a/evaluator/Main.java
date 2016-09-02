@@ -6,8 +6,8 @@ public class Main
 {
 	public static void main(String args[]) throws Exception
 	{
+		EvaluateMain.main(args); // order changed. 
 		GenerateDriftData.main(args);
-//		System.gc();
-		EvaluateMain.main(args);
+		
 	}
 }
