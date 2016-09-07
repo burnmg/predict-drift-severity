@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +30,67 @@ public class Analyser
 	public static void main(String[] args)
 	{
 //		new Analyser().analyse(Directory.resultFolderPath, "", "200mblock_5noise_5,50,5,5,5,50,5,5");
-//		new Analyser().analyse(Directory.resultFolderPath, "", "fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50");
-		new Analyser().analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\fulldrift\\regular", true);
-		new Analyser().analyse("C:\\Users\\rjia477\\Desktop\\completed experiment\\fulldrift\\regular", "", "fullD_100window_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5");
+//		new Analyser().analyse(Directory.resultFolderPath, "", "3000000measuringwindows_size_100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5");
+		
+		Analyser analyser = new Analyser();
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\fulldrift\\composed drift", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\fulldrift\\long high vol period", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\fulldrift\\long low vol period", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\fulldrift\\regular", true);
+		
+		
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\composed", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\decreasing vol", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\increasing and decreasing", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\long high vol period", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\regular", true);
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\long low vol period", true);
+
+		
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//				+ "\\partial drift\\1000 window size", true);
+		
+		/**
+		 * Measure Window sizee
+		 */
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\measure window 30", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\measure window 300", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\measure window 3000", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\measure window 30000", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\measure window 3000000", true);	
+		
+		/**
+		 * reservoir  size
+		 */
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\reservoir size 5", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\reservoir size 10", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\reservoir size 1000", true);	
+//		analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		+ "\\partial drift\\reservoir size 10000", true);	
+		
+		analyser.analyse(Directory.resultFolderPath, "", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5");
+
+		System.out.println("Analyse Done");
+		
+		
 	}
 	
 	public void analyseToExcel(String resultFolderPath, boolean roundResult)
@@ -156,7 +216,10 @@ public class Analyser
 			    FileOutputStream fileOut;
 				try
 				{
-					String fileName = roundResult? "workbook_rounded.xlsx": "workbook.xlsx";
+					Path p = Paths.get(resultFolderPath);
+					String fileNamePrefix = p.getParent().getFileName() + "_" + p.getFileName().toString();
+					
+					String fileName = roundResult? fileNamePrefix+"_rounded.xlsx": fileNamePrefix+ ".xlsx";
 					fileOut = new FileOutputStream(resultFolderPath+"\\" + fileName);
 				    wb.write(fileOut);
 				    fileOut.close();

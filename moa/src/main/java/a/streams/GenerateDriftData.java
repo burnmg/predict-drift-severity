@@ -17,9 +17,11 @@ import moa.clusterers.outliers.AbstractC.StreamObj;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.streams.VolatilityChangeStreamGeneratorGradual;
 import moa.streams.generators.CircleGenerator;
+import moa.streams.generators.DriftingSEAGenerator;
 import moa.streams.generators.HyperplaneGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 import weka.gui.HierarchyPropertyParser;
+import moa.streams.MultipleConceptDriftStreamGenerator3;
 
 public class GenerateDriftData
 {
@@ -30,7 +32,14 @@ public class GenerateDriftData
 
 //		generateDataParallel("100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 20);
 //		generateDataParallel("100wblock_5noise_100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5", new int[]{100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5,100,100,5,5,5,5,5}, 20);
-//		generateDataParallel("100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20);
+//		generateDataParallel("test_sea_data2", new int[]{50,50,5,5,50,50,5,5}, 4, true, 100, MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+
+
+//		generateDataParallel("sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", new int[]{50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+//		generateDataParallel("sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", new int[]{50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+//		generateDataParallel("sea_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+		
+		
 		
 		/**
 		 * Compose two high and low stream. 
@@ -43,12 +52,15 @@ public class GenerateDriftData
 	
 //		generateDataParallel("fullD_100window_5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50", new int[]{5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50}, 20, true, 100);
 		
-		generateDataParallel("fullD_1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50}, 20, true, 1000);
+//		generateDataParallel("10000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20, false, 10000);
+		
+//		generateDataParallel("fullD_10000interleaved_size_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true, 10000);
+		
 		
 		System.out.println("Done");
 	}
 	
-	public static void generateDataParallel(String name, int[] numDrifts, int numSamples, boolean isFullDrift, int interleavedWindowSize)
+	public static void generateDataParallel(String name, int[] numDrifts, int numSamples, boolean isFullDrift, int interleavedWindowSize, int generatorOption)
 	{
 		
 		int noisePercentage = 5;
@@ -68,7 +80,7 @@ public class GenerateDriftData
 		{ 
 			String streamName = name +"_"+ i +".arff";
 
-			tasks[i] = new GenerateStreamTask(numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, numDrifts, ran.nextInt(), 
+			tasks[i] = new GenerateStreamTask(generatorOption, numAtt, numClass, blockLength, interleavedWindowSize, driftAttsNum, numDrifts, ran.nextInt(), 
 					Directory.streamsPath+"/" +streamName+"/" +streamName, noisePercentage, isFullDrift);
 		}
 		

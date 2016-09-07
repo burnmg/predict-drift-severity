@@ -71,24 +71,23 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 
 	private long intervalStart;
 
-	private int allowableVolFluctuation;
+	private int lambda;
 
 	private int measurePeriod;
+	
+	private int reservoirSize;
 
 	// private ParameterInjector parameterInjector;
 
 	static final boolean DEBUG_MODE = true;
 
-	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, CurrentVolatilityMeasure currentVolatilityMeasure, int allowableVolFluctuation, int measurePeriod)
+	public VolatilityAdaptiveClassifer(CutPointDetector cutPointDetector, CurrentVolatilityMeasure currentVolatilityMeasure, int lambda, int measurePeriod, int reservoirSize)
 	{
 		// this.cutPointDetector = cutPointDetector;
-		this.allowableVolFluctuation = allowableVolFluctuation;
+		this.lambda = lambda;
 		this.currentVolatilityMeasure = currentVolatilityMeasure;
 		this.measurePeriod = measurePeriod;
-		// currentVolatilityMeasure = new AverageCurrentDriftIntervalMeasure(10, cutPointDetector, 2000);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasure(cutPointDetector, 32);
-//		currentVolatilityMeasure = new SimpleCurrentVolatilityMeasure(0.002);
-//		currentVolatilityMeasure = new RelativeVolatilityDetectorMeasureNoCutpointDect(32) ;
+		this.reservoirSize = reservoirSize;
 	}
 
 	@Override
@@ -147,7 +146,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 		// getPreparedClassOption(this.classifier2Option);
 
 //		classiferSelector = new DoubleReservoirsClassifierSelector(10, allowableVolFluctuation);
-		classiferSelector = new DoubleReservoirsHighForHighLowForLow(200, allowableVolFluctuation);
+		classiferSelector = new DoubleReservoirsHighForHighLowForLow(reservoirSize, lambda);
 		// CUSUM cusum = new CUSUM(10);
 		// cutPointDetector = cusum;
 
@@ -199,6 +198,7 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 	@Override
 	public void trainOnInstanceImpl(Instance inst)
 	{
+		
 		int currentVolatilityLevel = currentVolatilityMeasure.setInput(correctlyClassifies(inst) ? 0.0 : 1.0);
 		
 		if (currentVolatilityMeasure.conceptDrift())
@@ -246,7 +246,6 @@ public class VolatilityAdaptiveClassifer extends AbstractClassifier
 				int previousClassifierIndex = activeClassifierIndex;
 
 				activeClassifierIndex = decision;
-//				 activeClassifierIndex = 2;
 
 				if (DEBUG_MODE)
 				{

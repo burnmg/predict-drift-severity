@@ -8,7 +8,10 @@ public class DoubleReservoirs
 	private double variance;
 	private double delta = 0.002; 
 	private double lambda; // allowable fluctuation
-
+	private boolean isActive;
+	private double seenMax = Double.MIN_VALUE;
+	private double seenMin = Double.MAX_VALUE;
+ 
 	/**
 	 * 
 	 * @param size: size of the reservoir
@@ -20,6 +23,7 @@ public class DoubleReservoirs
 		this.lowReservoir = new Reservoir(size);
 		this.variance = 0;
 		this.lambda = lambda; 
+		this.isActive = false;
 	}
 	
 
@@ -42,6 +46,8 @@ public class DoubleReservoirs
 	 */
 	public boolean setInput(double input)
 	{
+		if(input>this.seenMax) this.seenMax = input;
+		if(input<this.seenMin) this.seenMin = input;
 
 		double mean = this.getMean();
 		if (input > mean)
@@ -76,11 +82,51 @@ public class DoubleReservoirs
 	
 	public boolean isActive()
 	{
-		double highMean = highReservoir.getWidth() == 0 ? 0 : highReservoir.getReservoirMean();
-		double lowMean = lowReservoir.getWidth() == 0 ? 0 : lowReservoir.getReservoirMean();
-		return (highMean - lowMean) >= this.lambda;
-	}
 
+		if(this.isActive)
+		{
+			return true;
+		}
+		else
+		{
+			double highMean = highReservoir.getWidth() == 0 ? 0 : highReservoir.getReservoirMean();
+			double lowMean = lowReservoir.getWidth() == 0 ? 0 : lowReservoir.getReservoirMean();
+			boolean makeItActive = (highMean - lowMean) >= this.lambda;
+			if(makeItActive)
+			{
+				this.isActive = true;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+//
+//	}
+//	public boolean isActive()
+//	{
+//
+//		if(this.isActive)
+//		{
+//			return true;
+//		}
+//		else
+//		{
+//			boolean makeItActive = this.seenMax-this.seenMin > this.lambda;
+//			if(makeItActive)
+//			{
+//				this.isActive = true;
+//				return true;
+//			}
+//			else
+//			{
+//				return false;
+//			}
+//		}
+//
+//	}
 
 	// with ADWIN akin approach
 //	public boolean isActive()

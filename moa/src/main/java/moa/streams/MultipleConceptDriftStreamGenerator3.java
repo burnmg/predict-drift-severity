@@ -10,6 +10,7 @@ import moa.core.Example;
 import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.streams.generators.DriftingHyperplaneGenerator;
+import moa.streams.generators.DriftingSEAGenerator;
 import moa.streams.generators.RandomTreeGenerator;
 import moa.tasks.TaskMonitor;
 import weka.classifiers.trees.RandomTree;
@@ -59,11 +60,19 @@ InstanceStream{
     public IntOption noisePercentageOption = new IntOption("noisePercentage",
             'n', "Percentage of noise to add to the data.", 0, 0, 100);
     
+    /**
+     * 0: random tree generator
+     * 1: 
+     */
+    public int dataGeneratorOption = 0;
+    final static public int RANDOM_TREE_GENERATOR_OPTION = 0;
+    final static public int SEA_GENERATOR_OPTION = 1;
     // Options for partial drifting
     public IntOption numDriftAttsOption = new IntOption("numDriftAtts", 'p',
             "Number of drifting atts", 3);
     
     public FlagOption isFullDriftOption = new FlagOption("isFullDrift", 'o', "isFullDrift");
+    
     
     protected int numberInstance;
     
@@ -89,6 +98,7 @@ InstanceStream{
 		return this.stream1.getHeader();
 	}
 	
+	
 	@Override
 	protected void prepareForUseImpl(TaskMonitor monitor,
 			ObjectRepository repository) {
@@ -102,17 +112,31 @@ InstanceStream{
 	
 	private DriftingStream getInitStream()
 	{
-		RandomTreeGenerator newStream = new RandomTreeGenerator();
-		newStream.getOptions().resetToDefaults();
-		newStream.numClassesOption = this.numClassesOption;
-		newStream.numNumericsOption = this.numAttsOption;
-		newStream.numNominalsOption.setValue(0);
-		newStream.instanceRandomSeedOption.setValue(driftRandom.nextInt());
-		newStream.treeRandomSeedOption.setValue(driftRandom.nextInt());
-		newStream.noiseOption = noisePercentageOption;
-		newStream.prepareForUse();
+		DriftingStream stream = null;
+		if(dataGeneratorOption==RANDOM_TREE_GENERATOR_OPTION)
+		{
+			RandomTreeGenerator randomTree = new RandomTreeGenerator();
+			randomTree.getOptions().resetToDefaults();
+			randomTree.numClassesOption = this.numClassesOption;
+			randomTree.numNumericsOption = this.numAttsOption;
+			randomTree.numNominalsOption.setValue(0);
+			randomTree.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+			randomTree.treeRandomSeedOption.setValue(driftRandom.nextInt());
+			randomTree.noiseOption = noisePercentageOption;
+			randomTree.prepareForUse();
+			stream = randomTree;
+		}
+		else if(dataGeneratorOption==SEA_GENERATOR_OPTION)
+		{
+			DriftingSEAGenerator seaGenerator = new DriftingSEAGenerator();
+			seaGenerator.getOptions().resetToDefaults();
+			seaGenerator.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+			seaGenerator.prepareForUse();
+			stream = seaGenerator;
+		}
+
 		
-		return newStream;
+		return stream;
 	}
 	
 	public void initStream1AndStream2()

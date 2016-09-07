@@ -38,37 +38,50 @@ public class EvaluateMain
 	public static void main(String[] args) throws Exception
 	{
 		long start = System.currentTimeMillis();
-		ExecutorService executorService = Executors.newFixedThreadPool(30);
+		ExecutorService executorService = Executors.newFixedThreadPool(40);
 
 		
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>();
 		
-
-
-//		/**
-//		 * These two full drifts data are re-generated. 
-//		 */
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100", HOEFFDING_ADWIN, 20, 0));
-//
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "fullD_block_5noise_5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100", HOEFFDING_ADWIN, 20, 0));
-//		
-//		list.addAll(buildTasksList("", "5,50,100", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-//		list.addAll(buildTasksList("", "5,50,100", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "5,50,100", HOEFFDING_ADWIN, 20, 0));
-//		
-//		list.addAll(buildTasksList("", "100,50,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-//		list.addAll(buildTasksList("", "100,50,5", HAT, 20, 0));
-//		list.addAll(buildTasksList("", "100,50,5", HOEFFDING_ADWIN, 20, 0));
-//		
-		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0));
-		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HAT, 20, 0));
-		list.addAll(buildTasksList("", "1000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", HOEFFDING_ADWIN, 20, 0));
-
+		/** 
+		 * Parameters: 
+		 * paras[0] measure window size
+		 * paras[1] reservoir size
+		 */
 		
+		
+		
+//		list.addAll(buildTasksList("5reservoirSize_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+//				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 5}));
+//		list.addAll(buildTasksList("10reservoirSize_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+//				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 10}));
+//		
+//		list.addAll(buildTasksList("1000reservoirSize_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+//				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 1000}));
+//		
+//		list.addAll(buildTasksList("10000reservoirSize_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+//				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 10000}));
+		
+		
+		/**
+		 * SEA long high vol period
+		 */
+		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+		HAT, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+
+		/**
+		 * SEA small high vol period
+		 */
+		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+		HAT, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
 		
 		/**
 		 * full drift, regular
@@ -121,7 +134,7 @@ public class EvaluateMain
 		
 	}
 
-	private static ArrayList<Callable<Integer>> buildTasksList(String resultPathPrefix, String streamPrefix, int classifierOption, int numSamples, int startIndex)
+	private static ArrayList<Callable<Integer>> buildTasksList(String resultPathPrefix, String streamPrefix, int classifierOption, int numSamples, int startIndex, double[] paras)
 	{
 		ArrayList<Callable<Integer>> list = new ArrayList<Callable<Integer>>(numSamples);
 		
@@ -129,7 +142,7 @@ public class EvaluateMain
 		{
 			try
 			{
-				list.add(buildTask(resultPathPrefix, streamPrefix+"_"+(i+startIndex)+".arff", classifierOption));
+				list.add(buildTask(resultPathPrefix, streamPrefix+"_"+(i+startIndex)+".arff", classifierOption, paras));
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -141,11 +154,12 @@ public class EvaluateMain
 
 	/**
 	 * 
+	 * @param paras 
 	 * @param streamName: give a streamName, it will generate a evaluation task for this stream.
 	 * @return
 	 * @throws Exception 
 	 */
-	private static Callable<Integer> buildTask(String resultPathPrefix, String streamName, int classifierOption) throws Exception
+	private static Callable<Integer> buildTask(String resultPathPrefix, String streamName, int classifierOption, double[] paras) throws Exception
 	{
 
 		File resultFolder = null;
@@ -157,8 +171,17 @@ public class EvaluateMain
 		{
 			resultFolder = new File(pathname+"/HOEFFDING_ADWIN");
 			classifier = new HoeffdingTreeADWIN(new ADWIN());
-			//			classifier = new HoeffdingTreeADWIN(new SlidingWindowMonitor(1000, 0.15, 5000));
 			classifier.getOptions().resetToDefaults();
+		}
+		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure)
+		{
+			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure");
+			
+			// default setting
+			// VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalTimeStampMeasure(300000, new ADWIN(), 2000), 20, 10000, 200);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalTimeStampMeasure((int)paras[0], new ADWIN(), 2000), 10, 10000, (int)paras[1]);
+			classifier = temp;
+			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 		}
 		else if (classifierOption==HAT) 
 		{
@@ -169,7 +192,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentDriftIntervalMeasure");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentDriftIntervalMeasure(30, new ADWIN(), 2000), 20, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentDriftIntervalMeasure(30, new ADWIN(), 2000), 20, 10000, 200);
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
 
 			classifier = temp;
@@ -177,7 +200,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_RelativeVolatilityDetectorMeasureNoCutpointDect");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new RelativeVolatilityDetectorMeasureNoCutpointDect(32), 10000, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new RelativeVolatilityDetectorMeasureNoCutpointDect(32), 10000, 10000, 200);
 			
 			classifier = temp;
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
@@ -185,7 +208,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasure)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_MaxCurrentDriftInterfvalMeasuret");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new MaxCurrentDriftInterfvalMeasure(20, new ADWIN(), 2000), 10000, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new MaxCurrentDriftInterfvalMeasure(20, new ADWIN(), 2000), 10000, 10000, 200);
 			
 			classifier = temp;
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
@@ -193,7 +216,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_SimpleCurrentVolatilityMeasure)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_SimpleCurrentVolatilityMeasure");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new SimpleCurrentVolatilityMeasure(5, new ADWIN(), 2000), 10000, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new SimpleCurrentVolatilityMeasure(5, new ADWIN(), 2000), 10000, 10000, 200);
 			
 			classifier = temp;
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());
@@ -201,15 +224,7 @@ public class EvaluateMain
 		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalInstanceWindowMeasure)
 		{
 			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalInstanceWindowMeasure");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalInstanceWindowMeasure(500000, new ADWIN(), 2000), 0, 10000);
-			
-			classifier = temp;
-			temp.dumpFileDirOption.setValue(resultFolder.getPath());
-		}
-		else if(classifierOption==VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure)
-		{
-			resultFolder = new File(pathname+"/VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure");
-			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalTimeStampMeasure(300000, new ADWIN(), 2000), 20, 10000);
+			VolatilityAdaptiveClassifer temp = new VolatilityAdaptiveClassifer(new ADWIN(), new AverageCurrentIntervalInstanceWindowMeasure(500000, new ADWIN(), 2000), 0, 10000, 200);
 			
 			classifier = temp;
 			temp.dumpFileDirOption.setValue(resultFolder.getPath());

@@ -52,7 +52,7 @@ public class DoubleReservoirsHighForHighLowForLow implements ClassifierSelector 
 	@Override
 	public double getThreshold()
 	{
-		return doubleReservoirs.getMiddleMean();
+		return doubleReservoirs.getMean();
 	}
 
 	@Override

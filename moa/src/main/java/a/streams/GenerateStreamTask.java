@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import com.google.common.primitives.UnsignedBytes;
 
 import a.tools.Directory;
+import java_cup.internal_error;
 import moa.streams.VolatilityChangeStreamGenerator;
 import moa.tasks.WriteStreamToARFFFile3;
 
@@ -23,10 +24,11 @@ public class GenerateStreamTask implements Callable<Integer>
 	private String fileAbsPath;
 	private int noisePercentage;
 	private boolean isFullDrift;
+	private int generatorOption;
 	
 
 
-	public GenerateStreamTask(int numAtt, int numClass, int blockLength, int interleavedWindowSize,
+	public GenerateStreamTask(int generatorOption, int numAtt, int numClass, int blockLength, int interleavedWindowSize,
 			int driftAttsNum, int[] changes, int randomSeedInt, String fileAbsPath, int noisePercentage, boolean isFullDrift)
 	{
 		this.numAtt = numAtt;
@@ -39,6 +41,7 @@ public class GenerateStreamTask implements Callable<Integer>
 		this.fileAbsPath = fileAbsPath;
 		this.noisePercentage = noisePercentage;
 		this.isFullDrift = isFullDrift;
+		this.generatorOption = generatorOption;
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class GenerateStreamTask implements Callable<Integer>
 			if(changes[i] < startChange) startIsLow = false;
 		}
 		
-		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(numAtt, numClass, changes,
+		VolatilityChangeStreamGenerator generator = new VolatilityChangeStreamGenerator(this.generatorOption, numAtt, numClass, changes,
 				driftAttsNum, blockLength, interleavedWindowSize, randomSeedInt, startIsLow?1:2, dir, noisePercentage, this.isFullDrift);
 		generator.prepareForUse();
 
