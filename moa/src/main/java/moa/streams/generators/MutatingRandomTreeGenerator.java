@@ -51,7 +51,7 @@ import moa.tasks.TaskMonitor;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class RandomTreeGenerator extends AbstractOptionHandler implements
+public class MutatingRandomTreeGenerator extends AbstractOptionHandler implements
 DriftingStream {
 
 	@Override
