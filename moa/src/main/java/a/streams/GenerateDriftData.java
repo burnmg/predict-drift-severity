@@ -37,7 +37,8 @@ public class GenerateDriftData
 
 //		generateDataParallel("sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", new int[]{50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
 //		generateDataParallel("sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", new int[]{50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
-//		generateDataParallel("sea_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true,100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+		generateDataParallel("sea_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true, 100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
+		generateDataParallel("sea_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", new int[]{50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50}, 20, true, 100,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
 		
 		
 		

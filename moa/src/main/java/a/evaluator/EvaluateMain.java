@@ -66,22 +66,44 @@ public class EvaluateMain
 		/**
 		 * SEA long high vol period
 		 */
-		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
-		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
-		HAT, 20, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
-		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+//		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+//		HAT, 20, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "sea_50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5,50,50,50,50,50,5,5", 
+//		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
 
 		/**
 		 * SEA small high vol period
 		 */
-		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+//		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+//		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+//		HAT, 20, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+//		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+		
+		/**
+		 * SEA regular
+		 */
+		list.addAll(buildTasksList("", "sea_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", 
 		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+		list.addAll(buildTasksList("", "sea_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", 
 		HAT, 20, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "sea_50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5,50,50,5,5,5,5,5", 
+		list.addAll(buildTasksList("", "sea_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", 
 		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+		
+		
+		/**
+		 * SEA composed
+		 */
+		list.addAll(buildTasksList("", "sea_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", 
+		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", 
+		HAT, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "sea_composed_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", 
+		HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+		
 		
 		/**
 		 * full drift, regular
