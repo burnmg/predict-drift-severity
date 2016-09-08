@@ -106,7 +106,7 @@ DriftingStream {
 	public IntOption noiseOption = new IntOption("noise",
 			'n',
 			"In percentage",
-			0, 0, 100);
+			5, 0, 100);
 	
 	
 
