@@ -48,21 +48,23 @@ public class Analyser
 		// experiment"
 		// + "\\fulldrift\\regular", true);
 
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\composed", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed"
+//		  + " experiment\\partial drift\\composed", false);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed"
+//				  + " experiment\\partial drift\\composed", true);
+		 
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
+//		 experiment"
 		// + "\\partial drift\\decreasing vol", true);
 		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
 		// experiment"
 		// + "\\partial drift\\increasing and decreasing", true);
-		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
-		 + "\\partial drift\\long high vol period", false);
-		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
-		 + "\\partial drift\\regular", false);
-		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
-		 + "\\partial drift\\long low vol period", false);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		 + "\\partial drift\\long high vol period", false);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		 + "\\partial drift\\regular", false);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		 + "\\partial drift\\long low vol period", false);
 
 		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
 		// experiment"
@@ -71,44 +73,27 @@ public class Analyser
 		/**
 		 * Measure Window sizee
 		 */
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\measure window 30", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\measure window 300", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\measure window 3000", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\measure window 30000", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\measure window 3000000", true);
-
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\measure window 30", true);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\measure window 300", true);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\measure window 3000", true);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\measure window 30000", true);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\measure window 3000000", true);
 		/**
 		 * reservoir size
 		 */
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\reservoir size 5", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\reservoir size 10", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\reservoir size 1000", true);
-		// analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed
-		// experiment"
-		// + "\\partial drift\\reservoir size 10000", true);
-		
+		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\reservoir size 5", true);
+		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\reservoir size 10", true);
+		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\reservoir size 1000", true);
+		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment\\partial drift\\reservoir size 10000", true);
+		 
 		/**
 		 * SEA
 		 */
-		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
-		 + "\\sea lambda 20\\long low vol period", true);
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		 + "\\sea lambda 20\\long low vol period", true);
 		
+//		 analyser.analyseToExcel("C:\\Users\\rjia477\\Desktop\\completed experiment"
+//		 + "\\sea lambda 20\\long low vol period", true);
 
 
 		System.out.println("Analyse Done");
