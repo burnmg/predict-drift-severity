@@ -131,7 +131,6 @@ InstanceStream{
 			DriftingSEAGenerator seaGenerator = new DriftingSEAGenerator();
 			seaGenerator.getOptions().resetToDefaults();
 			seaGenerator.instanceRandomSeedOption.setValue(driftRandom.nextInt());
-			seaGenerator.noisePercentageOption = noisePercentageOption;
 			seaGenerator.prepareForUse();
 			stream = seaGenerator;
 		}
