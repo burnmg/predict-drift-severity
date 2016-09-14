@@ -62,14 +62,28 @@ public class EvaluateMain
 //		list.addAll(buildTasksList("10000reservoirSize_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
 //				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 10000}));
 		
+		list.addAll(buildTasksList("", "100,50,5", VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "100,50,5", HAT, 20, 0, new double[]{300000, 200}));
+		list.addAll(buildTasksList("", "100,50,5", HOEFFDING_ADWIN, 20, 0, new double[]{300000, 200}));
+		/**
+		 * Different measurement window size
+		 */
+		list.addAll(buildTasksList("window400000_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{400000, 200}));
+		list.addAll(buildTasksList("window200000_", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{200000, 200}));
+		list.addAll(buildTasksList("window100000", "100wblock_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", 
+				VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 20, 0, new double[]{100000, 200}));
 		
-		
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
-		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 5, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
-		HAT, 5, 0, new double[]{300000, 200}));
-		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
-		HOEFFDING_ADWIN, 5, 0, new double[]{300000, 200}));
+		/**
+		 * large high vol
+		 */
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
+//		VOL_ADAPTIVE_CLASSIFIER_AverageCurrentIntervalTimeStampMeasure, 5, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
+//		HAT, 5, 0, new double[]{300000, 200}));
+//		list.addAll(buildTasksList("", "100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", 
+//		HOEFFDING_ADWIN, 5, 0, new double[]{300000, 200}));
 		
 		/**
 		 * SEA long high vol period

@@ -44,7 +44,7 @@ public class GenerateDriftData
 //		generateDataParallel("window_10000_sea_5noise_50,50,5,5,5,5,5,50,50,5,5,5,5,5,5,5,50,50,50,50,50,5,5,50,50,50,50,50", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true, 10000,MultipleConceptDriftStreamGenerator3.SEA_GENERATOR_OPTION);
 		
 		
-		generateDataParallel("100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 5, false, 100, MultipleConceptDriftStreamGenerator3.RANDOM_TREE_GENERATOR_OPTION);
+//		generateDataParallel("100wblock_5noise_100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5", new int[]{100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5,100,100,100,100,100,5,5}, 5, false, 100, MultipleConceptDriftStreamGenerator3.RANDOM_TREE_GENERATOR_OPTION);
 		
 		/**
 		 * Compose two high and low stream. 
@@ -60,6 +60,13 @@ public class GenerateDriftData
 //		generateDataParallel("10000interleaved_size_5noise_100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5", new int[]{100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5,100,100,5,5}, 20, false, 10000);
 		
 //		generateDataParallel("fullD_10000interleaved_size_5noise_50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5", new int[]{50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5,50,50,5,5}, 20, true, 10000);
+		
+		
+		/**
+		 *  decreasing vol
+		 */
+		
+		generateDataParallel("100,50,5", new int[]{100,50,5}, 20, false, 100, MultipleConceptDriftStreamGenerator3.RANDOM_TREE_GENERATOR_OPTION);
 		
 		
 		System.out.println("Done");
