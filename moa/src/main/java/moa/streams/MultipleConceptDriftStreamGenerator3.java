@@ -11,7 +11,7 @@ import moa.core.ObjectRepository;
 import moa.options.AbstractOptionHandler;
 import moa.streams.generators.DriftingHyperplaneGenerator;
 import moa.streams.generators.DriftingSEAGenerator;
-import moa.streams.generators.RandomTreeGenerator;
+import moa.streams.generators.MutatingRandomTreeGenerator;
 import moa.tasks.TaskMonitor;
 import weka.classifiers.trees.RandomTree;
 
@@ -115,7 +115,7 @@ InstanceStream{
 		DriftingStream stream = null;
 		if(dataGeneratorOption==RANDOM_TREE_GENERATOR_OPTION)
 		{
-			RandomTreeGenerator randomTree = new RandomTreeGenerator();
+			MutatingRandomTreeGenerator randomTree = new MutatingRandomTreeGenerator();
 			randomTree.getOptions().resetToDefaults();
 			randomTree.numClassesOption = this.numClassesOption;
 			randomTree.numNumericsOption = this.numAttsOption;
@@ -131,6 +131,7 @@ InstanceStream{
 			DriftingSEAGenerator seaGenerator = new DriftingSEAGenerator();
 			seaGenerator.getOptions().resetToDefaults();
 			seaGenerator.instanceRandomSeedOption.setValue(driftRandom.nextInt());
+			seaGenerator.noisePercentageOption = noisePercentageOption;
 			seaGenerator.prepareForUse();
 			stream = seaGenerator;
 		}

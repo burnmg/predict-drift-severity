@@ -51,7 +51,7 @@ import moa.tasks.TaskMonitor;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class RandomTreeGenerator extends AbstractOptionHandler implements
+public class MutatingRandomTreeGenerator extends AbstractOptionHandler implements
 DriftingStream {
 
 	@Override
@@ -106,7 +106,7 @@ DriftingStream {
 	public IntOption noiseOption = new IntOption("noise",
 			'n',
 			"In percentage",
-			0, 0, 100);
+			5, 0, 100);
 	
 	
 
