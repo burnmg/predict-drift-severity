@@ -40,7 +40,7 @@ public class EvaluateTask implements Callable<Integer>
 		this.streamName = streamName;
 		this.resultFolderPath = sampleResultFolderPath;
 
-		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 20000);
+		evaluatePrequential = new MyEvaluatePrequential(this.classifier, stream, Directory.streamsPath+'/'+streamName, this.resultFolderPath, 2000);
 		evaluatePrequential.getOptions().resetToDefaults();
 		evaluatePrequential.sampleFrequencyOption.setValue(100);
 
