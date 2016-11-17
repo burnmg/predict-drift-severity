@@ -17,7 +17,7 @@
  * 
  */
 
-package summer.VolatilityDetection;
+package summer.proSeed.VolatilityDetection;
 
 public class Buffer {
 	private double[] buffer;

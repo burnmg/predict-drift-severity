@@ -17,7 +17,7 @@
  * 
  */
 
-package summer.PatternMining;
+package summer.proSeed.PatternMining;
 
 import java.util.Random;
 

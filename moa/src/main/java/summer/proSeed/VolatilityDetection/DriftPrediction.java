@@ -17,15 +17,15 @@
  * 
  */
 
-package summer.VolatilityDetection;
+package summer.proSeed.VolatilityDetection;
 
 import java.util.ArrayList;
 
 import org.apache.commons.math3.stat.StatUtils;
 
-import summer.PatternMining.Pattern;
-import summer.PatternMining.PatternReservoir;
-import summer.PatternMining.PatternTransition;
+import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.PatternReservoir;
+import summer.proSeed.PatternMining.PatternTransition;
 
  /**
  * 

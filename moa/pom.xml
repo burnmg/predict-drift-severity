@@ -109,6 +109,21 @@
 		    <version>1.4</version>
 		</dependency>
 
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-math3</artifactId>
+	    <version>3.0</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/org.nuiton.thirdparty/JRI -->
+	<dependency>
+	    <groupId>org.nuiton.thirdparty</groupId>
+	    <artifactId>JRI</artifactId>
+	    <version>0.9-6</version>
+	</dependency>
+
+
 	</dependencies>
 
 	<build>

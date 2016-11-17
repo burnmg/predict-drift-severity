@@ -17,7 +17,7 @@
  * 
  */
 
-package summer.PatternMining;
+package summer.proSeed.PatternMining;
 
 public class PatternTransition implements Comparable<PatternTransition> {
     

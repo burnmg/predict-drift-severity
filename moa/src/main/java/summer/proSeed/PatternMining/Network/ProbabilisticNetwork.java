@@ -17,13 +17,13 @@
  * 
  */
 
-package summer.PatternMining.Network;
+package summer.proSeed.PatternMining.Network;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import summer.PatternMining.IndexedPattern;
-import summer.PatternMining.PatternTransition;
+import summer.proSeed.PatternMining.IndexedPattern;
+import summer.proSeed.PatternMining.PatternTransition;
 
 public class ProbabilisticNetwork {
 

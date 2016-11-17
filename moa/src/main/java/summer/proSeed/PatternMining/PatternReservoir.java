@@ -17,14 +17,14 @@
  * 
  */
 
-package summer.PatternMining;
+package summer.proSeed.PatternMining;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import summer.PatternMining.Network.ProbabilisticNetwork;
+import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 
 public class PatternReservoir {
 	private ProbabilisticNetwork network;

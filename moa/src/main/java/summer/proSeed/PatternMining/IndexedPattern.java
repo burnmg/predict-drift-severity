@@ -17,7 +17,7 @@
  * 
  */
 
-package summer.PatternMining;
+package summer.proSeed.PatternMining;
 
 public class IndexedPattern extends Pattern {
 

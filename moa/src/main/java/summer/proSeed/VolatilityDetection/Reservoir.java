@@ -17,7 +17,7 @@
  * 
  */
 
-package summer.VolatilityDetection;
+package summer.proSeed.VolatilityDetection;
 
 import java.util.Random;
 

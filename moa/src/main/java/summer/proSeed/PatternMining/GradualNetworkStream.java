@@ -17,10 +17,10 @@
  * 
  */
 
-package summer.PatternMining;
+package summer.proSeed.PatternMining;
 
-import summer.PatternMining.Pattern;
-import summer.PatternMining.Network.ProbabilisticNetwork;
+import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 
 import java.util.Random;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
