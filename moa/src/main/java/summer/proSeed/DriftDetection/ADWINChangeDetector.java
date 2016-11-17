@@ -1,10 +1,11 @@
 
-package DriftDetection;
+package summer.proSeed.DriftDetection;
+
+import com.github.javacliparser.FloatOption;
 
 import moa.classifiers.core.driftdetection.ADWIN;
 import moa.classifiers.core.driftdetection.AbstractChangeDetector;
 import moa.core.ObjectRepository;
-import moa.options.FloatOption;
 import moa.tasks.TaskMonitor;
 
 /**

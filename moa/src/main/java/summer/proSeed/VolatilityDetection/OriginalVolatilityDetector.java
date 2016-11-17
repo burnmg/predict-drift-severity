@@ -19,8 +19,9 @@
 
 package summer.proSeed.VolatilityDetection;
 
-import DriftDetection.CutPointDetector;
 import java.io.IOException;
+
+import summer.proSeed.DriftDetection.CutPointDetector;
 
 public class OriginalVolatilityDetector {
     

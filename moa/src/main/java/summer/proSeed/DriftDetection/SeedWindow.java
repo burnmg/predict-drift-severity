@@ -18,7 +18,7 @@
  * 
  */
  
-package DriftDetection;
+package summer.proSeed.DriftDetection;
 
  /**
  * 
@@ -133,11 +133,13 @@ public class SeedWindow {
 								break;
 							}
 						}						
-						if (prevCompression && compress) 
+						if (prevCompression && compress) {
 							compressBlock(cursor);
 						}
 						prevCompression = compress; // update state of previous compression
+						
 					}
+				
 					cursor = cursor.getNext();
 				}
 			}

@@ -18,7 +18,7 @@
  * 
  */
  
-package DriftDetection;
+package summer.proSeed.DriftDetection;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

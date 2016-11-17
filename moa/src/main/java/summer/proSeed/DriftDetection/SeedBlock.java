@@ -17,7 +17,7 @@
  * 
  */
  
-package DriftDetection;
+package summer.proSeed.DriftDetection;
 
 public class SeedBlock
 {
