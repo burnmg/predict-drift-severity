@@ -16,125 +16,123 @@
  * License.
  * 
  */
- 
+
 package summer.proSeed.DriftDetection;
 
 public class SeedBlock
 {
-    private SeedBlock next;
-    private SeedBlock previous;
+	private SeedBlock next;
+	private SeedBlock previous;
 
-    private int blockSize;
-    private double total;
-    private double variance;
-    private int itemCount;
+	private int blockSize;
+	private double total;
+	private double variance;
+	private int itemCount;
 
-    public SeedBlock(int blockSize)
-    {
-	this.next = null;
-	this.previous = null;
-	this.blockSize = blockSize;
-
-
-	this.total = 0;
-	this.variance = 0;
-	this.itemCount = 0;
-    }
-
-    public SeedBlock(SeedBlock block)
-    {
-	this.next = block.getNext();
-	this.previous = block.getPrevious();
-	this.blockSize = block.blockSize;
-
-
-	this.total = block.total;
-	this.variance = block.variance;
-	this.itemCount = block.itemCount;
-    }
-
-    public void setNext(SeedBlock next)
-    {
-	this.next = next;
-    }
-
-    public SeedBlock getNext()
-    {
-	return this.next;
-    }
-
-    public void setPrevious(SeedBlock previous)
-    {
-	this.previous = previous;
-    }
-
-    public SeedBlock getPrevious()
-    {
-	return this.previous;
-    }
-
-    public int getBlockSize()
-    {
-	return blockSize;
-    }
-
-    public void setBlockSize(int blockSize)
-    {
-	this.blockSize = blockSize;
-    }
-
-    public void add(double value)
-    {
-
-	itemCount++;
-	total += value;
-    }
-
-    public boolean isFull()
-    {
-	if (itemCount == blockSize)
-
+	public SeedBlock(int blockSize)
 	{
-	    return true;
-	} else
-	{
-	    return false;
+		this.next = null;
+		this.previous = null;
+		this.blockSize = blockSize;
+
+		this.total = 0;
+		this.variance = 0;
+		this.itemCount = 0;
 	}
-    }
 
-    public double getMean()
-    {
-	return this.total / this.itemCount;
-    }
+	public SeedBlock(SeedBlock block)
+	{
+		this.next = block.getNext();
+		this.previous = block.getPrevious();
+		this.blockSize = block.blockSize;
 
-    public void setTotal(double value)
-    {
-	this.total = value;
-    }
+		this.total = block.total;
+		this.variance = block.variance;
+		this.itemCount = block.itemCount;
+	}
 
-    public double getTotal()
-    {
-	return this.total;
-    }
+	public void setNext(SeedBlock next)
+	{
+		this.next = next;
+	}
 
-    public void setItemCount(int value)
-    {
-	this.itemCount = value;
-    }
+	public SeedBlock getNext()
+	{
+		return this.next;
+	}
 
-    public int getItemCount()
-    {
-	return this.itemCount;
-    }
+	public void setPrevious(SeedBlock previous)
+	{
+		this.previous = previous;
+	}
 
-    public void setVariance(double value)
-    {
-	this.variance = value;
-    }
+	public SeedBlock getPrevious()
+	{
+		return this.previous;
+	}
 
-    public double getVariance()
-    {
-	return this.variance;
-    }
+	public int getBlockSize()
+	{
+		return blockSize;
+	}
+
+	public void setBlockSize(int blockSize)
+	{
+		this.blockSize = blockSize;
+	}
+
+	public void add(double value)
+	{
+
+		itemCount++;
+		total += value;
+	}
+
+	public boolean isFull()
+	{
+		if (itemCount == blockSize)
+
+		{
+			return true;
+		} else
+		{
+			return false;
+		}
+	}
+
+	public double getMean()
+	{
+		return this.total / this.itemCount;
+	}
+
+	public void setTotal(double value)
+	{
+		this.total = value;
+	}
+
+	public double getTotal()
+	{
+		return this.total;
+	}
+
+	public void setItemCount(int value)
+	{
+		this.itemCount = value;
+	}
+
+	public int getItemCount()
+	{
+		return this.itemCount;
+	}
+
+	public void setVariance(double value)
+	{
+		this.variance = value;
+	}
+
+	public double getVariance()
+	{
+		return this.variance;
+	}
 
 }

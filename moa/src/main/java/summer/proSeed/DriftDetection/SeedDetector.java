@@ -17,18 +17,19 @@
  * License.
  * 
  */
- 
+
 package summer.proSeed.DriftDetection;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
- /**
+/**
  * 
- * Proactive drift detection method as published in:
- * Kylie Chen, Yun Sing Koh, and Patricia Riddle. Proactive Drift Detection: Predicting Concept Drifts in Data Streams using Probabilistic Networks.  
- * In Proceedings of the International Joint Conference on Neural	Networks (IJCNN), 2016.
+ * Proactive drift detection method as published in: Kylie Chen, Yun Sing Koh,
+ * and Patricia Riddle. Proactive Drift Detection: Predicting Concept Drifts in
+ * Data Streams using Probabilistic Networks. In Proceedings of the
+ * International Joint Conference on Neural Networks (IJCNN), 2016.
  * 
  * Usage: setInput(double)
  * 
@@ -36,7 +37,8 @@ import java.io.IOException;
  * @author David T.J. Huang - The University of Auckland
  * @version 2.0
  */
-public class SeedDetector implements CutPointDetector {
+public class SeedDetector implements CutPointDetector
+{
 	public SeedWindow window;
 	private double DELTA;
 	private int defaultBlockSize;
@@ -48,21 +50,23 @@ public class SeedDetector implements CutPointDetector {
 	public int warningCount = 0;
 
 	private double[][] predictions;
-	
+
 	private int samples = 0;
 	private BufferedWriter writer;
-	
+
 	private double maxMeanPrediction;
 
-	public SeedDetector(double delta, int blockSize) {
+	public SeedDetector(double delta, int blockSize)
+	{
 		this.DELTA = delta;
 		this.defaultBlockSize = blockSize;
 		this.blockSize = blockSize;
-		this.window = new SeedWindow(blockSize);		
+		this.window = new SeedWindow(blockSize);
 	}
 
 	public SeedDetector(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat,
-			double alpha, int term) {
+			double alpha, int term)
+	{
 		this.DELTA = delta;
 		this.defaultBlockSize = blockSize;
 		this.blockSize = blockSize;
@@ -70,45 +74,56 @@ public class SeedDetector implements CutPointDetector {
 	}
 
 	@Override
-	public void setPredictions(double[][] predictions) {
-		if (predictions != null) {
-			this.predictions = predictions;		
-			this.maxMeanPrediction = findMaxMean(this.predictions); // update maximum mean
+	public void setPredictions(double[][] predictions)
+	{
+		if (predictions != null)
+		{
+			this.predictions = predictions;
+			this.maxMeanPrediction = findMaxMean(this.predictions); // update
+																	// maximum
+																	// mean
 		}
 	}
 
-	private double findMaxMean(double[][] predictions2) {
+	private double findMaxMean(double[][] predictions2)
+	{
 		double max = 0.0;
-		for (int i = 0; i < predictions[0].length; i++) {
+		for (int i = 0; i < predictions[0].length; i++)
+		{
 			double mean = (predictions[0][i] + predictions[1][i]) / 2.0;
-			if (mean > max) {
+			if (mean > max)
+			{
 				max = mean;
 			}
 		}
 		return max;
 	}
 
-	public void setUpWriter(String s) throws IOException {
+	public void setUpWriter(String s) throws IOException
+	{
 		writer = new BufferedWriter(new FileWriter(s + ".txt"));
 	}
-	
-	public void closeWriter() throws IOException {
+
+	public void closeWriter() throws IOException
+	{
 		writer.close();
 	}
-	
+
 	@Override
-	public boolean setInput(double inputValue) {
+	public boolean setInput(double inputValue)
+	{
 		SeedBlock cursor;
 
 		addElement(inputValue);
-		
+
 		samples++;
 
-		if (elementCount % blockSize == 0 && window.getBlockCount() >= 2) 
+		if (elementCount % blockSize == 0 && window.getBlockCount() >= 2)
 		{
 			boolean blnReduceWidth = true;
 
-			while (blnReduceWidth) {
+			while (blnReduceWidth)
+			{
 
 				blnReduceWidth = false;
 				int n1 = 0;
@@ -117,7 +132,10 @@ public class SeedDetector implements CutPointDetector {
 				double u0 = window.getTotal();
 
 				cursor = window.getTail();
-				while (cursor.getPrevious() != null) {
+
+				// diff check for each block splits.
+				while (cursor.getPrevious() != null)
+				{
 					n0 -= cursor.getItemCount();
 					n1 += cursor.getItemCount();
 					u0 -= cursor.getTotal();
@@ -125,12 +143,17 @@ public class SeedDetector implements CutPointDetector {
 					double diff = Math.abs(u1 / n1 - (u0 / n0));
 
 					checks++;
-					if (diff > getADWINBound(n0, n1)) {				
+
+					// if find a drift.
+					if (diff > getADWINBound(n0, n1))
+					{
 						blnReduceWidth = true;
 						window.resetDecayIteration();
 						window.setHead(cursor);
 
-						while (cursor.getPrevious() != null) {
+						while (cursor.getPrevious() != null)
+						{
+							// remove all previous cursor.
 							cursor = cursor.getPrevious();
 							window.setWidth(window.getWidth() - cursor.getItemCount());
 							window.setTotal(window.getTotal() - cursor.getTotal());
@@ -139,7 +162,7 @@ public class SeedDetector implements CutPointDetector {
 						}
 
 						window.getHead().setPrevious(null);
-						
+
 						return true;
 					}
 
@@ -151,7 +174,8 @@ public class SeedDetector implements CutPointDetector {
 		return false;
 	}
 
-	private double getADWINBound(double n0, double n1) {
+	private double getADWINBound(double n0, double n1)
+	{
 		double n = n0 + n1;
 		double dd = Math.log(2 * Math.log(n) / DELTA);
 		double v = window.getVariance() / window.getWidth();
@@ -161,12 +185,14 @@ public class SeedDetector implements CutPointDetector {
 		return epsilon;
 	}
 
-	public void addElement(double value) {
+	public void addElement(double value)
+	{
 		window.addTransaction(value, predictions, maxMeanPrediction);
 		elementCount++;
 	}
 
-	public long getChecks() {
+	public long getChecks()
+	{
 		return checks;
 	}
 }
