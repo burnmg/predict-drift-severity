@@ -35,7 +35,7 @@ public class BernouilliExample {
 	private int changePoints = 500; // number of volatility change points
 	private double patternNoiseFlag = 1; // noise flag
 	
-	private int trials = 100;
+	private int trials = 1;
 		
 	// drift detector
 	String[] detectorSettings = { "best" };
@@ -46,12 +46,13 @@ public class BernouilliExample {
 	private double alpha = 0.05; // select from 0.05, 0.01, 0.1
 	private int kFrequentNum = 100; // select from 10, 30, 100
 	private int patternSize = 100;
-	
 	private boolean volDrift = false;
 
 	private Rengine re; // R engine
-	private String path = "P:\\Robert\\Uni\\Eclipse workspace\\kylieExample\\Data\\output\\"; // output path	 
-	private String mainPath = "P:\\Robert\\Uni\\Eclipse workspace\\kylieExample\\Data\\";		
+	//private String path = "P:\\Robert\\Uni\\Eclipse workspace\\kylieExample\\Data\\output\\"; // output path	 
+	//private String mainPath = "P:\\Robert\\Uni\\Eclipse workspace\\kylieExample\\Data\\";	
+	private String path = "/Users/rl/Desktop/output/"; // output path	 
+	private String mainPath = "/Users/rl/Desktop/data/";
 
 	public static void main(String[] args) throws Exception {
 		System.out.println(System.getProperty("java.library.path"));

@@ -127,7 +127,8 @@ public class Pattern implements Comparable<Pattern> {
 		long yVec = re.rniPutDoubleArray(y);
 		re.rniAssign("b", yVec, 0);
 		REXP ans = re.eval("ks.test(a, b)");
-
+	
+		
 		RList ansList = ans.asList();
 		REXP rStat = ansList.at("statistic");
 		double stat = rStat.asDouble();
