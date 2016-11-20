@@ -19,6 +19,10 @@ package summer.magSeed;
  * 
  */
 
+import java.util.ArrayList;
+
+import volatilityevaluation.Buffer;
+
 /**
  * 
  * Drift detection method as published in: Kylie Chen, Yun Sing Koh, and
@@ -54,6 +58,11 @@ public class MagSeed implements CutPointDetector
 	// warning parameters
 	private double warningDelta = 0.1;
 	private double warningConfidence = 2.0;
+	
+	//buffers
+	ArrayList<Double> warningBuffer; // unlimited size sliding window. 
+	Buffer preWarningBuffer; // fixed size sliding window
+	private int preWarningBufferSize;
 
 	public MagSeed(double delta, int blockSize)
 	{
@@ -68,6 +77,18 @@ public class MagSeed implements CutPointDetector
 		this.DELTA = delta;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
+	}
+	
+	public MagSeed(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat, double alpha,
+			int term, int preWarningBufferSize) // Lin's new constructor
+	{
+		this.DELTA = delta;
+		this.blockSize = blockSize;
+		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
+		
+		preWarningBuffer = new Buffer(preWarningBufferSize);
+		warningBuffer = new ArrayList<Double>(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
+		this.preWarningBufferSize = preWarningBufferSize;
 	}
 
 	public void setWarningConfidence(double confidence)
@@ -148,6 +169,8 @@ public class MagSeed implements CutPointDetector
 						pMin = Double.MAX_VALUE;
 						sMin = Double.MAX_VALUE;
 
+						// TODO compare warningBuffer and preWarningBuffer
+						// TODO reset all
 						return true;
 
 					} else if (warning)
@@ -155,12 +178,16 @@ public class MagSeed implements CutPointDetector
 						if (keepWarning == false && diff > getWarningBound(n0, n1))
 						{
 							keepWarning = true; // warning detected
+							
+							warningBuffer.add(inputValue); // add into warning buffer
 						}
 					} else if (!warning && !warningFound && diff > getWarningBound(n0, n1))
 					{
 						warningFound = true;
 						keepWarning = true; // warning detected
 						setWarningFlags(true); // set warning flags
+						
+						warningBuffer.add(inputValue); // add into warning buffer
 					}
 
 					cursor = cursor.getPrevious();
@@ -169,6 +196,8 @@ public class MagSeed implements CutPointDetector
 				if (keepWarning == false)
 				{
 					setWarningFlags(false); // reset warning flags
+					warningBuffer = new ArrayList<Double>(preWarningBufferSize);
+
 				}
 			}
 
