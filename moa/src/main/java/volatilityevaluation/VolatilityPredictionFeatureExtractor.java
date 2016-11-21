@@ -1,7 +1,7 @@
 package volatilityevaluation;
 
 public class VolatilityPredictionFeatureExtractor {
-	private Buffer movingAverage = new Buffer(500);
+	private LimitedBuffer movingAverage = new LimitedBuffer(500);
 	private double count = 0.0;
 
 	private double posCount = 0.0;
@@ -10,7 +10,7 @@ public class VolatilityPredictionFeatureExtractor {
 	private double negMag = 0.0;
 
 	private int blockSize = 30;
-	private Buffer buffer = new Buffer(blockSize);
+	private LimitedBuffer buffer = new LimitedBuffer(blockSize);
 	// private double blockMovingAverage = 0.0;
 	private double blockCount = 0.0;
 

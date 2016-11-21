@@ -1,11 +1,11 @@
 package moa.classifiers.a.VAC.other;
 
 import cutpointdetection.CutPointDetector;
-import volatilityevaluation.Buffer;
+import volatilityevaluation.LimitedBuffer;
 
 public class MaxCurrentDriftInterfvalMeasure implements CurrentVolatilityMeasure
 {
-	private Buffer buffer;
+	private LimitedBuffer buffer;
 	private CutPointDetector cutPointDetector;
 	private boolean isDrifting;
 	private int timestamp;
@@ -14,7 +14,7 @@ public class MaxCurrentDriftInterfvalMeasure implements CurrentVolatilityMeasure
 
 	public MaxCurrentDriftInterfvalMeasure(int bufferSize, CutPointDetector cutPointDetector, int coolingPeriod)
 	{
-		this.buffer = new Buffer(bufferSize);
+		this.buffer = new LimitedBuffer(bufferSize);
 		this.cutPointDetector = cutPointDetector;
 		this.isDrifting = false;
 		this.timestamp = 0;

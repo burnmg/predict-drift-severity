@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import volatilityevaluation.Buffer;
+import volatilityevaluation.LimitedBuffer;
 
 public class TestBufferMax
 {
@@ -12,7 +12,7 @@ public class TestBufferMax
 	@Test
 	public void test1()
 	{
-		Buffer buffer = new Buffer(5);
+		LimitedBuffer buffer = new LimitedBuffer(5);
 		double[] values = new double[]{2,3,-1,2.7, 1,6};
 		for(int i=0;i<values.length;i++)
 		{
@@ -23,7 +23,7 @@ public class TestBufferMax
 	@Test
 	public void test2()
 	{
-		Buffer buffer = new Buffer(5);
+		LimitedBuffer buffer = new LimitedBuffer(5);
 		double[] values = new double[]{2,3,-1,2.7, 1,6,2,3,-1,2.7,1,6,21.2,3,-1,2.7,1,60.23,12};
 		for(int i=0;i<values.length;i++)
 		{

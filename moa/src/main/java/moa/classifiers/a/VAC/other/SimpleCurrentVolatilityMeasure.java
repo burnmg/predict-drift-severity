@@ -1,7 +1,7 @@
 package moa.classifiers.a.VAC.other;
 
 import cutpointdetection.CutPointDetector;
-import volatilityevaluation.Buffer;
+import volatilityevaluation.LimitedBuffer;
 
 public class SimpleCurrentVolatilityMeasure implements CurrentVolatilityMeasure
 {

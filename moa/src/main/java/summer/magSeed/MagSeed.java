@@ -21,7 +21,9 @@ package summer.magSeed;
 
 import java.util.ArrayList;
 
-import volatilityevaluation.Buffer;
+import volatilityevaluation.BufferInterface;
+import volatilityevaluation.LimitedBuffer;
+import volatilityevaluation.UnlimitedBuffer;
 
 /**
  * 
@@ -60,9 +62,11 @@ public class MagSeed implements CutPointDetector
 	private double warningConfidence = 2.0;
 	
 	//buffers
-	ArrayList<Double> warningBuffer; // unlimited size sliding window. 
-	Buffer preWarningBuffer; // fixed size sliding window
+	BufferInterface warningBuffer; // unlimited size sliding window. 
+	BufferInterface preWarningBuffer; // fixed size sliding window
 	private int preWarningBufferSize;
+	
+	private double severity;
 
 	public MagSeed(double delta, int blockSize)
 	{
@@ -86,8 +90,8 @@ public class MagSeed implements CutPointDetector
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
 		
-		preWarningBuffer = new Buffer(preWarningBufferSize);
-		warningBuffer = new ArrayList<Double>(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
+		preWarningBuffer = new LimitedBuffer(preWarningBufferSize);
+		warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
 		this.preWarningBufferSize = preWarningBufferSize;
 	}
 
@@ -169,25 +173,27 @@ public class MagSeed implements CutPointDetector
 						pMin = Double.MAX_VALUE;
 						sMin = Double.MAX_VALUE;
 
-						// TODO compare warningBuffer and preWarningBuffer
-						// TODO reset all
+						// compute severity
+						severity = (warningBuffer.getMean()-preWarningBuffer.getMean()) / warningBuffer.size();
+						
+						// reset
+						preWarningBuffer.addAll(warningBuffer);
+						preWarningBuffer.add(inputValue); // if there is a drift, add the inputValue to the preWarning buffer used in the future. 
+						warningBuffer.clear();
+						
 						return true;
 
 					} else if (warning)
 					{
 						if (keepWarning == false && diff > getWarningBound(n0, n1))
 						{
-							keepWarning = true; // warning detected
-							
-							warningBuffer.add(inputValue); // add into warning buffer
+							keepWarning = true; // warning detected							
 						}
 					} else if (!warning && !warningFound && diff > getWarningBound(n0, n1))
 					{
 						warningFound = true;
 						keepWarning = true; // warning detected
-						setWarningFlags(true); // set warning flags
-						
-						warningBuffer.add(inputValue); // add into warning buffer
+						setWarningFlags(true); // set warning flags			
 					}
 
 					cursor = cursor.getPrevious();
@@ -196,8 +202,7 @@ public class MagSeed implements CutPointDetector
 				if (keepWarning == false)
 				{
 					setWarningFlags(false); // reset warning flags
-					warningBuffer = new ArrayList<Double>(preWarningBufferSize);
-
+					warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // reset warning buffer
 				}
 			}
 
@@ -207,6 +212,16 @@ public class MagSeed implements CutPointDetector
 		{
 			window.checkCompression(); // block compression check
 		}
+		
+		if(warning)
+		{
+			warningBuffer.add(inputValue);
+		}
+		else
+		{
+			preWarningBuffer.add(inputValue);
+		}
+		
 		return false;
 	}
 

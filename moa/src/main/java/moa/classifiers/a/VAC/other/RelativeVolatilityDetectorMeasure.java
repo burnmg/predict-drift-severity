@@ -4,14 +4,14 @@ package moa.classifiers.a.VAC.other;
 
 import a.algorithms.Reservoir;
 import cutpointdetection.CutPointDetector;
-import volatilityevaluation.Buffer;
+import volatilityevaluation.LimitedBuffer;
 
 public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasure
 {
 	// private ADWIN cutpointDetector;
 	private CutPointDetector cutpointDetector;
 	private Reservoir reservoir;
-	private Buffer buffer;
+	private LimitedBuffer buffer;
 	private double confidence;
 
 	private int timestamp = 0;
@@ -22,7 +22,7 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 		this.conceptDrift = false;
 		this.cutpointDetector = cutpointDetector;
 		this.reservoir = new Reservoir(resSize);
-		this.buffer = new Buffer(resSize);
+		this.buffer = new LimitedBuffer(resSize);
 		this.confidence = 0.05;
 	}
 
@@ -31,7 +31,7 @@ public class RelativeVolatilityDetectorMeasure implements CurrentVolatilityMeasu
 		this.conceptDrift = false;
 		this.cutpointDetector = cutpointDetector;
 		this.reservoir = new Reservoir(resSize);
-		this.buffer = new Buffer(resSize);
+		this.buffer = new LimitedBuffer(resSize);
 		this.confidence = confidence;
 	}
 	
