@@ -18,9 +18,6 @@ package summer.magSeed;
  * License.
  * 
  */
-
-import java.util.ArrayList;
-
 import volatilityevaluation.BufferInterface;
 import volatilityevaluation.LimitedBuffer;
 import volatilityevaluation.UnlimitedBuffer;
@@ -68,11 +65,15 @@ public class MagSeed implements CutPointDetector
 	
 	private double severity;
 
-	public MagSeed(double delta, int blockSize)
+	public MagSeed(double delta, int blockSize, int preWarningBufferSize)
 	{
 		this.DELTA = delta;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize);
+		preWarningBuffer = new LimitedBuffer(preWarningBufferSize);
+		warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
+		this.preWarningBufferSize = preWarningBufferSize;
+		
 	}
 
 	public MagSeed(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat, double alpha,
@@ -174,7 +175,7 @@ public class MagSeed implements CutPointDetector
 						sMin = Double.MAX_VALUE;
 
 						// compute severity
-						severity = (warningBuffer.getMean()-preWarningBuffer.getMean()) / warningBuffer.size();
+						severity = (warningBuffer.getMean()-preWarningBuffer.getMean()) / warningBuffer.size(); 
 						
 						// reset
 						preWarningBuffer.addAll(warningBuffer);

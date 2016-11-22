@@ -1,55 +1,68 @@
 package volatilityevaluation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UnlimitedBuffer implements BufferInterface
 {
+	private ArrayList<Double> list;
+	private int suggestedSize;
 
-	public UnlimitedBuffer(int preWarningBufferSize)
+	public UnlimitedBuffer()
 	{
-		// TODO Auto-generated constructor stub
+		suggestedSize = 0;
+		list = new ArrayList<Double>();
+	}
+	
+	public UnlimitedBuffer(int suggestedSize)
+	{
+		this.suggestedSize = suggestedSize;
+		list = new ArrayList<Double>(suggestedSize);
 	}
 	
 	@Override
-	public double add(double value)
+	public double add(double inputValue)
 	{
-		// TODO Auto-generated method stub
+		list.add(inputValue);
 		return 0;
 	}
 
 	@Override
 	public double getMean()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if(list.size()==0) return 0;
+		
+		double sum = 0;
+		for(Double item : list)
+		{
+			sum += item;
+		}
+		return sum/list.size();
 	}
 
 	@Override
 	public int size()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return list.size();
 	}
 
 	@Override
 	public void clear()
 	{
-		// TODO Auto-generated method stub
-		
+		list = new ArrayList<Double>(suggestedSize);	
 	}
 
 	@Override
 	public void addAll(BufferInterface warningBuffer)
 	{
-		// TODO Auto-generated method stub
+		list.addAll(warningBuffer.getAllElements());
 		
 	}
 
 	@Override
-	public ArrayList getAllElements()
+	public List<Double> getAllElements()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return list;
 	}
 
 }
