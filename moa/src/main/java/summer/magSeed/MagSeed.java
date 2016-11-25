@@ -1,4 +1,6 @@
 package summer.magSeed;
+import org.apache.commons.math3.analysis.function.Sigmoid;
+
 /*
  * MagSeed.java
  * Authors: Kylie Chen - The University of Auckland
@@ -64,15 +66,24 @@ public class MagSeed implements CutPointDetector
 	private int preWarningBufferSize;
 	
 	private double severity;
+	private double sigmoidBeta;
+	
+	private int numInstances = 0;
 
-	public MagSeed(double delta, int blockSize, int preWarningBufferSize)
+
+	
+	public MagSeed(double delta, double warningDelta, int blockSize, int preWarningBufferSize, double sigmoidBeta)
 	{
 		this.DELTA = delta;
+		this.warningDelta = warningDelta;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize);
+		
 		preWarningBuffer = new LimitedBuffer(preWarningBufferSize);
 		warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
 		this.preWarningBufferSize = preWarningBufferSize;
+		
+		this.sigmoidBeta = sigmoidBeta;
 		
 	}
 
@@ -84,6 +95,17 @@ public class MagSeed implements CutPointDetector
 		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
 	}
 	
+	/**
+	 * 
+	 * @param delta ADWIN Hoeffding Bound parameter
+	 * @param blockSize
+	 * @param decayMode
+	 * @param compressionMode
+	 * @param epsilonHat
+	 * @param alpha Decay coefficient
+	 * @param term
+	 * @param preWarningBufferSize
+	 */
 	public MagSeed(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat, double alpha,
 			int term, int preWarningBufferSize) // Lin's new constructor
 	{
@@ -125,6 +147,8 @@ public class MagSeed implements CutPointDetector
 	@Override
 	public boolean setInput(double inputValue)
 	{
+		this.numInstances++;
+		
 		SeedBlock cursor;
 		addElement(inputValue); // no block compression
 		boolean keepWarning = false;
@@ -175,7 +199,10 @@ public class MagSeed implements CutPointDetector
 						sMin = Double.MAX_VALUE;
 
 						// compute severity
-						severity = (warningBuffer.getMean()-preWarningBuffer.getMean()) / warningBuffer.size(); 
+						severity = (warningBuffer.getMean() - preWarningBuffer.getMean())/warningBuffer.size();
+						// severity = Math.atan((u1/n1 - u0/n0) / ((n1+n0)/2));
+						// severity = sigmoid(((u1/n1 - u0/n0) / ((n1+n0)/2)));
+						// severity = (u1/n1 - u0/n0) / ((n1+n0)/2);
 						
 						// reset
 						preWarningBuffer.addAll(warningBuffer);
@@ -196,9 +223,9 @@ public class MagSeed implements CutPointDetector
 						keepWarning = true; // warning detected
 						setWarningFlags(true); // set warning flags			
 					}
-
 					cursor = cursor.getPrevious();
 				}
+				
 
 				if (keepWarning == false)
 				{
@@ -224,6 +251,11 @@ public class MagSeed implements CutPointDetector
 		}
 		
 		return false;
+	}
+	
+	private double computeSeverity()
+	{
+		 return (warningBuffer.getMean()-preWarningBuffer.getMean()) / warningBuffer.size(); 
 	}
 
 	private double getWarningBound(double b0, double b1)
@@ -293,6 +325,20 @@ public class MagSeed implements CutPointDetector
 	public double getEstimation()
 	{
 		return window.getTotal() / window.getWidth();
+	}
+	
+	public double getSeverity()
+	{
+		return severity;
+	}
+	
+	public int getWindowSize()
+	{
+		return window.getWidth();
+	}
+	
+	private double sigmoid(double x) {
+		    return (1/( 1 + Math.pow(Math.E,(-sigmoidBeta*x))));
 	}
 
 }
