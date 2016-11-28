@@ -165,25 +165,25 @@ public class BernouilliExample {
 			//////////////////////////////////////
 			// detector type
 			//////////////////////////////////////
-			CutPointDetector d = null;
+			CutPointDetector driftDetectorForVolDector = null;
 			CutPointDetector detector = null;
 			
 			if (detectorType == 0) {
-				d = createOriginalSeed(seedType); // Original SEED
+				driftDetectorForVolDector = createOriginalSeed(seedType); // Original SEED
 				detector = createOriginalSeed(seedType); // Original SEED
 			} else if (detectorType == 1) {
-				d = createSeed(seedType); // ProSEED
+				driftDetectorForVolDector = createSeed(seedType); // ProSEED
 				detector = createSeed(seedType); // ProSEED			
 			} else if (detectorType == 2) {
-				d = createOriginalSeed(seedType); // Original SEED
+				driftDetectorForVolDector = createOriginalSeed(seedType); // Original SEED
 				detector = createSeed(seedType); // ProSEED
 			} else {
-				d = createADWIN();
+				driftDetectorForVolDector = createADWIN();
 				detector = createADWIN();
 			}
 
 			DriftPrediction driftPredictor = new DriftPrediction(mParameter, patternSize, alpha, kFrequentNum);
-			RelativeVolatilityDetector volatilityDetector = new RelativeVolatilityDetector(d, bufferSize, conf, driftPredictor);
+			RelativeVolatilityDetector volatilityDetector = new RelativeVolatilityDetector(driftDetectorForVolDector, bufferSize, conf, driftPredictor);
 
 			int streamLength = learningPeriod +  networkStream.stateTimeLength * changePoints;
 			int samples = 0;
@@ -218,6 +218,7 @@ public class BernouilliExample {
 					double timestep = volatilityDetector.getTimeStamp() + 1.0;
 
 					// detectors read input
+					// train the network. The network is in volatilityDetector. 
 					boolean drift = detector.setInput(bernoulliOutput);			
 					volDrift = volatilityDetector.setInputVarViaBuffer(bernoulliOutput);
 					

@@ -54,6 +54,13 @@ public class DriftPrediction {
     private Pattern currentPattern;
     private double[][] nextBounds;
     
+    /**
+     * 
+     * @param m merge parameter. default: 3. Merge to 3 patterns
+     * @param patternReservoirSize
+     * @param ksConfidence
+     * @param freqTransitions K for the top K.
+     */
     public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions) {    	
     	patternReservoir = new PatternReservoir(patternReservoirSize);
     	patternReservoir.setMergeParameter(m);
@@ -133,7 +140,10 @@ public class DriftPrediction {
         return confidenceIntervals;
     }
 
-    public void patternMatchingViaBuffer(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
+    /* pattern matching via buffer
+     * perform the pattern match before inserting a new pattern
+     */
+    public void trainNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
         double[] buffData = buffer.getBuffer();
         
         // remove outliers
