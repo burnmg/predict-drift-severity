@@ -144,8 +144,8 @@ public class DriftPrediction {
      * perform the pattern match before inserting a new pattern
      */
     public void trainNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
+    	
         double[] buffData = buffer.getBuffer();
-        
         // remove outliers
         double q1 = StatUtils.percentile(buffData, 25);
         double q3 = StatUtils.percentile(buffData, 75);

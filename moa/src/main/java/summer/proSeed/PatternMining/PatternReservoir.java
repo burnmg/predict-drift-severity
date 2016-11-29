@@ -175,11 +175,14 @@ public class PatternReservoir {
 	public int addPattern(double[] patternData, int dataLength, int currentLength, double patternDelta) {
 		compressed = false;	// reset compression flag	
 		Pattern newPattern = new Pattern(patternData, dataLength);
+		
+		// currentPatternIndex is the new pattern added (or updated).
+		// beforePrevPatternIndex < prevPatternIndex < currentPatternIndex
 		int currentPatternIndex = findPatternIndex(newPattern);
 
-		if (currentPatternIndex == -1) {
-			// pattern not found, so new pattern should be inserted
-			if (numberOfPatterns < this.patternReservoirSize) {
+		if (currentPatternIndex == -1) { // pattern not found, so new pattern should be inserted
+			
+			if (numberOfPatterns < this.patternReservoirSize) { // pattern reservoir is not full
 				// add pattern to reservoir
 				currentPatternIndex = numberOfPatterns; // update pattern index
 				addPatternToReservoir(newPattern);
@@ -188,13 +191,15 @@ public class PatternReservoir {
 			} else {
 				currentPatternIndex = findLowestWeight();
 			}
+			
 			// reset network probabilities for new pattern
 			this.network.resetNetworkForPattern(currentPatternIndex);
 		} else {
-			// pattern found
+			// pattern found, then update data
 			this.patternReservoir[currentPatternIndex].addData(patternData, dataLength);		
 		}
 
+		// compression check
 		if (beforePrevPatternIndex != -1) {		
 			double prevSlope = (patternReservoir[prevPatternIndex].getMean()
 					- patternReservoir[beforePrevPatternIndex].getMean()) / prevLength;

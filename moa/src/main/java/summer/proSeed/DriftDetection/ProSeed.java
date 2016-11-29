@@ -61,7 +61,8 @@ public class ProSeed implements CutPointDetector
 		}
 		
 		double timestamp = volatilityDetector.getTimeStamp() + 1.0;
-		// set prediction phase
+		
+		// setting prediction phase
 		double[][] prediction = null;
 		if(numSamples > learningPeriod)
 		{
