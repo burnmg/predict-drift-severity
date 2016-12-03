@@ -35,7 +35,7 @@ public class BernouilliExample {
 	private int changePoints = 500; // number of volatility change points
 	private double patternNoiseFlag = 1; // noise flag
 	
-	private int trials = 1;
+	private int trials = 10;
 		
 	// drift detector
 	String[] detectorSettings = { "best" };
@@ -285,8 +285,6 @@ public class BernouilliExample {
 			detectorSortedPatternWriter.write("Seed\t" + seed + "\t" + sortedPatternsString + "\n");
 
 			int numErrors[] = networkStream.getActualNetwork().compareTo(sortedNetwork);
-	
-
 
 		}
 
