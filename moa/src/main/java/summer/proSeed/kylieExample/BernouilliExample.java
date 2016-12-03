@@ -269,14 +269,17 @@ public class BernouilliExample {
 
 			volatilityDetector.getPredictor().getPatternReservoir().merge(); // MERGING at end to compare network
 
+			
+			//String actualNetwork = networkStream.getActualNetwork().getNetworkProbabilitiesString();
 			String actualNetwork = networkStream.getActualNetwork().getNetworkString();
 			streamNetworkWriter.write("Seed\t" + seed + "\t" + actualNetwork + "\n");
 			String actualStates = networkStream.getStatesString();
 			streamPatternWriter.write("Seed\t" + seed + "\t" + actualStates + "\n");
 
 			// get network of the volatility detector. 
-			ProbabilisticNetwork sortedNetwork = new ProbabilisticNetwork(volatilityDetector.getPredictor().getPatternReservoir().getSortedNetwork());
-			String sortedNetworkString = sortedNetwork.getNetworkString();
+			ProbabilisticNetwork detectorSortedNetwork = new ProbabilisticNetwork(volatilityDetector.getPredictor().getPatternReservoir().getSortedNetwork());
+			String sortedNetworkString = detectorSortedNetwork.getNetworkString();
+			// String sortedNetworkString = detectorSortedNetwork.getNetworkProbabilitiesString();
 			detectorSortedNetworkWriter.write("Seed\t" + seed + "\t" + sortedNetworkString + "\n");
 
 			// get patterns of the volatility detector.
@@ -284,7 +287,7 @@ public class BernouilliExample {
 			String sortedPatternsString = volatilityDetector.getPredictor().getPatternReservoir().getPatternStringOf(indexedPatterns);
 			detectorSortedPatternWriter.write("Seed\t" + seed + "\t" + sortedPatternsString + "\n");
 
-			int numErrors[] = networkStream.getActualNetwork().compareTo(sortedNetwork);
+			int numErrors[] = networkStream.getActualNetwork().compareTo(detectorSortedNetwork);
 
 		}
 

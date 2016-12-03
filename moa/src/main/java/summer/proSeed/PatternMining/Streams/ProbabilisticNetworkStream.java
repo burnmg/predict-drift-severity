@@ -182,7 +182,8 @@ public class ProbabilisticNetworkStream {
 
         // store true underlying network
         if (currentStateIndex != previousStateIndex) {       
-            storeNetwork(trueStateIndex);           
+            // storeNetwork(trueStateIndex);           
+            this.actualNetwork.updateNetwork(trueStateIndex);
             this.previousStateIndex = currentStateIndex;
             this.actualNetwork.setPreviousPatternIndex(currentStateIndex);
         }
