@@ -43,6 +43,11 @@ public class ProSeed implements CutPointDetector
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public void setTraining()
+	{
+		
+	}
 
 	@Override
 	public boolean setInput(double input)
