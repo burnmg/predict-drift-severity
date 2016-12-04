@@ -3,6 +3,7 @@ package summer.proSeed.DriftDetection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 
@@ -39,6 +40,16 @@ public class ProSeed implements CutPointDetector
 		
 		// seed detector TODO
 	}
+	
+	public ProbabilisticNetwork getNetwork()
+	{
+		return this.volatilityDetector.getPredictor().getPatternReservoir().getNetwork();
+	}
+	
+	public RelativeVolatilityDetector getVolatilityDetector()
+	{
+		return this.volatilityDetector;
+	}
 
 	@Override
 	public long getChecks()
@@ -60,6 +71,7 @@ public class ProSeed implements CutPointDetector
 		}
 		return volDrift;
 	}
+	
 
 	@Override
 	public boolean setInput(double input)
@@ -67,7 +79,6 @@ public class ProSeed implements CutPointDetector
 		// detecting phase
 		boolean foundDrift = seedDetector.setInput(input);
 		
-		// training phase
 		double timestep = volatilityDetector.getTimeStamp() + 1.0;
 		
 		boolean volDrift = setTraining(input);
@@ -79,6 +90,7 @@ public class ProSeed implements CutPointDetector
 			prediction = volatilityDetector.getPredictor().predictNextCI(volDrift, timestep);
 		}
 		seedDetector.setPredictions(prediction);
+		volatilityDetector.getDetector().setPredictions(prediction);
 		
 		return foundDrift;
 	}

@@ -152,11 +152,11 @@ public class BernouilliExample {
 			networkStream.intervalNoise = patternNoiseFlag;
 			
 			// set the network stream (testing)
-			ProbabilisticNetworkStream trainNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed); // Abrupt Volatility Change
-			trainNetworkStream.networkNoise = noise; // percentage of transition noise
-			trainNetworkStream.setStateTimeMean(volatility); // set volatility interval of stream
-			trainNetworkStream.noiseStandardDeviation = sd;
-			trainNetworkStream.intervalNoise = patternNoiseFlag;
+			ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed); // Abrupt Volatility Change
+			trainingNetworkStream.networkNoise = noise; // percentage of transition noise
+			trainingNetworkStream.setStateTimeMean(volatility); // set volatility interval of stream
+			trainingNetworkStream.noiseStandardDeviation = sd;
+			trainingNetworkStream.intervalNoise = patternNoiseFlag;
 
 			// set the bernoulli stream (testing)
 			BernoulliGenerator bernoulli = new BernoulliGenerator(0.2, seed);
@@ -203,7 +203,7 @@ public class BernouilliExample {
 			while (samples < streamLength) {
 				int streamInterval  = 0;
 				if (samples < learningPeriod) {
-					streamInterval = trainNetworkStream.generateNext();
+					streamInterval = trainingNetworkStream.generateNext();
 				} else {
 					streamInterval = networkStream.generateNext(); // generated interval
 				}						
