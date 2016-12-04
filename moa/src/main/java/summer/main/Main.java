@@ -1,5 +1,6 @@
 package summer.main;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import summer.magSeed.MagSeed;
+import summer.proSeed.DriftDetection.ProSeed;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 
 public class Main
@@ -19,6 +21,13 @@ public class Main
 	{
 
 		fluTrendServerity();
+	}
+	
+	public static void testProSeed() throws FileNotFoundException, IOException
+	{
+		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75);
+		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0);
 	}
 
 	public static void testDrift()
@@ -86,6 +95,14 @@ public class Main
 			}
 			i++;
 		}
+	}
+	
+	private summer.originalSeed.SeedDetector createOriginalSeed(String type) {
+		if (type.equals("best")) {
+			return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75); // Seed Best
+		} else {
+			return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.0025, 0.2, 75); // Seed Worst
+		} 
 	}
 
 }

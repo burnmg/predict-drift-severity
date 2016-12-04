@@ -20,6 +20,9 @@ public class ProSeed implements CutPointDetector
 	 * @param patternSize default: 100
 	 * @param ksConfidence KSConfidence select from 0.05, 0.01, 0.1 
 	 * @param topK default: 100
+	 * @param VDSize default: 32
+	 * @param VDconfidience default: 0.5
+	 * @param learningPeriod default: 0
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
@@ -44,9 +47,18 @@ public class ProSeed implements CutPointDetector
 		return 0;
 	}
 	
-	public void setTraining()
+	// perform training without detection. 
+	public boolean setTraining(double input)
 	{
-		
+		boolean volDrift = false;
+		try
+		{
+			volDrift = volatilityDetector.setInputVarViaBuffer(input);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return volDrift;
 	}
 
 	@Override
@@ -56,26 +68,25 @@ public class ProSeed implements CutPointDetector
 		boolean foundDrift = seedDetector.setInput(input);
 		
 		// training phase
-		boolean volDrift = false;
-		try
-		{
-			volDrift = volatilityDetector.setInputVarViaBuffer(input);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		double timestep = volatilityDetector.getTimeStamp() + 1.0;
 		
-		double timestamp = volatilityDetector.getTimeStamp() + 1.0;
+		boolean volDrift = setTraining(input);
 		
 		// setting prediction phase
 		double[][] prediction = null;
 		if(numSamples > learningPeriod)
 		{
-			prediction = volatilityDetector.getPredictor().predictNextCI(volDrift, timestamp);
+			prediction = volatilityDetector.getPredictor().predictNextCI(volDrift, timestep);
 		}
 		seedDetector.setPredictions(prediction);
 		
 		return foundDrift;
+	}
+	
+	public void setPrediction()
+	{
+		
+
 	}
 
 	@Override

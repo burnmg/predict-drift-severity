@@ -271,8 +271,8 @@ public class BernouilliExample {
 
 			
 			//String actualNetwork = networkStream.getActualNetwork().getNetworkProbabilitiesString();
-			String actualNetwork = networkStream.getActualNetwork().getNetworkString();
-			streamNetworkWriter.write("Seed\t" + seed + "\t" + actualNetwork + "\n");
+			String streamActualNetwork = networkStream.getActualNetwork().getNetworkString();
+			streamNetworkWriter.write("Seed\t" + seed + "\t" + streamActualNetwork + "\n");
 			String actualStates = networkStream.getStatesString();
 			streamPatternWriter.write("Seed\t" + seed + "\t" + actualStates + "\n");
 
