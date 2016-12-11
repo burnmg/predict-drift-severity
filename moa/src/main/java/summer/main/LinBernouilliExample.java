@@ -96,27 +96,31 @@ public class LinBernouilliExample {
 		BernoulliGenerator bernoulli = new BernoulliGenerator(0.2, seed);
 		bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int streamLength = 500*trainingNetworkStream.getStateTimeMean();
+		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
+		
 		// set the bernoulli stream (training)
 		BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
-		int numInstanecs = 0;
-		while(numInstanecs<streamLength)
+		int numBlocks = 0;
+		while(numBlocks<streamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
-			
+			System.out.println(streamInterval);
 			// training 
 			for (int i = 0; i < streamInterval; i++) 
 			{
-				double bernoulliOutput = bernoulli.generateNext();
+				double bernoulliOutput = trainBernoulli.generateNext();
 				proSeed.setTraining(bernoulliOutput);
-				System.out.println(bernoulliOutput);
+				// System.out.println(bernoulliOutput);
 				
-				numInstanecs++;
+				
 			}
+			numBlocks++;
 			trainBernoulli.swapMean();
 		}
+		proSeed.mergeNetwork();
 		String network = proSeed.getNetwork().getNetworkString();
 		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
+		String networkString = trainingNetworkStream.getActualNetwork().getNetworkString();
 		int i = 1-1;
 		
 		System.out.println("Done");

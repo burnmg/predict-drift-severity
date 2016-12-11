@@ -9,18 +9,31 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.rosuda.JRI.Rengine;
 
 import summer.magSeed.MagSeed;
 import summer.proSeed.DriftDetection.ProSeed;
 import summer.proSeed.PatternMining.BernoulliGenerator;
+import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.kylieExample.TextConsole;
 
 public class Main
 {
 
 	public static void main(String[] args) throws IOException
 	{
-
-		fluTrendServerity();
+		// TODO test 
+		String[] reArgs = new String[]{"--save"};
+		Rengine re = new Rengine(reArgs, false, new TextConsole());
+		System.out.println("Rengine created, waiting for R");
+		// the engine creates R is a new thread, so we should wait until it's ready
+		if (!re.waitForR()) {
+			System.out.println("Cannot load R");
+			return;
+		}
+		Pattern.setRengine(re);
+		
+		fluTrendServerityProSeed();
 	}
 	
 	public static void testProSeed() throws FileNotFoundException, IOException
@@ -29,6 +42,8 @@ public class Main
 		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
 				VDSeedDetector, 32, 0.5, 0);
 	}
+	
+
 
 	public static void testDrift()
 	{
@@ -61,6 +76,42 @@ public class Main
 			i++;
 		}
 
+	}
+	
+	public static void fluTrendServerityProSeed() throws IOException
+	{
+		FileReader reader = new FileReader("/Users/rl/Desktop/data/interpolated_flutrend.csv");
+		CSVFormat csvFileFormat = CSVFormat.RFC4180.withFirstRecordAsHeader();
+		CSVParser parser = new CSVParser(reader, csvFileFormat);
+		List<CSVRecord> records = parser.getRecords();
+
+		ArrayList<Double> data = new ArrayList<Double>(records.size());
+
+		for (int i = 0; i < records.size(); i++)
+		{
+			data.add(Double.parseDouble(records.get(i).get("New.Zealand")));
+		}
+
+		parser.close();
+
+		// public MagSeed(double delta, int blockSize, int decayMode, int
+		// compressionMode, double epsilonHat, double alpha,
+		// int term, int preWarningBufferSize) // Lin's new constructor
+
+		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
+		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0);
+
+		int i = 0;
+		for (double item : data)
+		{
+			if (proSeed.setInput(item))
+			{
+				System.out.println(i + "," + proSeed.getSeverity());
+
+			}
+			i++;
+		}
 	}
 
 	public static void fluTrendServerity() throws IOException
