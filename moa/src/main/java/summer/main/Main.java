@@ -22,7 +22,7 @@ public class Main
 
 	public static void main(String[] args) throws IOException
 	{
-		// TODO test 
+		// Set R Engine
 		String[] reArgs = new String[]{"--save"};
 		Rengine re = new Rengine(reArgs, false, new TextConsole());
 		System.out.println("Rengine created, waiting for R");
@@ -32,6 +32,8 @@ public class Main
 			return;
 		}
 		Pattern.setRengine(re);
+		// Set R Engine END 
+		
 		
 		fluTrendServerityProSeed();
 	}

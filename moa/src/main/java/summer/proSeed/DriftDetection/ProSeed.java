@@ -43,7 +43,7 @@ public class ProSeed implements CutPointDetector
 		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK);
 		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor);
 
-		seedDetector = new SeedDetector(0.05, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32); // best
+		seedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32); // best
 	}
 
 	public void mergeNetwork()
