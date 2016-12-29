@@ -111,6 +111,12 @@ public class RelativeVolatilityDetector {
 		return driftFound;
 	}
 
+	/**
+	 * Input
+	 * @param inputValue
+	 * @return
+	 * @throws IOException
+	 */
 	public Boolean setInputVarViaBuffer(double inputValue) throws IOException {
 		sample++;
 

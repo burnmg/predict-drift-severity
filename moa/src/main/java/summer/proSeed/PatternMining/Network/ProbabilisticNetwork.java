@@ -28,6 +28,7 @@ import summer.proSeed.PatternMining.PatternTransition;
 public class ProbabilisticNetwork {
 
 	private double[][] patternNetwork;
+	private SeveritySamplingEdge[][] edges;
 
 	private int numberOfPatterns = 0;
 	private int previousPatternIndex = -1;
@@ -100,7 +101,7 @@ public class ProbabilisticNetwork {
 	 * @param patternIndex
 	 *            index of pattern to be updated
 	 */
-	public void updateNetwork(int patternIndex) {
+	public void incrementNetworkTransition(int patternIndex) {
 		if (previousPatternIndex == -1) {
 			// no previous pattern
 		} else {
@@ -355,6 +356,12 @@ public class ProbabilisticNetwork {
 		}
 
 		return freqList;
+	}
+
+	public void addSeverityEdge(int from, int to, double[] severityData)
+	{
+		// TODO Auto-generated method stub
+		
 	}	
 
 }

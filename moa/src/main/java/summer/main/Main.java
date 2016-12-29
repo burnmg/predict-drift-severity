@@ -34,7 +34,6 @@ public class Main
 		Pattern.setRengine(re);
 		// Set R Engine END 
 		
-		
 		fluTrendServerityProSeed();
 	}
 	
@@ -110,7 +109,6 @@ public class Main
 			if (proSeed.setInput(item))
 			{
 				System.out.println(i + "," + proSeed.getSeverity());
-
 			}
 			i++;
 		}

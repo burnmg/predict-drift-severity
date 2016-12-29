@@ -154,10 +154,13 @@ public class PatternReservoir {
 		return -1;
 	}
 
+	/*
 	public int addPattern(double[] patternData, int dataLength, int patternLength) {
-		return addPattern(patternData, dataLength, patternLength, 0.05); 
+		// return addPattern(patternData, dataLength, patternLength, 0.05); 
+		return addPattern(patternData, dataLength, patternLength); 
 	}
-
+	*/
+	
 	/**
 	 * attempts to add a new pattern to the pattern reservoir
 	 *
@@ -171,7 +174,7 @@ public class PatternReservoir {
 	 *            delta for pattern matching
 	 * @return index of newly inserted pattern
 	 */
-	public int addPattern(double[] patternData, int dataLength, int currentLength, double patternDelta) {
+	public int addPattern(double[] patternData, int dataLength, int currentLength, double[] severityData) {
 		compressed = false;	// reset compression flag	
 		Pattern newPattern = new Pattern(patternData, dataLength);
 		
@@ -198,8 +201,14 @@ public class PatternReservoir {
 			this.patternReservoir[currentPatternIndex].addData(patternData, dataLength);		
 		}
 
+		// add severity edge
+		if (prevPatternIndex != -1)
+		{
+			network.addSeverityEdge(prevPatternIndex, currentPatternIndex, severityData);
+		}
+		
 		// compression check
-		if (beforePrevPatternIndex != -1) {		
+		if (beforePrevPatternIndex != -1) {
 			double prevSlope = (patternReservoir[prevPatternIndex].getMean()
 					- patternReservoir[beforePrevPatternIndex].getMean()) / prevLength;
 			double curSlope = (patternReservoir[currentPatternIndex].getMean() - patternReservoir[prevPatternIndex].getMean())
@@ -212,7 +221,7 @@ public class PatternReservoir {
 				prevLength = prevLength + currentLength; // when compressed the length between patterns is increased
 			} else {
 				// update network
-				this.network.updateNetwork(currentPatternIndex);
+				this.network.incrementNetworkTransition(currentPatternIndex);
 				compressed = false;
 			}
 		}
@@ -242,13 +251,14 @@ public class PatternReservoir {
 	 *            index of current pattern
 	 * @return index of current pattern
 	 */
+	// TODO edge
 	private int compressTransition(int indexA, int indexB, int indexC) {
 		// adjust length of pattern when compressing
 		// compress transitions from a -> b -> c to a -> c
 		if (this.patternReservoir[indexB].getWeight() <= 1) {
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
-			this.network.updateNetwork(indexC);
+			this.network.incrementNetworkTransition(indexC);
 			// remove pattern b
 			this.network.delete(indexB);
 			delete(indexB); // deletes pattern b from pattern reservoir
@@ -261,7 +271,7 @@ public class PatternReservoir {
 		} else {
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
-			this.network.updateNetwork(indexC);
+			this.network.incrementNetworkTransition(indexC);
 			// remove transition a -> b
 			this.network.decrementTransition(indexA, indexB);
 			// return current pattern index
@@ -282,6 +292,7 @@ public class PatternReservoir {
 		numberOfPatterns--;
 	}
 
+	// TODO edge
 	public int deleteHighVariance() {
 		ArrayList<Integer> deleteList = new ArrayList<Integer>();
 		for (int i = 0; i < this.numberOfPatterns; i++) {
@@ -304,6 +315,7 @@ public class PatternReservoir {
 	 *
 	 * @return current pattern index
 	 */
+	// TODO add edge
 	public int merge() {
 
 		while (numberOfPatterns > mergeParameter) {
@@ -356,6 +368,7 @@ public class PatternReservoir {
 	 *
 	 * @return true if merging was applied
 	 */
+	// TODO edge
 	public boolean mergePatterns() {
 		boolean merged = false;
 		for (int i = 0; i < numberOfPatterns; i++) {
@@ -411,6 +424,7 @@ public class PatternReservoir {
 		return copy;
 	}
 
+	// TODO edge
 	public double[][] getSortedNetwork() {
 		IndexedPattern[] indexedPatterns = getIndexedCopyOfPatterns();
 		Arrays.sort(indexedPatterns);

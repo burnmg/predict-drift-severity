@@ -101,7 +101,7 @@ public class LinBernouilliExample {
 		// set the bernoulli stream (training)
 		BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
-		while(numBlocks<streamLength)
+		while(numBlocks < streamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
 			System.out.println(streamInterval);
@@ -115,7 +115,7 @@ public class LinBernouilliExample {
 				
 			}
 			numBlocks++;
-			trainBernoulli.swapMean();
+			trainBernoulli.swapMean(); // create one drift
 		}
 		proSeed.mergeNetwork();
 		String network = proSeed.getNetwork().getNetworkString();
