@@ -221,7 +221,7 @@ public class PatternReservoir {
 				prevLength = prevLength + currentLength; // when compressed the length between patterns is increased
 			} else {
 				// update network
-				this.network.incrementNetworkTransition(currentPatternIndex);
+				this.network.incrementTransition(currentPatternIndex);
 				compressed = false;
 			}
 		}
@@ -251,14 +251,14 @@ public class PatternReservoir {
 	 *            index of current pattern
 	 * @return index of current pattern
 	 */
-	// TODO edge
+	// TODO edge (leave it right now)
 	private int compressTransition(int indexA, int indexB, int indexC) {
 		// adjust length of pattern when compressing
 		// compress transitions from a -> b -> c to a -> c
 		if (this.patternReservoir[indexB].getWeight() <= 1) {
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
-			this.network.incrementNetworkTransition(indexC);
+			this.network.incrementTransition(indexC);
 			// remove pattern b
 			this.network.delete(indexB);
 			delete(indexB); // deletes pattern b from pattern reservoir
@@ -271,7 +271,7 @@ public class PatternReservoir {
 		} else {
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
-			this.network.incrementNetworkTransition(indexC);
+			this.network.incrementTransition(indexC);
 			// remove transition a -> b
 			this.network.decrementTransition(indexA, indexB);
 			// return current pattern index

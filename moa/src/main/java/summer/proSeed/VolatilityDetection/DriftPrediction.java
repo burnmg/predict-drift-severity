@@ -181,7 +181,7 @@ public class DriftPrediction {
             }
         }
         
-        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength);
+        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength, null); //TODO this null
         boolean compressed = patternReservoir.getCompression();
         patternReservoir.getPatterns()[patternIndex].addLength(patternLength, compressed);
         

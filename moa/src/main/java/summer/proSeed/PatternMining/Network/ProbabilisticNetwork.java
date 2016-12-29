@@ -101,7 +101,7 @@ public class ProbabilisticNetwork {
 	 * @param patternIndex
 	 *            index of pattern to be updated
 	 */
-	public void incrementNetworkTransition(int patternIndex) {
+	public void incrementTransition(int patternIndex) {
 		if (previousPatternIndex == -1) {
 			// no previous pattern
 		} else {

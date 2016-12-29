@@ -112,6 +112,9 @@ public class Main
 			}
 			i++;
 		}
+		
+		double[][] net = proSeed.getNetwork().getNetwork();
+		int t = 1;
 	}
 
 	public static void fluTrendServerity() throws IOException

@@ -197,7 +197,7 @@ public class GradualNetworkStream {
     }
 
     private void storeNetwork(int current) {
-        this.actualNetwork.incrementNetworkTransition(current);
+        this.actualNetwork.incrementTransition(current);
     }
 
     private Pattern[] getStates() {
