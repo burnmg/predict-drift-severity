@@ -240,7 +240,8 @@ public class PatternReservoir {
 	}
 
 	/**
-	 * compresses two transitions into a single transition
+	 * compresses two transitions into a single transition 
+	 * A -> B -> C
 	 * 
 	 * @param indexA
 	 *            index of pattern before previous pattern (two steps before
