@@ -328,7 +328,7 @@ public class PatternReservoir {
 
 			patternReservoir[i].merge(patternReservoir[j]);
 
-			network.merge(i, j);
+			network.merge(i, j); // FIXME this also merges the edges
 			updatePatternReservoir(i, j); // update pattern reservoir
 
 			if (prevPatternIndex == j) {

@@ -286,6 +286,7 @@ public class ProbabilisticNetwork {
 	 * @param second
 	 *            index of second pattern
 	 */
+	// TODO edge
 	public void merge(int first, int second) {
 
 		for (int i = 0; i < patternNetworkSize; i++) {
@@ -293,6 +294,7 @@ public class ProbabilisticNetwork {
 			patternNetwork[first][i] += patternNetwork[second][i];
 			// update column 
 			patternNetwork[i][first] += patternNetwork[i][second];
+			// This merge can be used in edges merge.
 		}
 
 		patternNetwork[first][first] += patternNetwork[second][second]; // modified 18/12/15
