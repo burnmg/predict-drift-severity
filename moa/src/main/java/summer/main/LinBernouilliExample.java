@@ -32,7 +32,6 @@ public class LinBernouilliExample {
 		 * END ProSeed Parameters 
 		 */
 		
-		
 		/*
 		 * START Rengine
 		 */
@@ -56,10 +55,7 @@ public class LinBernouilliExample {
 		BufferedWriter detectorSortedPatternWriter = new BufferedWriter(
 				new FileWriter("/Users/rl/Desktop/data2/detectorSortedPatternWriter.txt"));
 	
-		
 
-		
-		
 		/*
 		 * START Network Stream Generator Parameters 
 		 */

@@ -28,13 +28,26 @@ import summer.proSeed.PatternMining.PatternTransition;
 public class ProbabilisticNetwork {
 
 	private double[][] patternNetwork;
-	private SeveritySamplingEdge[][] edges;
+	private SeveritySamplingEdgeInterface[][] edges;
 
 	private int numberOfPatterns = 0;
 	private int previousPatternIndex = -1;
 
 	private int patternNetworkSize = 0;
 	private final int DEFAULT_PATTERN_NETWORK_SIZE = 100;
+	
+	private void initiateEdges(int patternNetworkSize)
+	{
+		edges = new SeverityReservoirSampingEdge[patternNetworkSize][patternNetworkSize];
+		
+		for(int i=0;i<edges.length;i++)
+		{
+			for(int j=0;j<edges[0].length;j++)
+			{
+				edges[i][j] = new SeverityReservoirSampingEdge(100);
+			}
+		}
+	}
 
 	/**
 	 * construct a network with a DEFAULT size of 100
@@ -43,6 +56,8 @@ public class ProbabilisticNetwork {
 		// construct a default new network
 		this.patternNetworkSize = this.DEFAULT_PATTERN_NETWORK_SIZE;
 		patternNetwork = new double[patternNetworkSize][patternNetworkSize];
+		
+		initiateEdges(patternNetworkSize);
 	}
 
 	/**
@@ -55,6 +70,8 @@ public class ProbabilisticNetwork {
 		// construct a new network
 		this.patternNetworkSize = size;
 		patternNetwork = new double[patternNetworkSize][patternNetworkSize];
+		
+		initiateEdges(patternNetworkSize);
 	}
 
 	/**
@@ -67,6 +84,8 @@ public class ProbabilisticNetwork {
 		this.patternNetworkSize = network.length;
 		this.numberOfPatterns = network.length;
 		this.patternNetwork = network;
+		
+		initiateEdges(patternNetworkSize);
 	}
 
 	public int getNumberOfPatterns() {
@@ -362,8 +381,7 @@ public class ProbabilisticNetwork {
 
 	public void addSeverityEdge(int from, int to, double[] severityData)
 	{
-		// TODO Auto-generated method stub
-		
+		edges[from][to].addSamples(severityData);
 	}	
 
 }

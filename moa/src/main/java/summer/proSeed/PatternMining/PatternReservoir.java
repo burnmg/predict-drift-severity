@@ -25,7 +25,8 @@ import java.util.LinkedList;
 
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 
-public class PatternReservoir {
+public class PatternReservoir
+{
 	private ProbabilisticNetwork network;
 	private Pattern[] patternReservoir;
 	private int patternReservoirSize = 0; // maximum size of pattern reservoir
@@ -37,46 +38,54 @@ public class PatternReservoir {
 	// slope compression parameters below
 	private double slopeCompression;
 	private boolean compressed = false;
-	
+
 	private int beforePrevPatternIndex = -1;
-	private int prevPatternIndex = -1;	
+	private int prevPatternIndex = -1;
 	private int prevLength = -1;
-	
-	public PatternReservoir() {
+
+	public PatternReservoir()
+	{
 		this.patternReservoirSize = DEFAULT_PATTERNSIZE;
 		this.patternReservoir = new Pattern[patternReservoirSize];
 		this.network = new ProbabilisticNetwork(patternReservoirSize);
 		new LinkedList<Object>();
 	}
 
-	public PatternReservoir(int size) {
+	public PatternReservoir(int size)
+	{
 		this.patternReservoirSize = size;
 		this.patternReservoir = new Pattern[patternReservoirSize];
 		this.network = new ProbabilisticNetwork(patternReservoirSize);
 		new LinkedList<Object>();
 	}
 
-	public void setSlopeCompression(double slope) {
+	public void setSlopeCompression(double slope)
+	{
 		slopeCompression = slope;
 	}
 
-	public void setMergeParameter(int m) {
+	public void setMergeParameter(int m)
+	{
 		mergeParameter = m;
 	}
 
-	public int getMaxSize() {
+	public int getMaxSize()
+	{
 		return this.patternReservoirSize;
 	}
 
-	public int getSize() {
+	public int getSize()
+	{
 		return this.numberOfPatterns;
 	}
 
-	public ProbabilisticNetwork getNetwork() {
+	public ProbabilisticNetwork getNetwork()
+	{
 		return this.network;
 	}
 
-	public int getLatestPatternIndex() {
+	public int getLatestPatternIndex()
+	{
 		return this.prevPatternIndex;
 	}
 
@@ -87,25 +96,30 @@ public class PatternReservoir {
 	 *            of pattern to retrieve
 	 * @return pattern at a specified index in the reservoir
 	 */
-	public Pattern getPatternAt(int index) {
+	public Pattern getPatternAt(int index)
+	{
 		return patternReservoir[index];
 	}
 
-	public Pattern[] getPatterns() {
+	public Pattern[] getPatterns()
+	{
 		Pattern[] patterns = new Pattern[numberOfPatterns];
 		System.arraycopy(this.patternReservoir, 0, patterns, 0, patterns.length);
 		return patterns;
 	}
 
-	public String getPatternsString() {
+	public String getPatternsString()
+	{
 		Pattern[] patternRes = getPatterns();
 		return getPatternStringOf(patternRes);
 	}
 
-	public String getPatternStringOf(Pattern[] patternRes) {
+	public String getPatternStringOf(Pattern[] patternRes)
+	{
 		String result = "Patterns\nIndex\tMean\tVariance\n";
 		int i = 0;
-		for (Pattern p : patternRes) {
+		for (Pattern p : patternRes)
+		{
 			result = result + i + "\t" + p + "\n";
 			i++;
 		}
@@ -120,7 +134,8 @@ public class PatternReservoir {
 	 * @param index
 	 *            index of old pattern in reservoir to replace
 	 */
-	public void replacePattern(Pattern newPattern, int index) {
+	public void replacePattern(Pattern newPattern, int index)
+	{
 		patternReservoir[index] = newPattern;
 	}
 
@@ -130,7 +145,8 @@ public class PatternReservoir {
 	 * @param newPattern
 	 *            new pattern to add
 	 */
-	public void addPatternToReservoir(Pattern newPattern) {
+	public void addPatternToReservoir(Pattern newPattern)
+	{
 		patternReservoir[numberOfPatterns] = newPattern;
 	}
 
@@ -141,13 +157,17 @@ public class PatternReservoir {
 	 *            pattern to find
 	 * @return index of pattern in the reservoir, or -1 if no pattern found
 	 */
-	public int findPatternIndex(Pattern patternToFind) {
-		for (int i = 0; i < numberOfPatterns; i++) {
-			if (patternReservoir[i] == null) {
+	public int findPatternIndex(Pattern patternToFind)
+	{
+		for (int i = 0; i < numberOfPatterns; i++)
+		{
+			if (patternReservoir[i] == null)
+			{
 				System.out.println();
 			}
 			boolean patternFound = patternToFind.equals(patternReservoir[i]);
-			if (patternFound) {
+			if (patternFound)
+			{
 				return i;
 			}
 		}
@@ -155,12 +175,12 @@ public class PatternReservoir {
 	}
 
 	/*
-	public int addPattern(double[] patternData, int dataLength, int patternLength) {
-		// return addPattern(patternData, dataLength, patternLength, 0.05); 
-		return addPattern(patternData, dataLength, patternLength); 
-	}
-	*/
-	
+	 * public int addPattern(double[] patternData, int dataLength, int
+	 * patternLength) { // return addPattern(patternData, dataLength,
+	 * patternLength, 0.05); return addPattern(patternData, dataLength,
+	 * patternLength); }
+	 */
+
 	/**
 	 * attempts to add a new pattern to the pattern reservoir
 	 *
@@ -174,65 +194,85 @@ public class PatternReservoir {
 	 *            delta for pattern matching
 	 * @return index of newly inserted pattern
 	 */
-	public int addPattern(double[] patternData, int dataLength, int currentLength, double[] severityData) {
-		compressed = false;	// reset compression flag	
+	public int addPattern(double[] patternData, int dataLength, int currentLength, double[] severityData)
+	{
+		compressed = false; // reset compression flag
 		Pattern newPattern = new Pattern(patternData, dataLength);
-		
+
 		// currentPatternIndex is the new pattern added (or updated).
 		// beforePrevPatternIndex < prevPatternIndex < currentPatternIndex
 		int currentPatternIndex = findPatternIndex(newPattern);
 
-		if (currentPatternIndex == -1) { // pattern not found, so new pattern should be inserted
-			
-			if (numberOfPatterns < this.patternReservoirSize) { // pattern reservoir is not full
+		if (currentPatternIndex == -1)
+		{ // pattern not found, so new pattern should be inserted
+
+			if (numberOfPatterns < this.patternReservoirSize)
+			{ // pattern reservoir is not full
 				// add pattern to reservoir
 				currentPatternIndex = numberOfPatterns; // update pattern index
 				addPatternToReservoir(newPattern);
 				numberOfPatterns++;
 				this.network.setNumberOfPatterns(numberOfPatterns);
-			} else {
+			} else
+			{
 				currentPatternIndex = findLowestWeight();
 			}
-			
+
 			// reset network probabilities for new pattern
 			this.network.resetNetworkForPattern(currentPatternIndex);
-		} else {
+		} else
+		{
 			// pattern found, then update data
-			this.patternReservoir[currentPatternIndex].addData(patternData, dataLength);		
+			this.patternReservoir[currentPatternIndex].addData(patternData, dataLength);
 		}
 
 		// add severity edge
 		if (prevPatternIndex != -1)
 		{
+			severityData = new double[100]; // TODO fake severity for testing
 			network.addSeverityEdge(prevPatternIndex, currentPatternIndex, severityData);
 		}
-		
+
 		// compression check
-		if (beforePrevPatternIndex != -1) {
+		if (beforePrevPatternIndex != -1)
+		{
 			double prevSlope = (patternReservoir[prevPatternIndex].getMean()
 					- patternReservoir[beforePrevPatternIndex].getMean()) / prevLength;
-			double curSlope = (patternReservoir[currentPatternIndex].getMean() - patternReservoir[prevPatternIndex].getMean())
-					/ currentLength;
+			double curSlope = (patternReservoir[currentPatternIndex].getMean()
+					- patternReservoir[prevPatternIndex].getMean()) / currentLength;
 			double slopeDiff = Math.abs(prevSlope - curSlope);
-			if (slopeDiff < slopeCompression) {
-				// compress previous pattern transition and update network				
-				currentPatternIndex = compressTransition(beforePrevPatternIndex, prevPatternIndex, currentPatternIndex); 
+
+			if (slopeDiff < slopeCompression)
+			{
+				// compress previous pattern transition and update network TODO
+				// deal with edges as well
+				currentPatternIndex = compressTransition(beforePrevPatternIndex, prevPatternIndex, currentPatternIndex);
 				compressed = true;
-				prevLength = prevLength + currentLength; // when compressed the length between patterns is increased
-			} else {
+				prevLength = prevLength + currentLength; // when compressed the
+															// length between
+															// patterns is
+															// increased
+			} else
+			{
 				// update network
 				this.network.incrementTransition(currentPatternIndex);
 				compressed = false;
 			}
 		}
 
-		if (prevPatternIndex != -1) {						
-			if (compressed == false ) {
-				beforePrevPatternIndex = prevPatternIndex; // update value of pattern before previous pattern
-				prevLength = currentLength; // update length if no compression occurred
+		if (prevPatternIndex != -1)
+		{
+			if (compressed == false)
+			{
+				beforePrevPatternIndex = prevPatternIndex; // update value of
+															// pattern before
+															// previous pattern
+				prevLength = currentLength; // update length if no compression
+											// occurred
 			}
 		}
-		prevPatternIndex = currentPatternIndex; // update index of previous pattern
+		prevPatternIndex = currentPatternIndex; // update index of previous
+												// pattern
 		this.network.setPreviousPatternIndex(currentPatternIndex);
 
 		return prevPatternIndex;
@@ -240,8 +280,7 @@ public class PatternReservoir {
 	}
 
 	/**
-	 * compresses two transitions into a single transition 
-	 * A -> B -> C
+	 * compresses two transitions into a single transition A -> B -> C
 	 * 
 	 * @param indexA
 	 *            index of pattern before previous pattern (two steps before
@@ -253,10 +292,12 @@ public class PatternReservoir {
 	 * @return index of current pattern
 	 */
 	// TODO edge (leave it right now)
-	private int compressTransition(int indexA, int indexB, int indexC) {
+	private int compressTransition(int indexA, int indexB, int indexC)
+	{
 		// adjust length of pattern when compressing
 		// compress transitions from a -> b -> c to a -> c
-		if (this.patternReservoir[indexB].getWeight() <= 1) {
+		if (this.patternReservoir[indexB].getWeight() <= 1)
+		{
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
 			this.network.incrementTransition(indexC);
@@ -264,12 +305,15 @@ public class PatternReservoir {
 			this.network.delete(indexB);
 			delete(indexB); // deletes pattern b from pattern reservoir
 			// update current pattern index
-			if (indexB < indexC) {
+			if (indexB < indexC)
+			{
 				return indexC - 1; // pattern's index is shifted when b deleted
-			} else {
+			} else
+			{
 				return indexC;
 			}
-		} else {
+		} else
+		{
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
 			this.network.incrementTransition(indexC);
@@ -286,23 +330,29 @@ public class PatternReservoir {
 	 * @param row
 	 *            index of pattern to delete
 	 */
-	private void delete(int row) {
-		for (int i = row; i < numberOfPatterns - 1; i++) {
+	private void delete(int row)
+	{
+		for (int i = row; i < numberOfPatterns - 1; i++)
+		{
 			this.patternReservoir[i] = this.patternReservoir[i + 1];
 		}
 		numberOfPatterns--;
 	}
 
 	// TODO edge
-	public int deleteHighVariance() {
+	public int deleteHighVariance()
+	{
 		ArrayList<Integer> deleteList = new ArrayList<Integer>();
-		for (int i = 0; i < this.numberOfPatterns; i++) {
-			if (this.patternReservoir[i].calcVariance() > 300) {
+		for (int i = 0; i < this.numberOfPatterns; i++)
+		{
+			if (this.patternReservoir[i].calcVariance() > 300)
+			{
 				deleteList.add(i);
 			}
 		}
 
-		for (int i = 0; i < deleteList.size(); i++) {
+		for (int i = 0; i < deleteList.size(); i++)
+		{
 			int deleteIndex = deleteList.get(i) - i;
 			delete(deleteIndex);
 			network.delete(deleteIndex);
@@ -317,9 +367,11 @@ public class PatternReservoir {
 	 * @return current pattern index
 	 */
 	// TODO add edge
-	public int merge() {
+	public int merge()
+	{
 
-		while (numberOfPatterns > mergeParameter) {
+		while (numberOfPatterns > mergeParameter)
+		{
 			int[] closestPatterns = getClosestPatternIndices();
 			int i = closestPatterns[0];
 			int j = closestPatterns[1];
@@ -331,10 +383,12 @@ public class PatternReservoir {
 			network.merge(i, j); // FIXME let this also merges the edges
 			updatePatternReservoir(i, j); // update pattern reservoir
 
-			if (prevPatternIndex == j) {
+			if (prevPatternIndex == j)
+			{
 				prevPatternIndex = i;
 				this.network.setPreviousPatternIndex(prevPatternIndex);
-			} else if (prevPatternIndex > j) {
+			} else if (prevPatternIndex > j)
+			{
 				prevPatternIndex = prevPatternIndex - 1;
 				this.network.setPreviousPatternIndex(prevPatternIndex);
 			}
@@ -348,13 +402,17 @@ public class PatternReservoir {
 		return prevPatternIndex;
 	}
 
-	private int[] getClosestPatternIndices() {
+	private int[] getClosestPatternIndices()
+	{
 		int[] closestIndices = new int[2];
 		double minD = Integer.MAX_VALUE;
-		for (int i = 0; i < this.numberOfPatterns; i++) {
-			for (int j = i + 1; j < this.numberOfPatterns; j++) {
+		for (int i = 0; i < this.numberOfPatterns; i++)
+		{
+			for (int j = i + 1; j < this.numberOfPatterns; j++)
+			{
 				double d = patternReservoir[i].computeD(patternReservoir[j]);
-				if (d < minD) {
+				if (d < minD)
+				{
 					minD = d;
 					closestIndices[0] = i;
 					closestIndices[1] = j;
@@ -370,13 +428,17 @@ public class PatternReservoir {
 	 * @return true if merging was applied
 	 */
 	// TODO edge
-	public boolean mergePatterns() {
+	public boolean mergePatterns()
+	{
 		boolean merged = false;
-		for (int i = 0; i < numberOfPatterns; i++) {
+		for (int i = 0; i < numberOfPatterns; i++)
+		{
 			Pattern pattern = patternReservoir[i];
-			for (int j = i + 1; j < numberOfPatterns; j++) {
+			for (int j = i + 1; j < numberOfPatterns; j++)
+			{
 				Pattern otherPattern = patternReservoir[j];
-				if (pattern.equals(otherPattern)) {
+				if (pattern.equals(otherPattern))
+				{
 					System.out.println("merging " + i + ", " + j);
 
 					merged = true;
@@ -387,10 +449,12 @@ public class PatternReservoir {
 					numberOfPatterns--;
 					this.network.setNumberOfPatterns(numberOfPatterns);
 
-					if (prevPatternIndex == j) {
+					if (prevPatternIndex == j)
+					{
 						prevPatternIndex = i;
 						this.network.setPreviousPatternIndex(prevPatternIndex);
-					} else if (prevPatternIndex > j) {
+					} else if (prevPatternIndex > j)
+					{
 						prevPatternIndex = prevPatternIndex - 1;
 						this.network.setPreviousPatternIndex(prevPatternIndex);
 					}
@@ -400,21 +464,27 @@ public class PatternReservoir {
 		return merged;
 	}
 
-	private void updatePatternReservoir(int first, int second) {
+	private void updatePatternReservoir(int first, int second)
+	{
 		Pattern[] updatedReservoir = new Pattern[patternReservoir.length];
-		for (int i = 0; i < this.numberOfPatterns; i++) {
-			if (i > second) {
+		for (int i = 0; i < this.numberOfPatterns; i++)
+		{
+			if (i > second)
+			{
 				updatedReservoir[i - 1] = this.patternReservoir[i];
-			} else if (i < second) {
+			} else if (i < second)
+			{
 				updatedReservoir[i] = this.patternReservoir[i];
 			}
 		}
 		this.patternReservoir = updatedReservoir;
 	}
 
-	private IndexedPattern[] getIndexedCopyOfPatterns() {
+	private IndexedPattern[] getIndexedCopyOfPatterns()
+	{
 		IndexedPattern[] copy = new IndexedPattern[numberOfPatterns];
-		for (int i = 0; i < numberOfPatterns; i++) {
+		for (int i = 0; i < numberOfPatterns; i++)
+		{
 			Pattern p = this.patternReservoir[i];
 			double mean = p.getMean();
 			double variance = p.calcVariance();
@@ -426,24 +496,29 @@ public class PatternReservoir {
 	}
 
 	// TODO edge
-	public double[][] getSortedNetwork() {
+	public double[][] getSortedNetwork()
+	{
 		IndexedPattern[] indexedPatterns = getIndexedCopyOfPatterns();
 		Arrays.sort(indexedPatterns);
 		return this.network.sortBy(indexedPatterns);
 	}
 
-	public IndexedPattern[] getSortedPatterns() {
+	public IndexedPattern[] getSortedPatterns()
+	{
 		IndexedPattern[] indexedPatterns = getIndexedCopyOfPatterns();
 		Arrays.sort(indexedPatterns);
 		return indexedPatterns;
 	}
 
-	private int findLowestWeight() {
+	private int findLowestWeight()
+	{
 		int min = Integer.MAX_VALUE;
 		int minIndex = 0;
-		for (int i = 0; i < this.numberOfPatterns; i++) {
+		for (int i = 0; i < this.numberOfPatterns; i++)
+		{
 			int weight = this.patternReservoir[i].weight;
-			if (weight < min) {
+			if (weight < min)
+			{
 				min = weight;
 				minIndex = i;
 			}
@@ -451,7 +526,8 @@ public class PatternReservoir {
 		return minIndex;
 	}
 
-	public boolean getCompression() {
+	public boolean getCompression()
+	{
 		return compressed;
 	}
 }
