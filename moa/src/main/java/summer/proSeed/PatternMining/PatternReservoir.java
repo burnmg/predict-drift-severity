@@ -229,7 +229,12 @@ public class PatternReservoir
 		// add severity edge
 		if (prevPatternIndex != -1)
 		{
-			severityData = new double[100]; // TODO fake severity for testing
+			severityData = new double[100]; // FIXME fake severity for testing
+			for(int i=0;i<severityData.length;i++)
+			{
+				severityData[i] = 1024;
+			}
+			
 			network.addSeverityEdge(prevPatternIndex, currentPatternIndex, severityData);
 		}
 

@@ -27,6 +27,8 @@ import summer.proSeed.PatternMining.PatternTransition;
 
 public class ProbabilisticNetwork {
 
+	private static final int EACH_EDGE_SIZE = 100;
+	
 	private double[][] patternNetwork;
 	private SeveritySamplingEdgeInterface[][] edges;
 
@@ -40,6 +42,7 @@ public class ProbabilisticNetwork {
 	{
 		edges = new SeverityReservoirSampingEdge[patternNetworkSize][patternNetworkSize];
 		
+		/*
 		for(int i=0;i<edges.length;i++)
 		{
 			for(int j=0;j<edges[0].length;j++)
@@ -47,6 +50,8 @@ public class ProbabilisticNetwork {
 				edges[i][j] = new SeverityReservoirSampingEdge(100);
 			}
 		}
+		*/
+		
 	}
 
 	/**
@@ -381,7 +386,13 @@ public class ProbabilisticNetwork {
 
 	public void addSeverityEdge(int from, int to, double[] severityData)
 	{
+		if(edges[from][to]==null) edges[from][to] = new SeverityReservoirSampingEdge(EACH_EDGE_SIZE);
 		edges[from][to].addSamples(severityData);
-	}	
+	}
+	
+	public SeveritySamplingEdgeInterface[][] getEdges()
+	{
+		return this.edges;
+	}
 
 }

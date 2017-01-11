@@ -143,7 +143,8 @@ public class RelativeVolatilityDetector {
 				double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();
 				if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) {
 					// pass output to drift predictor
-					driftPredictor.trainNewPattern(interval, buffer, recentIntervals, sample, patternLength);
+					// TODO add severity
+					driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength);
 
 					// clear reservoir
 					reservoir.clear();
@@ -185,7 +186,7 @@ public class RelativeVolatilityDetector {
 			double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();
 			if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) {
 				// pass output to drift predictor
-				driftPredictor.trainNewPattern(interval, buffer, recentIntervals, sample, patternLength);
+				driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength);
 
 				// clear reservoir
 				reservoir.clear();
@@ -202,5 +203,11 @@ public class RelativeVolatilityDetector {
 		return false;
 
 	}
+	
+	public DriftPrediction getDriftPrediction()
+	{
+		return this.driftPredictor;
+	}
+	
 
 }

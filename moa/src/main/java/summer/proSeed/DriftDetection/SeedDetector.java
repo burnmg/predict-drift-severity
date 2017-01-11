@@ -333,6 +333,6 @@ public class SeedDetector implements CutPointDetector
 
 	public double getSeverity()
 	{
-		return severity;
+		return this.severity;
 	}
 }

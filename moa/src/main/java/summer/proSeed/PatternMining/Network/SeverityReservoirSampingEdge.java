@@ -21,4 +21,10 @@ public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterfa
 			this.samples.addElement(sample);
 		}
 	}
+
+	@Override
+	public double[] getSamples()
+	{
+		return this.samples.getReservoir();
+	}
 }

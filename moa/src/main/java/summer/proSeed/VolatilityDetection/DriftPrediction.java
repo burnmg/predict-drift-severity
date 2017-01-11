@@ -26,6 +26,8 @@ import org.apache.commons.math3.stat.StatUtils;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.PatternReservoir;
 import summer.proSeed.PatternMining.PatternTransition;
+import summer.proSeed.PatternMining.Network.SeverityReservoirSampingEdge;
+import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 
  /**
  * 
@@ -143,7 +145,7 @@ public class DriftPrediction {
     /* pattern matching via buffer
      * perform the pattern match before inserting a new pattern
      */
-    public void trainNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
+    public void addNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
     	
         double[] buffData = buffer.getBuffer();
         // remove outliers
@@ -181,7 +183,7 @@ public class DriftPrediction {
             }
         }
         
-        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength, null); //TODO this null
+        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength, null); //TODO implement this severity value
         boolean compressed = patternReservoir.getCompression();
         patternReservoir.getPatterns()[patternIndex].addLength(patternLength, compressed);
         
@@ -189,5 +191,10 @@ public class DriftPrediction {
 
 	public PatternReservoir getPatternReservoir() {
 		return this.patternReservoir;
+	}
+	
+	public SeveritySamplingEdgeInterface[][] getNetworkEdges()
+	{
+		return this.patternReservoir.getNetwork().getEdges();
 	}
 }

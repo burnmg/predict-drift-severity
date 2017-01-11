@@ -10,6 +10,7 @@ import org.rosuda.JRI.Rengine;
 import summer.proSeed.DriftDetection.ProSeed;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 import summer.proSeed.kylieExample.TextConsole;
@@ -100,7 +101,6 @@ public class LinBernouilliExample {
 		while(numBlocks < streamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
-			System.out.println(streamInterval);
 			// training 
 			for (int i = 0; i < streamInterval; i++) 
 			{
@@ -117,7 +117,22 @@ public class LinBernouilliExample {
 		String network = proSeed.getNetwork().getNetworkString();
 		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
 		String networkString = trainingNetworkStream.getActualNetwork().getNetworkString();
-		int i = 1-1;
+		
+		// test the result of edges
+		SeveritySamplingEdgeInterface[][] edges = vold.getDriftPrediction().getNetworkEdges();
+		
+		
+		for(int i=0;i<edges.length;i++)
+		{
+			for(int j=0;j<edges[0].length;j++)
+			{
+				if(edges[i][j]!=null)
+				{
+					System.out.println(edges[i][j].getSamples()[0]);
+				}
+			}
+		}
+		
 		
 		System.out.println("Done");
 
