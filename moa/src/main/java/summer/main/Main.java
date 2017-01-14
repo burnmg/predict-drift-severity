@@ -1,3 +1,4 @@
+
 package summer.main;
 
 import java.io.FileNotFoundException;
@@ -24,6 +25,8 @@ public class Main
 	public static void main(String[] args) throws IOException
 	{
 		// Set R Engine
+		/*
+
 		String[] reArgs = new String[]{"--save"};
 		Rengine re = new Rengine(reArgs, false, new TextConsole());
 		System.out.println("Rengine created, waiting for R");
@@ -33,17 +36,58 @@ public class Main
 			return;
 		}
 		Pattern.setRengine(re);
+		
+		*/
+		
 		// Set R Engine END 
-		testNetworkWithSeverityEdges();
+		testNetworkWithSeverityEdges3Patterns();
 	}
 	
-	public static void testNetworkWithSeverityEdges()
+	public static void testNetworkWithSeverityEdges3Patterns()
 	{
-		double[][] networkProbabilities = {{0,0.5}, {0.25,0}};
+		double transHigh = 0.75;
+		double transLow = 0.25;
+		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
+		
+		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100), new Pattern(300, 100)};
+		int seed = 1024;
+		Double[][] severityEdges = {{null, new Double(10), new Double(20)}, 
+				{new Double(30), null, new Double(40)}, 
+				{new Double(50), new Double(60), null}
+		};
+		
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, severityEdges, 1);
+		
+		double networkNoise = 0;
+		int stateTimeMean = 100;
+		double networkNoiseStandardDeviation = 0;
+		double patternNoiseFlag = 1;
+		
+		networkStream.networkNoise = networkNoise; // percentage of transition noise
+		networkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		networkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
+		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+		
+		int i=0;
+		while(i<500)
+		{
+			networkStream.generateNext();
+			System.out.println(networkStream.getCurrentState()+","+networkStream.getCurrentSeverity());
+			i++;
+		}
+	}
+	
+	public static void testNetworkWithSeverityEdges2Patterns()
+	{
+		double transHigh = 0.75;
+		double transLow = 0.25;
+		double[][] networkTransitions = {{0,1}, {1, 0}};
+		
 		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100)};
 		int seed = 1024;
-		Double[][] severityEdges = {{null, new Double(36)}, {new Double(72),null}};
-		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkProbabilities, states, seed, severityEdges, 1);
+		Double[][] severityEdges = {{null, new Double(36)}, {new Double(72), null}};
+		
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, severityEdges, 1);
 		
 		double networkNoise = 0;
 		int stateTimeMean = 100;

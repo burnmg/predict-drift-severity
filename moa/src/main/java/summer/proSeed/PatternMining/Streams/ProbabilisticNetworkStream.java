@@ -148,6 +148,8 @@ public class ProbabilisticNetworkStream {
                 // choose new state
                 moveToNewState = true;
                 double[] transitions = this.network[currentStateIndex];
+                this.fromIndex = currentStateIndex;
+                
                 currentStateIndex = selectState(rand, transitions);
                 stateTime = 1;
                 // add noise to state time length (volatility noise)
@@ -172,7 +174,7 @@ public class ProbabilisticNetworkStream {
                 rand = this.random.nextDouble();
                 currentStateIndex = selectState(rand, prob);
                 
-                this.fromIndex = currentStateIndex;
+                
                 
                 while (currentStateIndex == previousStateIndex || currentStateIndex == trueStateIndex) {
                     rand = this.random.nextDouble();
@@ -277,6 +279,10 @@ public class ProbabilisticNetworkStream {
 	public boolean hasChanged() {
 		// TODO Auto-generated method stub
 		return moveToNewState;
+	}
+	
+	public int getCurrentState(){
+		return this.currentStateIndex;
 	}
 
 }
