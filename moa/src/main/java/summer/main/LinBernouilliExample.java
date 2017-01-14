@@ -76,14 +76,16 @@ public class LinBernouilliExample {
 		 * END Network Stream Generator Parameters 
 		 */
 		
-		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed); // Abrupt Volatility Change
+		// TODO set network edges and fromIndex
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, null, 0); // Abrupt Volatility Change
 		networkStream.networkNoise = networkNoise; // percentage of transition noise
 		networkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
 		networkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
 		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
 		
 		// set the network stream (testing)
-		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed); // Abrupt Volatility Change
+		// TODO set network edges and fromIndex
+		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, null, 0); // Abrupt Volatility Change
 		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
 		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
 		trainingNetworkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 

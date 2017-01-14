@@ -40,6 +40,8 @@ public class ProbabilisticNetworkStream {
     private int previousStateIndex = -1;
     private int currentStateIndex;
     private int instances;
+    
+    private int fromIndex;
 
     private final int DEFAULT_RANDOM_SEED = 666;
     private int randomSeed;
@@ -47,6 +49,7 @@ public class ProbabilisticNetworkStream {
 
     private double[][] network;
     private double[] initialStates;
+    private Double[][] severityEdges;
 
     private ProbabilisticNetwork actualNetwork;
     private DescriptiveStatistics[] actualStates;
@@ -82,7 +85,8 @@ public class ProbabilisticNetworkStream {
         this.actualStates = new DescriptiveStatistics[states.length];
     }
 
-    public ProbabilisticNetworkStream(double[][] networkProbabilities, Pattern[] states, int seed) {
+    public ProbabilisticNetworkStream(double[][] networkProbabilities, Pattern[] states, int seed, Double[][] severityEdges,
+    		int intitialFromIndex) {
         this.network = networkProbabilities;
         this.initialStates = new double[this.network.length];
         setEqualProbabilities(this.initialStates);
@@ -93,6 +97,9 @@ public class ProbabilisticNetworkStream {
         this.actualNetwork = new ProbabilisticNetwork(states.length);
         this.actualNetwork.setNumberOfPatterns(states.length);
         this.actualStates = new DescriptiveStatistics[states.length];
+        
+        this.severityEdges = severityEdges;
+        this.fromIndex = intitialFromIndex;
     }
 
     public ProbabilisticNetworkStream(double[][] networkProbabilities, double[] initialProbabilities, Pattern[] states, int seed) {
@@ -129,6 +136,12 @@ public class ProbabilisticNetworkStream {
             stateTime = 1;
             // add noise to state time length (volatility noise)
             stateTimeLength = (int) (stateTimeMean  + random.nextGaussian() * sdVolatilityNoise);
+            
+            fromIndex = random.nextInt(severityEdges.length);
+            while(fromIndex==currentStateIndex)
+            {
+            	fromIndex = random.nextInt(severityEdges.length);
+            }
         } else {
             if (stateTime % stateTimeLength == 0) {
             	numVolatilityDrifts++;
@@ -158,12 +171,15 @@ public class ProbabilisticNetworkStream {
                 setEqualProbabilities(prob);
                 rand = this.random.nextDouble();
                 currentStateIndex = selectState(rand, prob);
-
+                
+                this.fromIndex = currentStateIndex;
+                
                 while (currentStateIndex == previousStateIndex || currentStateIndex == trueStateIndex) {
                     rand = this.random.nextDouble();
                     currentStateIndex = selectState(rand, prob);
                 }
             }
+            
         }
 
         // generate cut point interval
@@ -187,10 +203,14 @@ public class ProbabilisticNetworkStream {
             this.previousStateIndex = currentStateIndex;
             this.actualNetwork.setPreviousPatternIndex(currentStateIndex);
         }
-
         this.instances++;
 
         return (int) interval;
+    }
+   
+    public double getCurrentSeverity()
+    {
+    	return severityEdges[fromIndex][currentStateIndex];
     }
 
     private int selectState(double rand, double[] probabilities) {

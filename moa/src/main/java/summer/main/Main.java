@@ -15,6 +15,7 @@ import summer.magSeed.MagSeed;
 import summer.proSeed.DriftDetection.ProSeed;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.kylieExample.TextConsole;
 
 public class Main
@@ -33,8 +34,35 @@ public class Main
 		}
 		Pattern.setRengine(re);
 		// Set R Engine END 
+		testNetworkWithSeverityEdges();
+	}
+	
+	public static void testNetworkWithSeverityEdges()
+	{
+		double[][] networkProbabilities = {{0,0.5}, {0.25,0}};
+		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100)};
+		int seed = 1024;
+		Double[][] severityEdges = {{null, new Double(36)}, {new Double(72),null}};
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkProbabilities, states, seed, severityEdges, 1);
 		
-		fluTrendServerityProSeed();
+		double networkNoise = 0;
+		int stateTimeMean = 100;
+		double networkNoiseStandardDeviation = 0;
+		double patternNoiseFlag = 1;
+		
+		networkStream.networkNoise = networkNoise; // percentage of transition noise
+		networkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		networkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
+		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+		
+		int i=0;
+		while(i<1000)
+		{
+			networkStream.generateNext();
+			System.out.println(networkStream.getCurrentSeverity());
+			i++;
+		}
+		
 	}
 	
 	public static void testProSeed() throws FileNotFoundException, IOException
