@@ -23,7 +23,7 @@ public class IntegerStream implements StreamGenerator
 		return mean + streamNoise*random.nextGaussian();
 	}
 	
-	public void addDrift(int driftSeverity)
+	public void addDrift(double driftSeverity)
 	{
 		this.mean += driftSeverity + driftNoise*random.nextGaussian();
 	}

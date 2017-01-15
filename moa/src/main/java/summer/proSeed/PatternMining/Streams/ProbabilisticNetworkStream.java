@@ -85,8 +85,7 @@ public class ProbabilisticNetworkStream {
         this.actualStates = new DescriptiveStatistics[states.length];
     }
 
-    public ProbabilisticNetworkStream(double[][] networkProbabilities, Pattern[] states, int seed, Double[][] severityEdges,
-    		int intitialFromIndex) {
+    public ProbabilisticNetworkStream(double[][] networkProbabilities, Pattern[] states, int seed, Double[][] severityEdges) {
         this.network = networkProbabilities;
         this.initialStates = new double[this.network.length];
         setEqualProbabilities(this.initialStates);
@@ -99,7 +98,6 @@ public class ProbabilisticNetworkStream {
         this.actualStates = new DescriptiveStatistics[states.length];
         
         this.severityEdges = severityEdges;
-        this.fromIndex = intitialFromIndex;
     }
 
     public ProbabilisticNetworkStream(double[][] networkProbabilities, double[] initialProbabilities, Pattern[] states, int seed) {
