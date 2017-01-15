@@ -21,7 +21,7 @@ package summer.proSeed.PatternMining;
 
 import java.util.Random;
 
-public class BernoulliGenerator {
+public class BernoulliGenerator implements StreamGenerator {
 
     private final int DEFAULT_SEED = 666;
     private boolean lowMean;

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -16,6 +17,7 @@ import summer.magSeed.MagSeed;
 import summer.proSeed.DriftDetection.ProSeed;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Streams.IntegerStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.kylieExample.TextConsole;
 
@@ -40,7 +42,37 @@ public class Main
 		*/
 		
 		// Set R Engine END 
-		testNetworkWithSeverityEdges3Patterns();
+		testIntegerStreamWithDriftDetector();
+	}
+	
+	public static void testIntegerStreamWithDriftDetector() throws FileNotFoundException, IOException
+	{
+		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75);
+		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0);
+		
+		IntegerStream stream = new IntegerStream(78, 100, 1.0, 1.0);
+		Random random = new Random();
+		
+		for(int i=0;i<1000;i++)
+		{
+			if(i%100==0) stream.addDrift(random.nextInt(100));
+			boolean drift = proSeed.setInput(stream.generateNext());
+			if(drift) System.out.println(i);
+		}
+		
+	}
+	
+	public static void testIntegerStreamGenerator()
+	{
+		IntegerStream stream = new IntegerStream(78, 100, 1.0, 1.0);
+		Random random = new Random();
+		
+		for(int i=0;i<1000;i++)
+		{
+			if(i%100==0) stream.addDrift(random.nextInt(100));
+			System.out.println(stream.generateNext());
+		}
 	}
 	
 	public static void testNetworkWithSeverityEdges3Patterns()
@@ -118,7 +150,7 @@ public class Main
 	
 
 
-	public static void testDrift()
+	public static void testMagSeed()
 	{
 		int blockSize = 1000;
 		BernoulliGenerator generator;

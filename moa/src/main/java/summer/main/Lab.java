@@ -10,7 +10,7 @@ public class Lab
 		Random r = new Random();
 		for(int i=0;i<100;i++)
 		{
-			System.out.println(r.nextGaussian()*10+100);
+			System.out.println(r.nextGaussian()+100);
 		}
 	}
 }

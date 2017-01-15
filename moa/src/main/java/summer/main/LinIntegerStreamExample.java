@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 import org.rosuda.JRI.Rengine;
 
@@ -90,12 +91,13 @@ public class LinIntegerStreamExample
 		trainingNetworkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
 
 		// set the bernoulli stream (testing)
-		bernoulli.setNoise(0.0); // noise for error rate generator
+		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
 		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
 		
 		// set the bernoulli stream (training)
-		BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
+		Random 
+		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
 		while(numBlocks < streamLength)
 		{
