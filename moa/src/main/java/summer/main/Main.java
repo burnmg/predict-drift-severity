@@ -52,8 +52,8 @@ public class Main
 		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100), new Pattern(300, 100)};
 		int seed = 1024;
 		Double[][] severityEdges = {{null, new Double(10), new Double(20)}, 
-				{new Double(30), null, new Double(40)}, 
-				{new Double(50), new Double(60), null}
+									{new Double(30), null, new Double(40)}, 
+									{new Double(50), new Double(60), null}
 		};
 		
 		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, severityEdges, 1);
@@ -69,7 +69,7 @@ public class Main
 		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
 		
 		int i=0;
-		while(i<500)
+		while(i<5000)
 		{
 			networkStream.generateNext();
 			System.out.println(networkStream.getCurrentState()+","+networkStream.getCurrentSeverity());
