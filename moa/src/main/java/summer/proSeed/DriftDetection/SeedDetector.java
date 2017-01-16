@@ -331,6 +331,7 @@ public class SeedDetector implements CutPointDetector
 		return checks;
 	}
 
+	@Override
 	public double getSeverity()
 	{
 		return this.severity;

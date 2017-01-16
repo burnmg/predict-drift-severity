@@ -28,4 +28,6 @@ public interface CutPointDetector {
 	public boolean setInput(double d);
 
 	public void setPredictions(double[][] predictions);
+	
+	public double getSeverity();
 }

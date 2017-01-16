@@ -46,9 +46,113 @@ public class Main
 		*/
 		
 		// Set R Engine END 
-		testIntegerStreamWithNetwork();
+		testIntegerStreamWithNetwork2Patterns();
 	}
 	
+	public static void testIntegerStreamWithNetwork2Patterns() throws IOException
+	{
+
+
+		/*
+		 * START ProSeed Parameters 
+		 */
+		
+		/*
+		 * END ProSeed Parameters 
+		 */
+		
+		/*
+		 * START Rengine
+		 */
+		String[] reArgs = new String[]{"--save"};
+		Rengine re = new Rengine(reArgs, false, new TextConsole());
+		System.out.println("Rengine created, waiting for R");
+		// the engine creates R is a new thread, so we should wait until it's ready
+		if (!re.waitForR()) {
+			System.out.println("Cannot load R");
+			return;
+		}
+		Pattern.setRengine(re);
+		/*
+		 * END Rengine
+		 */
+		
+		BufferedWriter streamNetworkWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data2/streamNetworkWriter.txt"));
+		BufferedWriter streamPatternWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data2/streamPatternWriter.txt"));
+		BufferedWriter detectorSortedNetworkWriter = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data2/detectorSortedNetworkWriter.txt"));
+		BufferedWriter detectorSortedPatternWriter = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data2/detectorSortedPatternWriter.txt"));
+	
+
+		BufferedWriter dataWrtier = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data1.txt"));
+		
+		/*
+		 * START Network Stream Generator Parameters 
+		 */
+
+		/*
+		 * END Network Stream Generator Parameters 
+		 */
+		
+		/*
+		// TODO set network edges and fromIndex
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, null, 0); // Abrupt Volatility Change
+		networkStream.networkNoise = networkNoise; // percentage of transition noise
+		networkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		networkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
+		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+		*/
+		
+		// set the network stream (testing)
+		// TODO set network edges and fromIndex
+		int trials = 10;
+		double networkNoise = 0;
+		int stateTimeMean = 20;
+		double networkNoiseStandardDeviation = 0;
+		double patternNoiseFlag = 1;
+		double[][] networkTransitions = { {0, 1}, {1, 0}};
+		
+		Pattern[] states = { new Pattern(100, 100), new Pattern(600, 100)};
+		int seed = 1024;
+		Double[][] severityEdges = {{null, new Double(36)}, {new Double(72), null}};
+		
+		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
+		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
+		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		trainingNetworkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
+		trainingNetworkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+
+		// set the bernoulli stream (testing)
+		// bernoulli.setNoise(0.0); // noise for error rate generator
+		
+		int blockLength = 1000;
+		
+		// set the bernoulli stream (training)
+		IntegerStream trainingStream = new IntegerStream(1024, 100, 1, 1);
+		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
+		int numBlocks = 0;
+		while(numBlocks < blockLength)
+		{
+			int streamInterval = trainingNetworkStream.generateNext();
+			// training 
+			for (int i = 0; i < streamInterval; i++) 
+			{
+				double output = trainingStream.generateNext();
+				dataWrtier.write(output+"");
+				dataWrtier.newLine();
+				
+			}
+			numBlocks++;
+			trainingStream.addDrift(trainingNetworkStream.getCurrentSeverity()); // create one drift
+		}
+		String networkString = trainingNetworkStream.getActualNetwork().getNetworkString();
+
+		
+		dataWrtier.close();
+		System.out.println("Done");
+	}
 	public static void testIntegerStreamWithNetwork() throws FileNotFoundException, IOException
 	{
 
@@ -117,9 +221,9 @@ public class Main
 		
 		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100), new Pattern(300, 100)};
 		int seed = 1024;
-		Double[][] severityEdges = {{null, new Double(10), new Double(20)}, 
-									{new Double(30), null, new Double(40)}, 
-									{new Double(50), new Double(60), null}
+		Double[][] severityEdges = {{null, new Double(5), new Double(10)}, 
+									{new Double(100), null, new Double(50)}, 
+									{new Double(1000), new Double(500), null}
 		};
 		
 		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
@@ -131,7 +235,7 @@ public class Main
 		// set the bernoulli stream (testing)
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int blockLength = 10;
+		int blockLength = 100;
 		
 		// set the bernoulli stream (training)
 		IntegerStream trainingStream = new IntegerStream(1024, 100, 1, 1);

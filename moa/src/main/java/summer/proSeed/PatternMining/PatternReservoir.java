@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import javax.print.attribute.standard.Severity;
+
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
+import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 
 public class PatternReservoir
 {
@@ -229,12 +232,6 @@ public class PatternReservoir
 		// add severity edge
 		if (prevPatternIndex != -1)
 		{
-			severityData = new double[100]; // FIXME fake severity for testing
-			for(int i=0;i<severityData.length;i++)
-			{
-				severityData[i] = 1024;
-			}
-			
 			network.addSeverityEdge(prevPatternIndex, currentPatternIndex, severityData);
 		}
 

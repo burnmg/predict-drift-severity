@@ -20,6 +20,7 @@
 package summer.proSeed.VolatilityDetection;
 
 import java.util.ArrayList;
+import java.util.function.DoublePredicate;
 
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -145,7 +146,7 @@ public class DriftPrediction {
     /* pattern matching via buffer
      * perform the pattern match before inserting a new pattern
      */
-    public void addNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength) {
+    public void addNewPattern(double interval, Buffer buffer, double[] recentIntervals, long sample, int patternLength, double[] severitySample) {
     	
         double[] buffData = buffer.getBuffer();
         // remove outliers
@@ -183,7 +184,7 @@ public class DriftPrediction {
             }
         }
         
-        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength, null); //TODO implement this severity value
+        int patternIndex = patternReservoir.addPattern(nonOutliers, nonOutlierCount, patternLength, severitySample);
         boolean compressed = patternReservoir.getCompression();
         patternReservoir.getPatterns()[patternIndex].addLength(patternLength, compressed);
         

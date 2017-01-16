@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import summer.proSeed.DriftDetection.CutPointDetector;
+import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 
  /**
  * 
@@ -46,6 +47,8 @@ public class RelativeVolatilityDetector {
 	private Buffer buffer;
 	private double confidence;
 	private int timestamp = 0;
+	
+	private SeveritySamplingEdgeInterface severityBuffer;
 
 	private int patternLength = 0;
 
@@ -86,13 +89,16 @@ public class RelativeVolatilityDetector {
 		setRecentIntervals(resSize * 2);
 	}
 
-	public RelativeVolatilityDetector(CutPointDetector cutpointDetector, int resSize, double confidence, DriftPrediction driftPredictor) throws FileNotFoundException, IOException {
+	// I am using this constructor. 
+	public RelativeVolatilityDetector(CutPointDetector cutpointDetector, int resSize, double confidence, DriftPrediction driftPredictor, SeveritySamplingEdgeInterface severityBuffer) throws FileNotFoundException, IOException {
 		this.cutpointDetector = cutpointDetector;
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = confidence;
 		this.driftPredictor = driftPredictor;
 		setRecentIntervals(resSize * 2);
+		
+		this.severityBuffer = severityBuffer;
 	}
 
 	public CutPointDetector getDetector() {
@@ -136,15 +142,16 @@ public class RelativeVolatilityDetector {
 			if (rollingIndex == recentIntervals.length) {
 				rollingIndex = 0;
 			}
-
+			severityBuffer.addSamples(new double[]{cutpointDetector.getSeverity()});
 			timestamp = 0;
 
+			
 			if (buffer.isFull() && reservoir.isFull()) {
 				double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();
 				if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) {
 					// pass output to drift predictor
-					// TODO add severity
-					driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength);
+					// add severity
+					driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength, severityBuffer.getSamples());
 
 					// clear reservoir
 					reservoir.clear();
@@ -186,7 +193,7 @@ public class RelativeVolatilityDetector {
 			double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();
 			if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) {
 				// pass output to drift predictor
-				driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength);
+				driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength, severityBuffer.getSamples());
 
 				// clear reservoir
 				reservoir.clear();
