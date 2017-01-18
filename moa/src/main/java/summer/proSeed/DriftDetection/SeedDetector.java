@@ -78,7 +78,9 @@ public class SeedDetector implements CutPointDetector
 	BufferInterface warningBuffer; // unlimited size sliding window. 
 	BufferInterface preWarningBuffer; // fixed size sliding window
 	private int preWarningBufferSize;
+	private int coolingPeriod;
 
+	
 	public SeedDetector(double delta, int blockSize)
 	{
 		this.DELTA = delta;
@@ -87,6 +89,7 @@ public class SeedDetector implements CutPointDetector
 		this.window = new SeedWindow(blockSize);
 	}
 
+	// return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75); // Seed Best
 	public SeedDetector(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat,
 			double alpha, int term)
 	{
@@ -95,6 +98,7 @@ public class SeedDetector implements CutPointDetector
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
 	}
+	
 	
 	/**
 	 * 
@@ -109,7 +113,7 @@ public class SeedDetector implements CutPointDetector
 	 * @param preWarningBufferSize 32
 	 */
 	public SeedDetector(double delta, double warningDelta, int blockSize, int decayMode, int compressionMode, double epsilonHat,
-			double alpha, int term, int preWarningBufferSize)
+			double alpha, int term, int preWarningBufferSize, int coolingPeriod)
 	{
 		this.DELTA = delta;
 		this.WARNING_DELTA = warningDelta;
@@ -120,6 +124,8 @@ public class SeedDetector implements CutPointDetector
 		preWarningBuffer = new LimitedBuffer(preWarningBufferSize);
 		warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
 		this.preWarningBufferSize = preWarningBufferSize;
+		
+		this.coolingPeriod = coolingPeriod;
 	}
 
 	@Override
@@ -196,7 +202,8 @@ public class SeedDetector implements CutPointDetector
 					checks++;
 
 					// if find a drift.
-					if (diff > getADWINBound(n0, n1, DELTA))
+					double threshold = getADWINBound(n0, n1, DELTA);
+					if (samples%coolingPeriod==0 && diff > threshold)
 					{
 						blnReduceWidth = true;
 						window.resetDecayIteration();

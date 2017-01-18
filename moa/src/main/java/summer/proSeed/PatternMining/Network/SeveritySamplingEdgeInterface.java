@@ -6,4 +6,6 @@ public interface SeveritySamplingEdgeInterface
 	
 	public double[] getSamples();
 
+	public void clear();
+
 }

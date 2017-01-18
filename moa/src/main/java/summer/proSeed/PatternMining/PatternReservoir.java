@@ -380,6 +380,7 @@ public class PatternReservoir
 
 			System.out.println("merging " + i + ", " + j);
 
+			// merge pattern
 			patternReservoir[i].merge(patternReservoir[j]);
 
 			network.merge(i, j); // FIXME let this also merges the edges
@@ -430,7 +431,7 @@ public class PatternReservoir
 	 * @return true if merging was applied
 	 */
 	// TODO edge
-	public boolean mergePatterns()
+	private boolean mergePatterns()
 	{
 		boolean merged = false;
 		for (int i = 0; i < numberOfPatterns; i++)

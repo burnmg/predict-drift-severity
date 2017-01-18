@@ -10,7 +10,7 @@ public class IntegerStream implements StreamGenerator
 	private double streamNoise;
 	private double driftNoise;
 	private Random random;
-	
+
 	public IntegerStream(int ranSeed, double mean, double streamNoise, double driftNoise)
 	{
 		random = new Random(ranSeed);
@@ -18,13 +18,14 @@ public class IntegerStream implements StreamGenerator
 		this.streamNoise = streamNoise;
 		this.driftNoise = driftNoise;
 	}
+
 	public double generateNext()
 	{
-		return mean + streamNoise*random.nextGaussian();
+		return mean + streamNoise * random.nextGaussian();
 	}
-	
+
 	public void addDrift(double driftSeverity)
 	{
-		this.mean += driftSeverity + driftNoise*random.nextGaussian();
+		this.mean += driftSeverity + driftNoise * random.nextGaussian();
 	}
 }

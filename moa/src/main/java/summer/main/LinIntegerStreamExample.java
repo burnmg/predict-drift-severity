@@ -8,9 +8,14 @@ import java.util.Random;
 
 import org.rosuda.JRI.Rengine;
 
-import summer.proSeed.DriftDetection.ProSeed;
+import com.google.common.collect.AsynchronousComputationException;
+
+import cutpointdetection.ADWIN;
+import summer.proSeed.DriftDetection.ProSeed2;
+import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.IntegerStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
@@ -25,9 +30,9 @@ public class LinIntegerStreamExample
 		/*
 		 * START ProSeed Parameters 
 		 */
-		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0);
+		SeedDetector VDSeedDetector =new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 200);
+		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.05, 0, 100);
 		
 		/*
 		 * END ProSeed Parameters 
@@ -55,6 +60,12 @@ public class LinIntegerStreamExample
 				new FileWriter("/Users/rl/Desktop/data2/detectorSortedNetworkWriter.txt"));
 		BufferedWriter detectorSortedPatternWriter = new BufferedWriter(
 				new FileWriter("/Users/rl/Desktop/data2/detectorSortedPatternWriter.txt"));
+		
+		BufferedWriter writer = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data.txt"));
+		
+		BufferedWriter driftWriter = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/drift.txt"));
 	
 
 		/*
@@ -86,11 +97,11 @@ public class LinIntegerStreamExample
 		double transLow = 0.25;
 		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
 		
-		Pattern[] states = { new Pattern(100, 100), new Pattern(200, 100), new Pattern(300, 100)};
+		Pattern[] states = { new Pattern(1000, 100), new Pattern(2500, 100), new Pattern(3000, 100)};
 		int seed = 1024;
-		Double[][] severityEdges = {{null, new Double(10), new Double(20)}, 
-									{new Double(30), null, new Double(40)}, 
-									{new Double(50), new Double(60), null}
+		Double[][] severityEdges = {{null, new Double(100), new Double(200)}, 
+									{new Double(300), null, new Double(400)}, 
+									{new Double(500), new Double(600), null}
 		};
 		
 		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
@@ -102,36 +113,67 @@ public class LinIntegerStreamExample
 		// set the bernoulli stream (testing)
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
+		int streamLength = 10*trainingNetworkStream.getStateTimeMean();
 		
 		// set the bernoulli stream (training)
-		IntegerStream trainingStream = new IntegerStream(1024, 100, 1, 1);
+		IntegerStream trainingStream = new IntegerStream(1024, 0, 500, 1);
 		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
+		int driftCount = 0;
+		boolean positveDirft = false;
+		
+		ADWIN adwin = new ADWIN(0.02);
+		
 		while(numBlocks < streamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
 			// training 
 			for (int i = 0; i < streamInterval; i++) 
 			{
-				double bernoulliOutput = trainingStream.generateNext();
-				proSeed.setTraining(bernoulliOutput);
-				// System.out.println(bernoulliOutput);
+				double output = trainingStream.generateNext();
+				
+				boolean drift = proSeed.setInput(output);
+				boolean voldrift = proSeed.getVolatilityDetector().getVolatilityDriftFound();
+				writer.write(output+"\n");
+				if(voldrift) driftWriter.write(proSeed.getVolatilityDetector().getCurrentBufferMean()+"\n");
 				
 				
+				
+				
+				
+				driftCount++;
 			}
 			numBlocks++;
-			trainingStream.addDrift(trainingNetworkStream.getCurrentSeverity()); // create one drift
+			
+			if(positveDirft)
+			{
+				trainingStream.addDrift(trainingNetworkStream.getCurrentSeverity()); // create one drift
+				positveDirft = false;
+			}
+			else
+			{
+				trainingStream.addDrift(-trainingNetworkStream.getCurrentSeverity()); // create one drift
+				positveDirft = true;
+			}
+			
 		}
-		proSeed.mergeNetwork();
-		String network = proSeed.getNetwork().getNetworkString();
-		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
-		String networkString = trainingNetworkStream.getActualNetwork().getNetworkString();
 		
+		proSeed.mergeNetwork();
+		String networkString = new ProbabilisticNetwork(proSeed.getPatternReservoir().getSortedNetwork()).getNetworkString();
+		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
+		String actualNetworkString = new ProbabilisticNetwork(trainingNetworkStream.getActualNetwork().getNetwork()).getNetworkString();
+		
+		System.out.println("ProSeed Results:");
+		System.out.println(networkString);
+		System.out.print(proSeed.getPatternReservoir().getPatternsString());
+		
+		
+		//System.out.println(actualNetworkString);
+		//System.out.println(trainingNetworkStream.getStatesString());
 		// test the result of edges
 		SeveritySamplingEdgeInterface[][] edges = vold.getDriftPrediction().getNetworkEdges();
 		
-		
+		/*
 		for(int i=0;i<edges.length;i++)
 		{
 			for(int j=0;j<edges[0].length;j++)
@@ -142,9 +184,10 @@ public class LinIntegerStreamExample
 				}
 			}
 		}
-		
-		
+		*/
+		writer.close();
+		driftWriter.close();
 		System.out.println("Done");
-
+		re.end();
 	}
 }

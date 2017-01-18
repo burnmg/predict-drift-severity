@@ -16,7 +16,8 @@ import org.apache.commons.csv.CSVRecord;
 import org.rosuda.JRI.Rengine;
 
 import summer.magSeed.MagSeed;
-import summer.proSeed.DriftDetection.ProSeed;
+import summer.proSeed.DriftDetection.ProSeed2;
+import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
@@ -265,8 +266,8 @@ public class Main
 	public static void testIntegerStreamWithDriftDetector() throws FileNotFoundException, IOException
 	{
 		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0);
+		ProSeed2 proSeed = new ProSeed2(3, 3, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0, 100);
 		
 		IntegerStream stream = new IntegerStream(78, 100, 1.0, 1.0);
 		Random random = new Random();
@@ -364,9 +365,9 @@ public class Main
 	
 	public static void testProSeed() throws FileNotFoundException, IOException
 	{
-		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0);
+		summer.proSeed.DriftDetection.SeedDetector VDSeedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32);
+		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0, 100);
 	}
 	
 
@@ -425,8 +426,8 @@ public class Main
 		// int term, int preWarningBufferSize) // Lin's new constructor
 
 		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0);
+		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0, 100);
 
 		int i = 0;
 		for (double item : data)

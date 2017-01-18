@@ -20,8 +20,6 @@
 
 package summer.proSeed.DriftDetection;
 
-import java.io.IOException;
-
 public interface CutPointDetector {
 	public long getChecks();
 

@@ -91,4 +91,9 @@ public class Reservoir {
 		elementTotal = 0;
 		this.eIndex = 0;
 	}
+	
+	public boolean isClear()
+	{
+		return this.eIndex==0;
+	}
 }

@@ -3,11 +3,13 @@ package summer.proSeed.DriftDetection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import summer.proSeed.PatternMining.PatternReservoir;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
+import summer.proSeed.PatternMining.Network.SeverityReservoirSampingEdge;
 import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 
-public class ProSeed implements CutPointDetector
+public class ProSeed2 implements CutPointDetector
 {
 	RelativeVolatilityDetector volatilityDetector;
 	SeedDetector seedDetector;
@@ -30,20 +32,23 @@ public class ProSeed implements CutPointDetector
 	 *            default: 0.5
 	 * @param learningPeriod
 	 *            default: 0
+	 * @param severitySampeSize
+	 *  		  default: 100          
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public ProSeed(int mergeParameter, int patternSize, double ksConfidence, int topK, CutPointDetector VDdriftDetector,
-			int VDSize, double VDconfidience, int learningPeriod) throws FileNotFoundException, IOException
+	public ProSeed2(int mergeParameter, int patternSize, double ksConfidence, int topK, CutPointDetector VDdriftDetector,
+			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize) throws FileNotFoundException, IOException
 	{
 		numSamples = 0;
 		this.learningPeriod = learningPeriod;
 
 		// volatilityDetector
 		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK);
-		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor);
+		
+		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor, new SeverityReservoirSampingEdge(severitySampeSize));
 
-		seedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32); // best
+		seedDetector = new SeedDetector(0.05, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 50); // best
 	}
 
 	public void mergeNetwork()
@@ -68,7 +73,7 @@ public class ProSeed implements CutPointDetector
 	}
 
 	// perform training without detection.
-	public boolean setTraining(double input)
+	private boolean setTraining(double input)
 	{
 		boolean volDrift = false;
 		try
@@ -85,11 +90,11 @@ public class ProSeed implements CutPointDetector
 	public boolean setInput(double input)
 	{
 		// detecting phase
-		boolean foundDrift = seedDetector.setInput(input);
+		boolean foundDrift = this.seedDetector.setInput(input);
 
-		double timestep = volatilityDetector.getTimeStamp() + 1.0;
+		double timestep = this.volatilityDetector.getTimeStamp() + 1.0;
 
-		boolean volDrift = setTraining(input);
+		boolean volDrift = this.setTraining(input);
 
 		// setting prediction phase
 		double[][] prediction = null;
@@ -113,6 +118,11 @@ public class ProSeed implements CutPointDetector
 	{
 		// TODO Auto-generated method stub
 
+	}
+	
+	public PatternReservoir getPatternReservoir()
+	{
+		return this.volatilityDetector.getPredictor().getPatternReservoir();
 	}
 	
 	public double getSeverity()

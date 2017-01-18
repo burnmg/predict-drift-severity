@@ -20,11 +20,8 @@
 
 package summer.proSeed.VolatilityDetection;
 
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-
 import summer.proSeed.DriftDetection.CutPointDetector;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 
@@ -57,6 +54,9 @@ public class RelativeVolatilityDetector {
 	private double[] recentIntervals = new double[100]; // default rolling window size
 
 	private boolean driftFound = false;
+
+	private boolean volatilityDriftFound;
+	
 
 	public void setRecentIntervals(int size) {
 		recentIntervals = new double[size];
@@ -117,12 +117,21 @@ public class RelativeVolatilityDetector {
 		return driftFound;
 	}
 
+	public boolean getVolatilityDriftFound()
+	{
+		return this.volatilityDriftFound;
+	}
 	/**
 	 * Input
 	 * @param inputValue
 	 * @return
 	 * @throws IOException
 	 */
+	
+	public double getCurrentBufferMean()
+	{
+		return this.buffer.getMean();
+	}
 	public Boolean setInputVarViaBuffer(double inputValue) throws IOException {
 		sample++;
 
@@ -154,11 +163,18 @@ public class RelativeVolatilityDetector {
 					driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength, severityBuffer.getSamples());
 
 					// clear reservoir
+					// clear severity buffer
+					
 					reservoir.clear();
+					severityBuffer.clear();
 					patternLength = 0;
+					
+					this.volatilityDriftFound = true;
 					return true;
 				} else {
 					patternLength++;
+					
+					this.volatilityDriftFound = false;
 					return false;
 				}
 			}
@@ -168,8 +184,12 @@ public class RelativeVolatilityDetector {
 		} else {
 			timestamp++;
 			patternLength++;
+			
+			this.volatilityDriftFound = false;
 			return false;
 		}
+		
+		this.volatilityDriftFound = false;
 		return false;
 	}
 

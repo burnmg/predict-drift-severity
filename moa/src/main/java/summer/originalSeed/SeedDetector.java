@@ -121,4 +121,10 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public double getSeverity()
+	{
+		return 0;
+	}
 }

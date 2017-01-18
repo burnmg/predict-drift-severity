@@ -8,6 +8,7 @@ import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.IndexedPattern;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
+import summer.proSeed.PatternMining.Network.SeverityReservoirSampingEdge;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
@@ -138,21 +139,27 @@ public class BernouilliExample {
 		BufferedWriter detectorSortedPatternWriter = new BufferedWriter(
 				new FileWriter(path + "sd_" + sd + "_noise_" + noise + "_detector_patterns_sorted_" + name
 						+ "_volatility_" + volatility + "_conf_" + conf + "_buffer_" + bufferSize + "alpha_" + alpha + ".txt"));
-	
+		BufferedWriter writer = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data.txt"));
+		
+		BufferedWriter driftWriter = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/drift.txt"));
 
 		for (int seed = 0; seed < trials; seed++) {
 			System.out.println("\nSeed\t" + seed + "\n" + "sd_" + sd + "_noise_" + noise + "_detector_network_sorted_"
 					+ name + "_volatility_" + volatility + "_conf_" + conf + "_buffer_" + bufferSize);
 				
 			// set the network stream (training)
-			ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed); // Abrupt Volatility Change
+			Double[][] severityEdges = {{null, new Double(10), new Double(20)}, 
+					{new Double(30), null, new Double(40)}, 
+					{new Double(50), new Double(60), null}};
+			ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, severityEdges); // Abrupt Volatility Change
 			networkStream.networkNoise = noise; // percentage of transition noise
 			networkStream.setStateTimeMean(volatility); // set volatility interval of stream
 			networkStream.noiseStandardDeviation = sd;
 			networkStream.intervalNoise = patternNoiseFlag;
-			
 			// set the network stream (testing)
-			ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed); // Abrupt Volatility Change
+			ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
 			trainingNetworkStream.networkNoise = noise; // percentage of transition noise
 			trainingNetworkStream.setStateTimeMean(volatility); // set volatility interval of stream
 			trainingNetworkStream.noiseStandardDeviation = sd;
@@ -187,7 +194,7 @@ public class BernouilliExample {
 			}
 
 			DriftPrediction driftPredictor = new DriftPrediction(mParameter, patternSize, alpha, kFrequentNum);
-			RelativeVolatilityDetector volatilityDetector = new RelativeVolatilityDetector(driftDetectorForVolDector, bufferSize, conf, driftPredictor);
+			RelativeVolatilityDetector volatilityDetector = new RelativeVolatilityDetector(driftDetectorForVolDector, bufferSize, conf, driftPredictor, new SeverityReservoirSampingEdge(10));
 
 			int streamLength = learningPeriod +  networkStream.stateTimeLength * changePoints;
 			int samples = 0;
@@ -199,7 +206,6 @@ public class BernouilliExample {
 
 			boolean driftOccurred = false; // ground truth
 			DescriptiveStatistics delayStats = new DescriptiveStatistics();
-			
 			while (samples < streamLength) {
 				int streamInterval  = 0;
 				if (samples < learningPeriod) {
@@ -208,7 +214,6 @@ public class BernouilliExample {
 					streamInterval = networkStream.generateNext(); // generated interval
 				}						
 				
-				System.out.println(streamInterval);
 				for (int i = 0; i < streamInterval; i++) {
 					intervalCount++; // added
 					
@@ -226,6 +231,7 @@ public class BernouilliExample {
 					// train the network. The network is in volatilityDetector. 
 					boolean drift = detector.setInput(bernoulliOutput);			
 					volDrift = volatilityDetector.setInputVarViaBuffer(bernoulliOutput);
+					if(volDrift) driftWriter.write(samples +"\n");
 					
 					double[][] prediction = null;					
 					if (samples >= learningPeriod) {						
@@ -298,6 +304,8 @@ public class BernouilliExample {
 		detectorSortedNetworkWriter.close();
 		detectorSortedPatternWriter.close();
 
+		driftWriter.close();
+		writer.close();
 
 	}
 

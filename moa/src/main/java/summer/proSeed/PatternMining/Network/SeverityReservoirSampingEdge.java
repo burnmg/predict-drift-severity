@@ -4,8 +4,6 @@ import summer.proSeed.VolatilityDetection.Reservoir;
 
 public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterface
 {
-
-
 	Reservoir samples; 
 	
 	public SeverityReservoirSampingEdge(int size)
@@ -26,5 +24,16 @@ public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterfa
 	public double[] getSamples()
 	{
 		return this.samples.getReservoir();
+	}
+
+	@Override
+	public void clear()
+	{
+		this.samples.clear();
+	}
+	
+	public void isClear()
+	{
+		this.samples.isClear();
 	}
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.rosuda.JRI.Rengine;
 
-import summer.proSeed.DriftDetection.ProSeed;
+import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
@@ -26,8 +26,8 @@ public class LinBernouilliExample {
 		 * START ProSeed Parameters 
 		 */
 		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed proSeed = new ProSeed(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0);
+		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.5, 0, 200);
 		
 		/*
 		 * END ProSeed Parameters 

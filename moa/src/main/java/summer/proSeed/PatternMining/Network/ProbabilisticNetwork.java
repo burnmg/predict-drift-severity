@@ -30,8 +30,6 @@ import summer.proSeed.PatternMining.IndexedPattern;
 import summer.proSeed.PatternMining.PatternTransition;
 
 public class ProbabilisticNetwork {
-
-	private static final int EACH_EDGE_SIZE = 100;
 	
 	private double[][] patternNetwork;
 	private SeveritySamplingEdgeInterface[][] edges;
@@ -41,20 +39,21 @@ public class ProbabilisticNetwork {
 
 	private int patternNetworkSize = 0;
 	private final int DEFAULT_PATTERN_NETWORK_SIZE = 100;
+	private final int DEFAULT_EDGE_SAMPLE_SIZE = 100;
 	
 	private void initiateEdges(int patternNetworkSize)
 	{
 		edges = new SeverityReservoirSampingEdge[patternNetworkSize][patternNetworkSize];
 		
-		/*
+		
 		for(int i=0;i<edges.length;i++)
 		{
 			for(int j=0;j<edges[0].length;j++)
 			{
-				edges[i][j] = new SeverityReservoirSampingEdge(100);
+				edges[i][j] = new SeverityReservoirSampingEdge(DEFAULT_EDGE_SAMPLE_SIZE);
 			}
 		}
-		*/
+		
 		
 	}
 
@@ -314,9 +313,9 @@ public class ProbabilisticNetwork {
 	 * @param second
 	 *            index of second pattern
 	 */
-	// TODO edge
 	public void merge(int first, int second) {
 
+		// move all probatility to the FIRST
 		for (int i = 0; i < patternNetworkSize; i++) {
 			// update row 
 			patternNetwork[first][i] += patternNetwork[second][i];
@@ -325,6 +324,7 @@ public class ProbabilisticNetwork {
 			// This merge can be used in edges merge.
 		}
 
+		// move SECOND its own data to FRIST
 		patternNetwork[first][first] += patternNetwork[second][second]; // modified 18/12/15
 		patternNetwork[first][second] = 0;
 		patternNetwork[second][first] = 0;
@@ -343,6 +343,8 @@ public class ProbabilisticNetwork {
 				patternNetwork[i - 1][index] = patternNetwork[i][index];
 			}
 		}
+		
+		this.mergeEdge(first, second);
 
 		numberOfPatterns--;
 
@@ -352,6 +354,45 @@ public class ProbabilisticNetwork {
 			patternNetwork[index][numberOfPatterns] = 0;
 		}
 
+	}
+
+	private void mergeEdge(int first, int second)
+	{
+		for (int i = 0; i < patternNetworkSize; i++) {
+			// update row 
+			edges[first][i].addSamples(edges[second][i].getSamples());
+			
+			// update column 
+			edges[i][first].addSamples(edges[i][second].getSamples());
+		}
+		
+		// move SECOND its own data to FRIST
+		edges[first][first].addSamples(edges[second][second].getSamples());
+		edges[first][second].clear();
+		edges[second][first].clear();
+		
+		// remove second pattern row and column
+		for (int i = second + 1; i < numberOfPatterns; i++) {
+			for (int index = 0; index < numberOfPatterns; index++) {
+				// shift rows to left
+				edges[index][i - 1] = edges[index][i];
+			}
+		}
+		
+		for (int i = second + 1; i < numberOfPatterns; i++) {
+			for (int index = 0; index < numberOfPatterns; index++) {
+				// shift columns upwards
+				edges[i - 1][index] = edges[i][index];
+			}
+		}
+		
+		for(int i=0;i<numberOfPatterns;i++)
+		{
+			// reset the last column and row in the light of shrift
+			edges[i][numberOfPatterns-1].clear(); 
+			edges[numberOfPatterns-1][i].clear();
+		}
+	
 	}
 
 	public ArrayList<PatternTransition> getTopKTransitionIndices(int patternIndex, int k) {
@@ -390,7 +431,7 @@ public class ProbabilisticNetwork {
 
 	public void addSeverityEdge(int from, int to, double[] severityData)
 	{
-		if(edges[from][to]==null) edges[from][to] = new SeverityReservoirSampingEdge(EACH_EDGE_SIZE);
+		edges[from][to] = new SeverityReservoirSampingEdge(DEFAULT_EDGE_SAMPLE_SIZE);
 		edges[from][to].addSamples(severityData);
 	}
 	
@@ -399,4 +440,16 @@ public class ProbabilisticNetwork {
 		return this.edges;
 	}
 
+	
+	// TEST METHOD
+	
+	public void setEdges(SeveritySamplingEdgeInterface[][] edges)
+	{
+		this.edges = edges;
+	}
+	
+	public int getPatternNetworkSize()
+	{
+		return this.patternNetworkSize;
+	}
 }
