@@ -4,14 +4,14 @@ import java.util.Random;
 
 import summer.proSeed.PatternMining.StreamGenerator;
 
-public class IntegerStream implements StreamGenerator
+public class DoubleStream implements StreamGenerator
 {
 	private double mean;
 	private double streamNoise;
 	private double driftNoise;
 	private Random random;
 
-	public IntegerStream(int ranSeed, double mean, double streamNoise, double driftNoise)
+	public DoubleStream(int ranSeed, double mean, double streamNoise, double driftNoise)
 	{
 		random = new Random(ranSeed);
 		this.mean = mean;
@@ -27,5 +27,10 @@ public class IntegerStream implements StreamGenerator
 	public void addDrift(double driftSeverity)
 	{
 		this.mean += driftSeverity + driftNoise * random.nextGaussian();
+	}
+	
+	public void addVarDrift(double driftSeverity)
+	{
+		this.streamNoise += driftSeverity;
 	}
 }

@@ -79,6 +79,8 @@ public class SeedDetector implements CutPointDetector
 	BufferInterface preWarningBuffer; // fixed size sliding window
 	private int preWarningBufferSize;
 	private int coolingPeriod;
+	
+	private double previousSnapshot;
 
 	
 	public SeedDetector(double delta, int blockSize)
@@ -225,8 +227,11 @@ public class SeedDetector implements CutPointDetector
 						pMin = Double.MAX_VALUE;
 						sMin = Double.MAX_VALUE;
 
+						/*
+						 * Warning approach
+						 */
 						// compute severity
-						severity = (warningBuffer.getMean() - preWarningBuffer.getMean())/warningBuffer.size();
+						// severity = (warningBuffer.getMean() - preWarningBuffer.getMean())/warningBuffer.size();
 						// severity = Math.atan((u1/n1 - u0/n0) / ((n1+n0)/2));
 						// severity = sigmoid(((u1/n1 - u0/n0) / ((n1+n0)/2)));
 						// severity = (u1/n1 - u0/n0) / ((n1+n0)/2);
@@ -235,7 +240,13 @@ public class SeedDetector implements CutPointDetector
 						preWarningBuffer.addAll(warningBuffer);
 						preWarningBuffer.add(inputValue); // if there is a drift, add the inputValue to the preWarning buffer used in the future. 
 						warningBuffer.clear();
-
+						
+						/*
+						 * Snapshot approach
+						 */
+						
+						severity = u1 / n1 - previousSnapshot;
+						previousSnapshot = u1 / n1;
 						return true;
 					}
 					// else if (currently is warning)
@@ -343,4 +354,5 @@ public class SeedDetector implements CutPointDetector
 	{
 		return this.severity;
 	}
+	
 }

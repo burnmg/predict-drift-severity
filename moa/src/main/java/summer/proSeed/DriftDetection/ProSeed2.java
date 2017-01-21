@@ -6,13 +6,13 @@ import java.io.IOException;
 import summer.proSeed.PatternMining.PatternReservoir;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeverityReservoirSampingEdge;
+import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 
 public class ProSeed2 implements CutPointDetector
 {
 	RelativeVolatilityDetector volatilityDetector;
-	SeedDetector seedDetector;
 	int numSamples;
 	int learningPeriod;
 
@@ -37,7 +37,7 @@ public class ProSeed2 implements CutPointDetector
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public ProSeed2(int mergeParameter, int patternSize, double ksConfidence, int topK, CutPointDetector VDdriftDetector,
+	public ProSeed2(int mergeParameter, int patternSize, double ksConfidence, int topK, SeedDetector VDdriftDetector,
 			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize) throws FileNotFoundException, IOException
 	{
 		numSamples = 0;
@@ -48,7 +48,7 @@ public class ProSeed2 implements CutPointDetector
 		
 		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor, new SeverityReservoirSampingEdge(severitySampeSize));
 
-		seedDetector = new SeedDetector(0.05, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 50); // best
+		// seedDetector = new SeedDetector(0.05, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 50); // best
 	}
 
 	public void mergeNetwork()
@@ -90,7 +90,7 @@ public class ProSeed2 implements CutPointDetector
 	public boolean setInput(double input)
 	{
 		// detecting phase
-		boolean foundDrift = this.seedDetector.setInput(input);
+		// boolean foundDrift = this.seedDetector.setInput(input);
 
 		double timestep = this.volatilityDetector.getTimeStamp() + 1.0;
 
@@ -102,10 +102,9 @@ public class ProSeed2 implements CutPointDetector
 		{
 			prediction = volatilityDetector.getPredictor().predictNextCI(volDrift, timestep);
 		}
-		seedDetector.setPredictions(prediction);
 		volatilityDetector.getDetector().setPredictions(prediction);
 
-		return foundDrift;
+		return volatilityDetector.getDriftFound();
 	}
 
 	public void setPrediction()
@@ -127,7 +126,8 @@ public class ProSeed2 implements CutPointDetector
 	
 	public double getSeverity()
 	{
-		return seedDetector.getSeverity();
+		return volatilityDetector.getDetector().getSeverity();
 	}
+	
 
 }

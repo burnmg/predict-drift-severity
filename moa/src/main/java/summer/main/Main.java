@@ -21,7 +21,7 @@ import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
-import summer.proSeed.PatternMining.Streams.IntegerStream;
+import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 import summer.proSeed.kylieExample.TextConsole;
@@ -31,25 +31,71 @@ public class Main
 
 	public static void main(String[] args) throws IOException
 	{
-		// Set R Engine
-		/*
+
 
 		String[] reArgs = new String[]{"--save"};
 		Rengine re = new Rengine(reArgs, false, new TextConsole());
 		System.out.println("Rengine created, waiting for R");
 		// the engine creates R is a new thread, so we should wait until it's ready
+		
 		if (!re.waitForR()) {
 			System.out.println("Cannot load R");
 			return;
 		}
 		Pattern.setRengine(re);
 		
-		*/
-		
 		// Set R Engine END 
-		testIntegerStreamWithNetwork2Patterns();
+		testProSeedWithIntegerStream();
+		re.end();
 	}
+	public static void testProSeedWithIntegerStream() throws FileNotFoundException, IOException
+	{
+		// 0.01 0.02 0.1
+		SeedDetector VDSeedDetector =new SeedDetector(0.1, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 200);
+		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
+				VDSeedDetector, 32, 0.02, 0, 100);
+		
+		DoubleStream s = new DoubleStream(3213213, 0, 100, 1);
+		
+		BufferedWriter writer = new BufferedWriter(
+				new FileWriter("/Users/rl/Desktop/data.txt"));
+		
+		double severity = 100;
+		int detectedDrift = 0;
+		int actualDrift = 0;
+		int dataLength = 200000;
+		int driftNum = 10;
+		
+		for(int i=0;i<dataLength;i++)
+		{
+			double data = s.generateNext();
+			boolean drift = proSeed.setInput(data);
+			boolean volDrift = proSeed.getVolatilityDetector().getVolatilityDriftFound();
+			if(drift)
+			{
+				// System.out.println(i+" severity:"+proSeed.getSeverity());
+				System.out.println(proSeed.getVolatilityDetector().getCurrentBufferMean());
+				writer.write(proSeed.getSeverity()+"\n");
+				detectedDrift++;
+			}
+			
+			if(i%(dataLength/(driftNum+1))==0)
+			{
+				actualDrift++;
+				s.addDrift(severity);
+				severity += 1;
+				
+			}
+			
+		}
+		System.out.println("detected drift:"+detectedDrift);
+		System.out.println("actual drift:"+actualDrift);
+
+		
+		writer.close();
 	
+		
+	}
 	public static void testIntegerStreamWithNetwork2Patterns() throws IOException
 	{
 
@@ -131,7 +177,7 @@ public class Main
 		int blockLength = 1000;
 		
 		// set the bernoulli stream (training)
-		IntegerStream trainingStream = new IntegerStream(1024, 100, 1, 1);
+		DoubleStream trainingStream = new DoubleStream(1024, 100, 1, 1);
 		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
 		while(numBlocks < blockLength)
@@ -239,7 +285,7 @@ public class Main
 		int blockLength = 100;
 		
 		// set the bernoulli stream (training)
-		IntegerStream trainingStream = new IntegerStream(1024, 100, 1, 1);
+		DoubleStream trainingStream = new DoubleStream(1024, 100, 1, 1);
 		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
 		while(numBlocks < blockLength)
@@ -263,31 +309,11 @@ public class Main
 		System.out.println("Done");
 	}
 	
-	public static void testIntegerStreamWithDriftDetector() throws FileNotFoundException, IOException
-	{
-		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed2 proSeed = new ProSeed2(3, 3, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0, 100);
-		
-		IntegerStream stream = new IntegerStream(78, 100, 1.0, 1.0);
-		Random random = new Random();
-		
-		for(int i=0;i<1000;i++)
-		{
-			if(i%100==0) stream.addDrift(random.nextInt(100));
-			boolean drift = proSeed.setInput(stream.generateNext());
-			if(drift)
-			{
-				System.out.println(i);
-				System.out.println(proSeed.getSeverity());
-			}
-		}
-		
-	}
+
 	
 	public static void testIntegerStreamGenerator()
 	{
-		IntegerStream stream = new IntegerStream(78, 100, 1.0, 1.0);
+		DoubleStream stream = new DoubleStream(78, 100, 1.0, 1.0);
 		Random random = new Random();
 		
 		for(int i=0;i<1000;i++)
@@ -363,12 +389,6 @@ public class Main
 		
 	}
 	
-	public static void testProSeed() throws FileNotFoundException, IOException
-	{
-		summer.proSeed.DriftDetection.SeedDetector VDSeedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32);
-		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0, 100);
-	}
 	
 
 
@@ -405,43 +425,7 @@ public class Main
 
 	}
 	
-	public static void fluTrendServerityProSeed() throws IOException
-	{
-		FileReader reader = new FileReader("/Users/rl/Desktop/data/interpolated_flutrend.csv");
-		CSVFormat csvFileFormat = CSVFormat.RFC4180.withFirstRecordAsHeader();
-		CSVParser parser = new CSVParser(reader, csvFileFormat);
-		List<CSVRecord> records = parser.getRecords();
 
-		ArrayList<Double> data = new ArrayList<Double>(records.size());
-
-		for (int i = 0; i < records.size(); i++)
-		{
-			data.add(Double.parseDouble(records.get(i).get("New.Zealand")));
-		}
-
-		parser.close();
-
-		// public MagSeed(double delta, int blockSize, int decayMode, int
-		// compressionMode, double epsilonHat, double alpha,
-		// int term, int preWarningBufferSize) // Lin's new constructor
-
-		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
-		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.5, 0, 100);
-
-		int i = 0;
-		for (double item : data)
-		{
-			if (proSeed.setInput(item))
-			{
-				System.out.println(i + "," + proSeed.getSeverity());
-			}
-			i++;
-		}
-		
-		double[][] net = proSeed.getNetwork().getNetwork();
-		int t = 1;
-	}
 
 	public static void fluTrendServerity() throws IOException
 	{

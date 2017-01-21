@@ -70,6 +70,7 @@ public class SeedBlock
 	{
 		return this.previous;
 	}
+	
 
 	public int getBlockSize()
 	{

@@ -36,4 +36,10 @@ public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterfa
 	{
 		this.samples.isClear();
 	}
+
+	@Override
+	public double getMean()
+	{
+		return this.samples.getReservoirMean();
+	}
 }
