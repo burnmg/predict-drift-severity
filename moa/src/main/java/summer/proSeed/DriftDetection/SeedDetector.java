@@ -245,7 +245,7 @@ public class SeedDetector implements CutPointDetector
 						 * Snapshot approach
 						 */
 						
-						severity = u1 / n1 - previousSnapshot;
+						severity = Math.abs(u1 / n1 - previousSnapshot);
 						previousSnapshot = u1 / n1;
 						return true;
 					}

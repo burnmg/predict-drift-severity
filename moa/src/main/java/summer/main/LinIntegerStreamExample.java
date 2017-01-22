@@ -99,7 +99,7 @@ public class LinIntegerStreamExample
 		double transLow = 0.25;
 		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
 		
-		Pattern[] states = { new Pattern(1000, 100), new Pattern(2500, 100), new Pattern(3000, 100)};
+		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		int seed = 1024;
 		/*
 		Double[][] severityEdges = {{null, new Double(100), new Double(200)}, 
@@ -120,7 +120,7 @@ public class LinIntegerStreamExample
 		// set the bernoulli stream (testing)
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
+		int streamLength = 200*trainingNetworkStream.getStateTimeMean();
 		
 		// set the bernoulli stream (training)
 		DoubleStream trainingStream = new DoubleStream(1024, 0, 500, 1);
@@ -159,7 +159,7 @@ public class LinIntegerStreamExample
 			
 		}
 		
-		proSeed.mergeNetwork();
+		// proSeed.mergeNetwork();
 		int networkSize = proSeed.getNetwork().getNumberOfPatterns();
 		SeveritySamplingEdgeInterface[][] edges = proSeed.getNetwork().getEdges();;
 		for(int i=0;i<networkSize;i++)
@@ -176,28 +176,17 @@ public class LinIntegerStreamExample
 		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
 		String actualNetworkString = new ProbabilisticNetwork(trainingNetworkStream.getActualNetwork().getNetwork()).getNetworkString();
 		
-		/*
+		
 		System.out.println("ProSeed Results:");
 		System.out.println(networkString);
 		System.out.print(proSeed.getPatternReservoir().getPatternsString());
-		*/
 		
-		//System.out.println(actualNetworkString);
+		
+		System.out.println(actualNetworkString);
 		//System.out.println(trainingNetworkStream.getStatesString());
 		// test the result of edges
 		
-		/*
-		for(int i=0;i<edges.length;i++)
-		{
-			for(int j=0;j<edges[0].length;j++)
-			{
-				if(edges[i][j]!=null)
-				{
-					System.out.println(edges[i][j].getSamples()[0]);
-				}
-			}
-		}
-		*/
+
 		writer.close();
 		driftWriter.close();
 		System.out.println("Done");

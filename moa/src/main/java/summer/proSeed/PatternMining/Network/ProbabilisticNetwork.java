@@ -431,7 +431,6 @@ public class ProbabilisticNetwork {
 
 	public void addSeverityEdge(int from, int to, double[] severityData)
 	{
-		edges[from][to] = new SeverityReservoirSampingEdge(DEFAULT_EDGE_SAMPLE_SIZE);
 		edges[from][to].addSamples(severityData);
 	}
 	

@@ -19,9 +19,11 @@
 
 package summer.proSeed.PatternMining.Streams;
 
+import summer.proSeed.PatternMining.IndexedPattern;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 
+import java.util.Arrays;
 import java.util.Random;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -261,6 +263,7 @@ public class ProbabilisticNetworkStream {
     public ProbabilisticNetwork getActualNetwork() {
         return this.actualNetwork;
     }
+    
     
     public int getVolatilityDrifts() {
     	return numVolatilityDrifts;
