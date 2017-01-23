@@ -4,18 +4,11 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
-import java.util.Random;
 
-import org.apache.commons.math3.analysis.function.Abs;
 import org.rosuda.JRI.Rengine;
 
-import com.google.common.collect.AsynchronousComputationException;
-
-import cutpointdetection.ADWIN;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
-import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
@@ -32,9 +25,9 @@ public class LinIntegerStreamExample
 		/*
 		 * START ProSeed Parameters 
 		 */
-		SeedDetector VDSeedDetector =new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 200);
-		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
-				VDSeedDetector, 32, 0.05, 0, 1000);
+		SeedDetector VDSeedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 200);
+		ProSeed2 proSeed2 = new ProSeed2(3, 20, 0.05, 100, 
+				VDSeedDetector, 32, 0.05, 0, 2000);
 		
 		/*
 		 * END ProSeed Parameters 
@@ -101,26 +94,51 @@ public class LinIntegerStreamExample
 		
 		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		int seed = 1024;
+		
 		/*
 		Double[][] severityEdges = {{null, new Double(100), new Double(200)}, 
 									{new Double(300), null, new Double(400)}, 
-									{new Double(500), new Double(600), null}
+									{new Double(500), new Double(800), null}
 		};
 		*/
-		Double[][] severityEdges = {{null, new Double(1000), new Double(2000)}, 
-				{new Double(3000), null, new Double(4000)}, 
-				{new Double(5000), new Double(6000), null}
-};
+		/*
+		Double[][] severityEdges = {{null, new Double(50), new Double(100)}, 
+				{new Double(150), null, new Double(250)}, 
+				{new Double(300), new Double(350), null}
+		};
+		*/
+		Double[][] severityEdges = {{null, new Double(350), new Double(300)}, 
+				{new Double(250), null, new Double(200)}, 
+				{new Double(150), new Double(100), null}
+		};
+		
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(500)}, 
+				{new Double(2500), null, new Double(5000)}, 
+				{new Double(8000), new Double(9000), null}
+				};
+		*/
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(500)}, 
+				{new Double(2500), null, new Double(5000)}, 
+				{new Double(8000), new Double(9000), null}
+				};
+		*/
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(1000)}, 
+				{new Double(10000), null, new Double(50000)}, 
+				{new Double(100000), new Double(200000), null}
+				};
+		*/
 		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
 		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
 		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
-		trainingNetworkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
 		trainingNetworkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
 
 		// set the bernoulli stream (testing)
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int streamLength = 200*trainingNetworkStream.getStateTimeMean();
+		int streamLength = 1000*trainingNetworkStream.getStateTimeMean();
 		
 		// set the bernoulli stream (training)
 		DoubleStream trainingStream = new DoubleStream(1024, 0, 500, 1);
@@ -137,10 +155,10 @@ public class LinIntegerStreamExample
 			{
 				double output = trainingStream.generateNext();
 				
-				boolean drift = proSeed.setInput(output);
-				boolean voldrift = proSeed.getVolatilityDetector().getVolatilityDriftFound();
-				if (drift) writer.write(Math.abs(proSeed.getSeverity())+"\n");
-				if(voldrift) driftWriter.write(proSeed.getVolatilityDetector().getCurrentBufferMean()+"\n");
+				boolean drift = proSeed2.setInput(output);
+				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
+				// if (drift) writer.write(Math.abs(proSeed.getSeverity())+"\n");
+				if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
 				
 				instanceCount++;
 			}
@@ -159,27 +177,52 @@ public class LinIntegerStreamExample
 			
 		}
 		
-		// proSeed.mergeNetwork();
-		int networkSize = proSeed.getNetwork().getNumberOfPatterns();
-		SeveritySamplingEdgeInterface[][] edges = proSeed.getNetwork().getEdges();;
+		int networkSize = proSeed2.getNetwork().getNumberOfPatterns();
+		SeveritySamplingEdgeInterface[][] edges = proSeed2.getPatternReservoir().getSortEdges();
+		for(int i=0;i<networkSize;i++)
+		{
+			for(int j=0;j<networkSize;j++)
+			{
+				// System.out.format("%10f", (float)edges[i][j].getMean());
+				System.out.print((float)edges[i][j].getSampleCount() + "\t");
+			}
+			System.out.println();
+		}
+		
+		for(int i=0;i<networkSize;i++)
+		{
+			for(int j=0;j<networkSize;j++)
+			{
+				double mean = (float)edges[i][j].getMean();
+				if(mean<100000000) writer.write(mean+"\n");
+			}
+		}
+		System.out.print(proSeed2.getPatternReservoir().getSortedPatternString());
+		
+		System.out.println("After Merge:");
+		proSeed2.mergeNetwork();
+		networkSize = proSeed2.getNetwork().getNumberOfPatterns();
+		edges = proSeed2.getPatternReservoir().getSortEdges();
 		for(int i=0;i<networkSize;i++)
 		{
 			for(int j=0;j<networkSize;j++)
 			{
 				System.out.print((float)edges[i][j].getMean() + "\t");
+				//System.out.print((float)edges[i][j].getSampleCount() + "\t");
 			}
 			System.out.println();
 		}
 		
+
 		
-		String networkString = new ProbabilisticNetwork(proSeed.getPatternReservoir().getSortedNetwork()).getNetworkString();
-		RelativeVolatilityDetector vold = proSeed.getVolatilityDetector();
+		String networkString = new ProbabilisticNetwork(proSeed2.getPatternReservoir().getSortedNetwork()).getNetworkString();
+		RelativeVolatilityDetector vold = proSeed2.getVolatilityDetector();
 		String actualNetworkString = new ProbabilisticNetwork(trainingNetworkStream.getActualNetwork().getNetwork()).getNetworkString();
 		
 		
 		System.out.println("ProSeed Results:");
 		System.out.println(networkString);
-		System.out.print(proSeed.getPatternReservoir().getPatternsString());
+		System.out.print(proSeed2.getPatternReservoir().getSortedPatternString());
 		
 		
 		System.out.println(actualNetworkString);

@@ -9,5 +9,7 @@ public interface SeveritySamplingEdgeInterface
 	public void clear();
 	
 	public double getMean();
+	
+	public int getSampleCount();
 
 }

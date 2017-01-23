@@ -1,5 +1,7 @@
 package summer.proSeed.PatternMining.Network;
 
+import java.util.ArrayList;
+
 import summer.proSeed.VolatilityDetection.Reservoir;
 
 public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterface
@@ -23,7 +25,22 @@ public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterfa
 	@Override
 	public double[] getSamples()
 	{
-		return this.samples.getReservoir();
+		ArrayList<Double> list = new ArrayList<Double>();
+		double[] input = this.samples.getReservoir();
+		for(int i=0;i<input.length;i++)
+		{
+			if(Math.abs(input[i]-0)>0.001)
+			{
+				list.add(input[i]);
+			}
+		}
+		double[] output = new double[list.size()];
+		for(int i=0;i<output.length;i++)
+		{
+			output[i] = list.get(i);
+		}
+		
+		return output;
 	}
 
 	@Override
@@ -41,5 +58,12 @@ public class SeverityReservoirSampingEdge implements SeveritySamplingEdgeInterfa
 	public double getMean()
 	{
 		return this.samples.getReservoirMean();
+	}
+
+	@Override
+	public int getSampleCount()
+	{
+		
+		return this.samples.getCount();
 	}
 }

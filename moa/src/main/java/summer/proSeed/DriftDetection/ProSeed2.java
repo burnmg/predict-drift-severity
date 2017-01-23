@@ -44,7 +44,7 @@ public class ProSeed2 implements CutPointDetector
 		this.learningPeriod = learningPeriod;
 
 		// volatilityDetector
-		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK);
+		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK, severitySampeSize);
 		
 		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor);
 

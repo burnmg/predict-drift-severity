@@ -69,7 +69,7 @@ public class RelativeVolatilityDetector {
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = 0.05;
-		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100); // use default drift predictor
+		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000); // use default drift predictor
 		setRecentIntervals(resSize * 2);
 	}
 
@@ -78,7 +78,7 @@ public class RelativeVolatilityDetector {
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = confidence;
-		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100); // use default drift predictor
+		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000); // use default drift predictor
 		setRecentIntervals(resSize * 2);
 	}
 
@@ -159,7 +159,7 @@ public class RelativeVolatilityDetector {
 			
 			if (buffer.isFull() && reservoir.isFull()) {
 				double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();
-				if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) {
+				if (RelativeVar > 1.0 + confidence || RelativeVar < 1.0 - confidence) { // find a volatility drift 
 					// pass output to drift predictor
 					// add severity
 					double[] array = new double[severityBuffer.size()];

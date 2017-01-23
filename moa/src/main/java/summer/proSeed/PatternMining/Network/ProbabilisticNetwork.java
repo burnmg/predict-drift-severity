@@ -28,6 +28,7 @@ import java.util.Collections;
 
 import summer.proSeed.PatternMining.IndexedPattern;
 import summer.proSeed.PatternMining.PatternTransition;
+import weka.gui.treevisualizer.Edge;
 
 public class ProbabilisticNetwork {
 	
@@ -39,18 +40,17 @@ public class ProbabilisticNetwork {
 
 	private int patternNetworkSize = 0;
 	private final int DEFAULT_PATTERN_NETWORK_SIZE = 100;
-	private final int DEFAULT_EDGE_SAMPLE_SIZE = 100;
+	private int severityEdgeSampleSize = 0;
 	
 	private void initiateEdges(int patternNetworkSize)
 	{
 		edges = new SeverityReservoirSampingEdge[patternNetworkSize][patternNetworkSize];
 		
-		
 		for(int i=0;i<edges.length;i++)
 		{
 			for(int j=0;j<edges[0].length;j++)
 			{
-				edges[i][j] = new SeverityReservoirSampingEdge(DEFAULT_EDGE_SAMPLE_SIZE);
+				edges[i][j] = new SeverityReservoirSampingEdge(severityEdgeSampleSize);
 			}
 		}
 		
@@ -79,6 +79,14 @@ public class ProbabilisticNetwork {
 		this.patternNetworkSize = size;
 		patternNetwork = new double[patternNetworkSize][patternNetworkSize];
 		
+		initiateEdges(patternNetworkSize);
+	}
+	
+	public ProbabilisticNetwork(int size, int severitySampleSize) {
+		// construct a new network
+		this.patternNetworkSize = size;
+		patternNetwork = new double[patternNetworkSize][patternNetworkSize];
+		this.severityEdgeSampleSize = severitySampleSize;
 		initiateEdges(patternNetworkSize);
 	}
 
@@ -266,7 +274,7 @@ public class ProbabilisticNetwork {
 		return result;
 	}
 
-	public double[][] sortBy(IndexedPattern[] patternList) throws IllegalArgumentException {
+	public double[][] sortProbabilityBy(IndexedPattern[] patternList) throws IllegalArgumentException {
 
 		if (patternList.length != numberOfPatterns) {
 			throw new IllegalArgumentException("Pattern list size and network size mismatch.");
@@ -283,6 +291,24 @@ public class ProbabilisticNetwork {
 		}
 
 		return sortedNetwork;
+	}
+	
+	public SeveritySamplingEdgeInterface[][] sortEdgesBy(IndexedPattern[] patternList)
+	{
+		if (patternList.length != numberOfPatterns) {
+			throw new IllegalArgumentException("Pattern list size and network size mismatch.");
+		}
+
+		SeveritySamplingEdgeInterface[][] sortedEdges = new SeveritySamplingEdgeInterface[numberOfPatterns][numberOfPatterns];
+
+		// sort by pattern index list
+		for (int i = 0; i < numberOfPatterns; i++) {
+			for (int j = 0; j < numberOfPatterns; j++) {
+				sortedEdges[i][j] = this.edges[patternList[i].getIndex()][patternList[j].getIndex()];
+			}
+		}
+		
+		return sortedEdges;
 	}
 
 	public void decrementTransition(int row, int col) {
@@ -356,6 +382,47 @@ public class ProbabilisticNetwork {
 
 	}
 
+	public void mergeEdge(int first, int second)
+	{
+		for (int i = 0; i < patternNetworkSize; i++) {
+			// update row 
+			edges[first][i].addSamples(edges[second][i].getSamples());
+			
+			// update column 
+			edges[i][first].addSamples(edges[i][second].getSamples());
+		}
+		
+		// move SECOND its own data to FRIST
+		edges[first][first].addSamples(edges[second][second].getSamples());
+		edges[first][second].clear();
+		edges[second][first].clear();
+		
+		// remove second pattern row and column
+		for (int i = second + 1; i < numberOfPatterns; i++) {
+			for (int index = 0; index < numberOfPatterns; index++) {
+				// shift rows to left
+				edges[index][i - 1] = edges[index][i];
+			}
+		}
+		
+		for (int i = second + 1; i < numberOfPatterns; i++) {
+			for (int index = 0; index < numberOfPatterns; index++) {
+				// shift columns upwards
+				edges[i - 1][index] = edges[i][index];
+			}
+		}
+		
+		for(int i=0;i<numberOfPatterns;i++)
+		{
+			// reset the last column and row in the light of shrift
+			edges[i][numberOfPatterns-1] = new SeverityReservoirSampingEdge(this.severityEdgeSampleSize);
+			edges[numberOfPatterns-1][i] = new SeverityReservoirSampingEdge(this.severityEdgeSampleSize);
+		}
+		
+	
+	}
+	
+	/*
 	private void mergeEdge(int first, int second)
 	{
 		for (int i = 0; i < patternNetworkSize; i++) {
@@ -392,9 +459,10 @@ public class ProbabilisticNetwork {
 			edges[i][numberOfPatterns-1].clear(); 
 			edges[numberOfPatterns-1][i].clear();
 		}
+		
 	
 	}
-
+	*/
 	public ArrayList<PatternTransition> getTopKTransitionIndices(int patternIndex, int k) {
 		ArrayList<PatternTransition> transitionList = new ArrayList<PatternTransition>();
 		int sum = 0;

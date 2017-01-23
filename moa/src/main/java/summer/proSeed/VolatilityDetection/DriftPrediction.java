@@ -64,8 +64,8 @@ public class DriftPrediction {
      * @param ksConfidence
      * @param freqTransitions K for the top K.
      */
-    public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions) {    	
-    	patternReservoir = new PatternReservoir(patternReservoirSize);
+    public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions, int severitySampleSize) {    	
+    	patternReservoir = new PatternReservoir(patternReservoirSize, severitySampleSize);
     	patternReservoir.setMergeParameter(m);
     	ksDelta = ksConfidence;
     	numOfFrequentTransitions = freqTransitions;

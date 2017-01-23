@@ -45,6 +45,8 @@ public class PatternReservoir
 	private int beforePrevPatternIndex = -1;
 	private int prevPatternIndex = -1;
 	private int prevLength = -1;
+	
+	private int fromIndex = -1;
 
 	public PatternReservoir()
 	{
@@ -52,6 +54,16 @@ public class PatternReservoir
 		this.patternReservoir = new Pattern[patternReservoirSize];
 		this.network = new ProbabilisticNetwork(patternReservoirSize);
 		new LinkedList<Object>();
+	}
+	
+	// I am using this one
+	public PatternReservoir(int size, int severitySampleSize)
+	{
+		this.patternReservoirSize = size;
+		this.patternReservoir = new Pattern[patternReservoirSize];
+		this.network = new ProbabilisticNetwork(patternReservoirSize, severitySampleSize);
+		new LinkedList<Object>();
+		
 	}
 
 	public PatternReservoir(int size)
@@ -115,6 +127,12 @@ public class PatternReservoir
 	{
 		Pattern[] patternRes = getPatterns();
 		return getPatternStringOf(patternRes);
+	}
+	
+	public String getSortedPatternString()
+	{
+		Pattern[] patternsRes = getSortedPatterns();
+		return getPatternStringOf(patternsRes);
 	}
 
 	public String getPatternStringOf(Pattern[] patternRes)
@@ -199,13 +217,16 @@ public class PatternReservoir
 	 */
 	public int addPattern(double[] patternData, int dataLength, int currentLength, double[] severityData)
 	{
+
 		compressed = false; // reset compression flag
 		Pattern newPattern = new Pattern(patternData, dataLength);
 
 		// currentPatternIndex is the new pattern added (or updated).
 		// beforePrevPatternIndex < prevPatternIndex < currentPatternIndex
 		int currentPatternIndex = findPatternIndex(newPattern);
-
+		
+		if(prevPatternIndex!=currentPatternIndex) fromIndex = currentPatternIndex;
+		
 		if (currentPatternIndex == -1)
 		{ // pattern not found, so new pattern should be inserted
 
@@ -229,12 +250,11 @@ public class PatternReservoir
 			this.patternReservoir[currentPatternIndex].addData(patternData, dataLength);
 		}
 
-		// add severity edge
-		if (prevPatternIndex != -1)
-		{
-			network.addSeverityEdge(prevPatternIndex, currentPatternIndex, severityData);
-		}
 
+		// add severity edge
+
+		if(currentPatternIndex!=prevPatternIndex) fromIndex = prevPatternIndex;
+		if(fromIndex!=-1) this.network.addSeverityEdge(fromIndex, currentPatternIndex, severityData);
 		// compression check
 		if (beforePrevPatternIndex != -1)
 		{
@@ -262,19 +282,23 @@ public class PatternReservoir
 			}
 		}
 
+
+		
 		if (prevPatternIndex != -1)
 		{
 			if (compressed == false)
 			{
 				beforePrevPatternIndex = prevPatternIndex; // update value of
 															// pattern before
-															// previous pattern
 				prevLength = currentLength; // update length if no compression
 											// occurred
 			}
 		}
+
+		
 		prevPatternIndex = currentPatternIndex; // update index of previous
 												// pattern
+
 		this.network.setPreviousPatternIndex(currentPatternIndex);
 
 		return prevPatternIndex;
@@ -300,13 +324,18 @@ public class PatternReservoir
 		// compress transitions from a -> b -> c to a -> c
 		if (this.patternReservoir[indexB].getWeight() <= 1)
 		{
+			this.network.mergeEdge(indexA, indexB);
 			// add a -> c
 			this.network.setPreviousPatternIndex(indexA);
 			this.network.incrementTransition(indexC);
+			
+
+			
 			// remove pattern b
 			this.network.delete(indexB);
 			delete(indexB); // deletes pattern b from pattern reservoir
 			// update current pattern index
+			
 			if (indexB < indexC)
 			{
 				return indexC - 1; // pattern's index is shifted when b deleted
@@ -321,6 +350,8 @@ public class PatternReservoir
 			this.network.incrementTransition(indexC);
 			// remove transition a -> b
 			this.network.decrementTransition(indexA, indexB);
+			
+			
 			// return current pattern index
 			return indexC;
 		}
@@ -341,8 +372,7 @@ public class PatternReservoir
 		numberOfPatterns--;
 	}
 
-	// TODO edge
-	public int deleteHighVariance()
+	private int deleteHighVariance()
 	{
 		ArrayList<Integer> deleteList = new ArrayList<Integer>();
 		for (int i = 0; i < this.numberOfPatterns; i++)
@@ -368,7 +398,7 @@ public class PatternReservoir
 	 *
 	 * @return current pattern index
 	 */
-	// TODO add edge
+	
 	public int merge()
 	{
 
@@ -383,7 +413,7 @@ public class PatternReservoir
 			// merge pattern
 			patternReservoir[i].merge(patternReservoir[j]);
 
-			network.merge(i, j); // FIXME let this also merges the edges
+			network.merge(i, j); // this also merges the edges
 			updatePatternReservoir(i, j); // update pattern reservoir
 
 			if (prevPatternIndex == j)
@@ -430,7 +460,6 @@ public class PatternReservoir
 	 *
 	 * @return true if merging was applied
 	 */
-	// TODO edge
 	private boolean mergePatterns()
 	{
 		boolean merged = false;
@@ -503,7 +532,14 @@ public class PatternReservoir
 	{
 		IndexedPattern[] indexedPatterns = getIndexedCopyOfPatterns();
 		Arrays.sort(indexedPatterns);
-		return this.network.sortBy(indexedPatterns);
+		return this.network.sortProbabilityBy(indexedPatterns);
+	}
+	
+	public SeveritySamplingEdgeInterface[][] getSortEdges()
+	{
+		IndexedPattern[] indexedPatterns = getIndexedCopyOfPatterns();
+		Arrays.sort(indexedPatterns);
+		return this.network.sortEdgesBy(indexedPatterns);
 	}
 
 	public IndexedPattern[] getSortedPatterns()
