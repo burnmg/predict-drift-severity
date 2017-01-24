@@ -20,6 +20,7 @@ import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.BernoulliGenerator;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
@@ -45,8 +46,147 @@ public class Main
 		Pattern.setRengine(re);
 		
 		// Set R Engine END 
-		testProSeedWithIntegerStream();
+		confidenceAndNumberOfDriftTest(0.01);
+		confidenceAndNumberOfDriftTest(0.05);
+		confidenceAndNumberOfDriftTest(0.1);
+		
 		re.end();
+	}
+	
+	public static void confidenceAndNumberOfDriftTest(double confidence) throws IOException
+	{
+
+		/*
+		 * START ProSeed Parameters 
+		 */
+		SeedDetector VDSeedDetector = new SeedDetector(confidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
+		ProSeed2 proSeed2 = new ProSeed2(3, 20, 0.05, 100, 
+				VDSeedDetector, 32, 0.05, 0, 2000);
+		
+		/*
+		 * END ProSeed Parameters 
+		 */
+
+
+		/*
+		 * START Network Stream Generator Parameters 
+		 */
+		int trials = 10;
+		
+		double networkNoise = 0;
+		int stateTimeMean = 100;
+		double networkNoiseStandardDeviation = 0;
+		double patternNoiseFlag = 1;
+		/*
+		 * END Network Stream Generator Parameters 
+		 */
+		
+		/*
+		// TODO set network edges and fromIndex
+		ProbabilisticNetworkStream networkStream = new ProbabilisticNetworkStream(networkTransitions, states, seed, null, 0); // Abrupt Volatility Change
+		networkStream.networkNoise = networkNoise; // percentage of transition noise
+		networkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		networkStream.noiseStandardDeviation = networkNoiseStandardDeviation;// pattern noise 
+		networkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+		*/
+		
+		// set the network stream (testing)
+		// TODO set network edges and fromIndex
+		
+		double transHigh = 0.75;
+		double transLow = 0.25;
+		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
+		
+		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
+		int seed = 1024;
+		
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(200)}, 
+									{new Double(300), null, new Double(400)}, 
+									{new Double(500), new Double(800), null}
+		};
+		*/
+		/*
+		Double[][] severityEdges = {{null, new Double(50), new Double(100)}, 
+				{new Double(150), null, new Double(250)}, 
+				{new Double(300), new Double(350), null}
+		};
+		*/
+		Double[][] severityEdges = {{null, new Double(1), new Double(2)}, 
+				{new Double(3), null, new Double(4)}, 
+				{new Double(5), new Double(6), null}
+		};
+		
+		
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(500)}, 
+				{new Double(2500), null, new Double(5000)}, 
+				{new Double(8000), new Double(9000), null}
+				};
+		*/
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(500)}, 
+				{new Double(2500), null, new Double(5000)}, 
+				{new Double(8000), new Double(9000), null}
+				};
+		*/
+		/*
+		Double[][] severityEdges = {{null, new Double(100), new Double(1000)}, 
+				{new Double(10000), null, new Double(50000)}, 
+				{new Double(100000), new Double(200000), null}
+				};
+		*/
+		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, states, trials + seed, severityEdges); // Abrupt Volatility Change
+		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
+		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
+		trainingNetworkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
+
+		// set the bernoulli stream (testing)
+		// bernoulli.setNoise(0.0); // noise for error rate generator
+		
+		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
+		
+		// set the bernoulli stream (training)
+		DoubleStream trainingStream = new DoubleStream(1024, 0, 1, 1);
+		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
+		int numBlocks = 0;
+		int instanceCount = 0;
+		int driftCount = 0;
+		boolean positveDirft = false;
+		
+		while(numBlocks < streamLength)
+		{
+			int streamInterval = trainingNetworkStream.generateNext();
+			// training 
+			for (int i = 0; i < streamInterval; i++) 
+			{
+				double output = trainingStream.generateNext();
+				
+				boolean drift = proSeed2.setInput(output);
+				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
+				if (drift) driftCount++;
+				// if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
+				
+				instanceCount++;
+			}
+			numBlocks++;
+			
+			if(positveDirft)
+			{
+				trainingStream.addDrift(trainingNetworkStream.getCurrentSeverity()); // create one drift
+				positveDirft = false;
+			}
+			else
+			{
+				trainingStream.addDrift(-trainingNetworkStream.getCurrentSeverity()); // create one drift
+				positveDirft = true;
+			}
+			
+		}
+		
+		System.out.println(confidence+":"+driftCount);
+		System.out.println("Done");
+
 	}
 	public static void testProSeedWithIntegerStream() throws FileNotFoundException, IOException
 	{

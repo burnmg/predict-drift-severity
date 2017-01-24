@@ -2,6 +2,8 @@ package summer.proSeed.PatternMining.Streams;
 
 import java.util.Random;
 
+import javax.print.attribute.standard.Severity;
+
 import summer.proSeed.PatternMining.StreamGenerator;
 
 public class DoubleStream implements StreamGenerator
@@ -26,7 +28,8 @@ public class DoubleStream implements StreamGenerator
 
 	public void addDrift(double driftSeverity)
 	{
-		this.mean += driftSeverity + driftNoise * random.nextGaussian();
+		// this.mean += driftSeverity + driftNoise * random.nextGaussian();
+		this.mean += (1+driftSeverity) * streamNoise * random.nextGaussian();
 	}
 	
 	public void addVarDrift(double driftSeverity)

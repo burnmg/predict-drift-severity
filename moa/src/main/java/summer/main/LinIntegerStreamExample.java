@@ -25,7 +25,8 @@ public class LinIntegerStreamExample
 		/*
 		 * START ProSeed Parameters 
 		 */
-		SeedDetector VDSeedDetector = new SeedDetector(0.02, 0.1, 32, 1, 1, 0.01, 0.8, 75, 32, 200);
+		double confidence = 0.1;
+		SeedDetector VDSeedDetector = new SeedDetector(confidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
 		ProSeed2 proSeed2 = new ProSeed2(3, 20, 0.05, 100, 
 				VDSeedDetector, 32, 0.05, 0, 2000);
 		
@@ -107,10 +108,11 @@ public class LinIntegerStreamExample
 				{new Double(300), new Double(350), null}
 		};
 		*/
-		Double[][] severityEdges = {{null, new Double(350), new Double(300)}, 
-				{new Double(250), null, new Double(200)}, 
-				{new Double(150), new Double(100), null}
+		Double[][] severityEdges = {{null, new Double(0.5), new Double(1)}, 
+				{new Double(1.5), null, new Double(2)}, 
+				{new Double(3), new Double(4), null}
 		};
+		
 		
 		/*
 		Double[][] severityEdges = {{null, new Double(100), new Double(500)}, 
@@ -138,13 +140,14 @@ public class LinIntegerStreamExample
 		// set the bernoulli stream (testing)
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
-		int streamLength = 1000*trainingNetworkStream.getStateTimeMean();
+		int streamLength = 100*trainingNetworkStream.getStateTimeMean();
 		
 		// set the bernoulli stream (training)
-		DoubleStream trainingStream = new DoubleStream(1024, 0, 500, 1);
+		DoubleStream trainingStream = new DoubleStream(1024, 0, 1, 1);
 		// BernoulliGenerator trainBernoulli = new BernoulliGenerator(0.2, trials + seed);
 		int numBlocks = 0;
 		int instanceCount = 0;
+		int driftCount = 0;
 		boolean positveDirft = false;
 		
 		while(numBlocks < streamLength)
@@ -157,8 +160,8 @@ public class LinIntegerStreamExample
 				
 				boolean drift = proSeed2.setInput(output);
 				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
-				// if (drift) writer.write(Math.abs(proSeed.getSeverity())+"\n");
-				if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
+				if (drift) driftCount++;
+				// if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
 				
 				instanceCount++;
 			}
@@ -232,6 +235,7 @@ public class LinIntegerStreamExample
 
 		writer.close();
 		driftWriter.close();
+		System.out.println(confidence+":"+driftCount);
 		System.out.println("Done");
 		re.end();
 	}
