@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.Buffer;
 
 import org.rosuda.JRI.Rengine;
@@ -35,6 +36,15 @@ public class ProSeed2Experiment
 		/*
 		 * END Rengine
 		 */
+		
+		//put the experiment code here
+		
+
+		re.end();
+	}
+	
+	public static void testRelationshipOfDelayAndConfidence()
+	{
 		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
@@ -43,15 +53,33 @@ public class ProSeed2Experiment
 				{new Double(1.5), null, new Double(2)}, 
 				{new Double(3), new Double(4), null}
 		};
-		run(0.01,states, networkTransitions, severityEdges);
-		run(0.1,states, networkTransitions, severityEdges);
-		run(0.25,states, networkTransitions, severityEdges);
-		run(0.3,states, networkTransitions, severityEdges);
-		re.end();
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/rl/Desktop/res.txt")); 
+		
+		
+		double confidence = 0.01;
+		while(confidence<0.5)
+		{
+			double[] res = run(confidence ,states, networkTransitions, severityEdges);
+			writer.write(res[0]+","+res[1]+","+res[2]+"\n");
+			confidence += 0.01;
+		}
+		
+		writer.close();
 	}
 	
 	
-	public static void run(double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
+	/**
+	 * The method of experiment (IMPORTANT)
+	 * @param detectorConfidence
+	 * @param patterns
+	 * @param networkTransitions
+	 * @param severityEdges
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static double[] run(double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
 			, Double[][] severityEdges) throws FileNotFoundException, IOException
 	{
 		/*
@@ -92,7 +120,7 @@ public class ProSeed2Experiment
 		// bernoulli.setNoise(0.0); // noise for error rate generator
 		
 		// int streamLength = 100*trainingNetworkStream.getStateTimeMean();
-		int streamLength = 5;
+		int streamLength = 50;
 		
 		// set the bernoulli stream (training)
 		DoubleStream trainingStream = new DoubleStream(1024, 0, 1, 1);
@@ -106,10 +134,15 @@ public class ProSeed2Experiment
 		 * START variables for test 
 		 */
 		
-		int lastActualDriftPoint = -1;
+		int numDetectedDrift = 0;
+		int numTrueDrift = 0;
+		
+		int actualDriftPoint = -1;
 		final int TRUE_POSITIVE_WINDOW_SIZE = 100;
 		int numFalsePositive = 0;
 		double fpRate = 0;
+		
+		int delay = 0;
 		
 		/*
 		 * END variables for test
@@ -125,9 +158,12 @@ public class ProSeed2Experiment
 				
 				boolean drift = proSeed2.setInput(output);
 				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
+				
+				// experiment with false postive and delay
 				if (drift)
 				{
-					if(lastActualDriftPoint!=-1 && instanceCount>lastActualDriftPoint+TRUE_POSITIVE_WINDOW_SIZE)
+					// if it is false drift
+					if(actualDriftPoint!=-1 && instanceCount>actualDriftPoint+TRUE_POSITIVE_WINDOW_SIZE)
 					{
 						numFalsePositive++;
 						falsedriftWriter.write(instanceCount+"\n");
@@ -135,7 +171,11 @@ public class ProSeed2Experiment
 					else
 					{
 						truedriftWriter.write(instanceCount+"\n");
+						delay += instanceCount - actualDriftPoint;
+						numTrueDrift++;
 					}
+					
+					numDetectedDrift++;
 				}
 				dataWriter.write(output+"\n");
 				instanceCount++;
@@ -154,7 +194,7 @@ public class ProSeed2Experiment
 				trainingStream.addDrift(-trainingNetworkStream.getCurrentSeverity()); // create one drift
 				positveDirft = true;
 			}
-			lastActualDriftPoint = instanceCount;
+			actualDriftPoint = instanceCount;
 		}
 		
 		
@@ -162,6 +202,8 @@ public class ProSeed2Experiment
 		dataWriter.close();
 		falsedriftWriter.close();
 		truedriftWriter.close();
+		
+		return new double[]{detectorConfidence, (double)numFalsePositive/instanceCount, (double)delay/numTrueDrift};
 	}
 }
 
