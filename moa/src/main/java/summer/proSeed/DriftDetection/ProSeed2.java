@@ -86,6 +86,13 @@ public class ProSeed2 implements CutPointDetector
 		return volDrift;
 	}
 
+	public boolean setInputWithTraining(double input)
+	{
+		this.setTraining(input);
+
+		return volatilityDetector.getDriftFound();
+	}
+	
 	@Override
 	public boolean setInput(double input)
 	{
@@ -94,16 +101,17 @@ public class ProSeed2 implements CutPointDetector
 
 		double timestep = this.volatilityDetector.getTimeStamp() + 1.0;
 
+		
 		boolean volDrift = this.setTraining(input);
-
 		// setting prediction phase
-		double[][] prediction = null;
-		if (numSamples > learningPeriod)
-		{
-			prediction = volatilityDetector.getPredictor().predictNextCI(volDrift, timestep);
-		}
-		volatilityDetector.getDetector().setPredictions(prediction);
+		PredictionModel predictionModel = new PredictionModel();
+		DriftPrediction driftPrediction = volatilityDetector.getPredictor();
 
+		predictionModel.predictionDriftPoints = driftPrediction.predictNextCI(volDrift, timestep);
+		predictionModel.deltaCoefficient = driftPrediction.getDeltaCoefficient();
+		
+		volatilityDetector.getDetector().setPredictions(predictionModel);
+			
 		return volatilityDetector.getDriftFound();
 	}
 
@@ -127,6 +135,13 @@ public class ProSeed2 implements CutPointDetector
 	public double getSeverity()
 	{
 		return volatilityDetector.getDetector().getSeverity();
+	}
+
+	@Override
+	public void setPredictions(PredictionModel predictions)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 

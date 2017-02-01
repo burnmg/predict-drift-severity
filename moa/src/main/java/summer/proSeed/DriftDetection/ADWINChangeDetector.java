@@ -59,7 +59,7 @@ public class ADWINChangeDetector extends AbstractChangeDetector implements CutPo
     }
 
     @Override
-    public boolean setInput(double d) {
+    public boolean setInputWithTraining(double d) {
         input(d);
         return this.isChangeDetected;
     }

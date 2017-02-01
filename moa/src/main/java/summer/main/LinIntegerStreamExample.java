@@ -162,7 +162,7 @@ public class LinIntegerStreamExample
 			{
 				double output = trainingStream.generateNext();
 				
-				boolean drift = proSeed2.setInput(output);
+				boolean drift = proSeed2.setInputWithTraining(output);
 				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
 				instanceCount++;
 			}

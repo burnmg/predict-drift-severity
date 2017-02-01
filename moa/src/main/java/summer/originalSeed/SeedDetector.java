@@ -40,7 +40,7 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 	}
 
 	@Override
-	public boolean setInput(double inputValue) {
+	public boolean setInputWithTraining(double inputValue) {
 		SeedBlock cursor;
 
 		addElement(inputValue);

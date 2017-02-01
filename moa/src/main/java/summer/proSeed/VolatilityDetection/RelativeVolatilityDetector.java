@@ -242,6 +242,6 @@ public class RelativeVolatilityDetector {
 	{
 		return this.driftPredictor;
 	}
-	
+
 
 }

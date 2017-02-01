@@ -162,7 +162,7 @@ public class Main
 			{
 				double output = trainingStream.generateNext();
 				
-				boolean drift = proSeed2.setInput(output);
+				boolean drift = proSeed2.setInputWithTraining(output);
 				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
 				if (drift) driftCount++;
 				// if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
@@ -209,7 +209,7 @@ public class Main
 		for(int i=0;i<dataLength;i++)
 		{
 			double data = s.generateNext();
-			boolean drift = proSeed.setInput(data);
+			boolean drift = proSeed.setInputWithTraining(data);
 			boolean volDrift = proSeed.getVolatilityDetector().getVolatilityDriftFound();
 			if(drift)
 			{

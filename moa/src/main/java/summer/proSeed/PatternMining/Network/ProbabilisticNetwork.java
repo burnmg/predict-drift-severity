@@ -293,6 +293,7 @@ public class ProbabilisticNetwork {
 		return sortedNetwork;
 	}
 	
+	
 	public SeveritySamplingEdgeInterface[][] sortEdgesBy(IndexedPattern[] patternList)
 	{
 		if (patternList.length != numberOfPatterns) {

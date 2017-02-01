@@ -23,9 +23,12 @@ package summer.proSeed.DriftDetection;
 public interface CutPointDetector {
 	public long getChecks();
 
-	public boolean setInput(double d);
 
 	public void setPredictions(double[][] predictions);
 	
 	public double getSeverity();
+
+	public void setPredictions(PredictionModel predictions);
+
+	boolean setInput(double input);
 }

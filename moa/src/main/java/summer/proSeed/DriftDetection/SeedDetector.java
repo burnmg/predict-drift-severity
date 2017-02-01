@@ -45,6 +45,7 @@ public class SeedDetector implements CutPointDetector
 {
 	public SeedWindow window;
 	private double DELTA;
+	private double DELTACoefficient = 1; 
 
 	private int defaultBlockSize;
 	private int blockSize;
@@ -130,16 +131,20 @@ public class SeedDetector implements CutPointDetector
 		this.coolingPeriod = coolingPeriod;
 	}
 
+
+	
 	@Override
-	public void setPredictions(double[][] predictions)
-	{
+	public void setPredictions(PredictionModel predictions)
+	{ 
 		if (predictions != null)
 		{
-			this.predictions = predictions;
+			this.predictions = predictions.predictionDriftPoints;
 			this.maxMeanPrediction = findMaxMean(this.predictions); // update
 																	// maximum
 																	// mean
+			this.DELTACoefficient = predictions.deltaCoefficient; 
 		}
+		
 	}
 
 	private double findMaxMean(double[][] predictions2)
@@ -204,7 +209,8 @@ public class SeedDetector implements CutPointDetector
 					checks++;
 
 					// if find a drift.
-					double threshold = getADWINBound(n0, n1, DELTA);
+					// transform the DELTA with the coefficent
+					double threshold = getADWINBound(n0, n1, DELTA*DELTACoefficient);
 					if (samples%coolingPeriod==0 && diff > threshold)
 					{
 						blnReduceWidth = true;
@@ -354,5 +360,12 @@ public class SeedDetector implements CutPointDetector
 	{
 		return this.severity;
 	}
+
+	@Override
+	public void setPredictions(double[][] predictions)
+	{
+	
+	}
+
 	
 }

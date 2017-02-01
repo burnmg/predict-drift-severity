@@ -198,4 +198,12 @@ public class DriftPrediction {
 	{
 		return this.patternReservoir.getNetwork().getEdges();
 	}
+
+
+
+	public double getDeltaCoefficient()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

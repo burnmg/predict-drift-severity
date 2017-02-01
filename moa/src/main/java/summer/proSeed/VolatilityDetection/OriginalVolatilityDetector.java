@@ -50,7 +50,7 @@ public class OriginalVolatilityDetector {
 
     public Boolean setInputVar(double inputValue) {
         
-        if (cutpointDetector.setInput(inputValue)) {
+        if (cutpointDetector.setInputWithTraining(inputValue)) {
             if (buffer.isFull()) {
                 reservoir.addElement(buffer.add(++timestamp));
             } else {

@@ -31,7 +31,7 @@ import moa.tasks.TaskMonitor;
  * </p>
  * David Tse Jung Huang, Yun Sing Koh, Gillian Dobbie, and Russel Pears: Detecting Volatility Shift in Data Streams. ICDM 2014: 863-868
  * </p>
- * Usage: {@link #setInput(double)}
+ * Usage: {@link #setInputWithTraining(double)}
  * </p>
  * 
  * @author David T.J. Huang - The University of Auckland

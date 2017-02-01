@@ -229,7 +229,7 @@ public class BernouilliExample {
 
 					// detectors read input
 					// train the network. The network is in volatilityDetector. 
-					boolean drift = detector.setInput(bernoulliOutput);			
+					boolean drift = detector.setInputWithTraining(bernoulliOutput);			
 					volDrift = volatilityDetector.setInputVarViaBuffer(bernoulliOutput);
 					if(volDrift) driftWriter.write(samples +"\n");
 					

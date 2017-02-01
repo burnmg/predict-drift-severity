@@ -129,7 +129,7 @@ public class DDMChangeDetector extends AbstractChangeDetector implements CutPoin
 	}
 
 	@Override
-	public boolean setInput(double d) {
+	public boolean setInputWithTraining(double d) {
 		input(d);
 		return this.isChangeDetected;
 	}

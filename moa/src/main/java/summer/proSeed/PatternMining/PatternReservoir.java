@@ -541,6 +541,11 @@ public class PatternReservoir
 		Arrays.sort(indexedPatterns);
 		return this.network.sortEdgesBy(indexedPatterns);
 	}
+	
+	public SeveritySamplingEdgeInterface[][] getEdges()
+	{
+		return this.network.getEdges();
+	}
 
 	public IndexedPattern[] getSortedPatterns()
 	{
