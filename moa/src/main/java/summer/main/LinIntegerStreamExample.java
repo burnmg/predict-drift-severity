@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.rosuda.JRI.Rengine;
 
@@ -63,6 +64,7 @@ public class LinIntegerStreamExample
 		BufferedWriter driftWriter = new BufferedWriter(
 				new FileWriter("/Users/rl/Desktop/drift.txt"));
 	
+
 
 		/*
 		 * START Network Stream Generator Parameters 
@@ -150,6 +152,8 @@ public class LinIntegerStreamExample
 		int driftCount = 0;
 		boolean positveDirft = false;
 		
+
+		
 		while(numBlocks < streamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
@@ -160,13 +164,12 @@ public class LinIntegerStreamExample
 				
 				boolean drift = proSeed2.setInput(output);
 				boolean voldrift = proSeed2.getVolatilityDetector().getVolatilityDriftFound();
-				if (drift) driftCount++;
-				// if(voldrift) driftWriter.write(proSeed2.getVolatilityDetector().getCurrentBufferMean()+"\n");
-				
 				instanceCount++;
 			}
+			
 			numBlocks++;
 			
+			// create a drift
 			if(positveDirft)
 			{
 				trainingStream.addDrift(trainingNetworkStream.getCurrentSeverity()); // create one drift
