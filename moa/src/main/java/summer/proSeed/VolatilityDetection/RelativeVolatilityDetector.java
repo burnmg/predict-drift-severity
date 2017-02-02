@@ -47,6 +47,8 @@ public class RelativeVolatilityDetector {
 	private double confidence;
 	private int timestamp = 0;
 	
+	private long previousDriftPoint = -1;
+	
 	private ArrayList<Double> severityBuffer;
 
 	private int patternLength = 0;
@@ -58,6 +60,8 @@ public class RelativeVolatilityDetector {
 	private boolean driftFound = false;
 
 	private boolean volatilityDriftFound;
+
+	private int severityGracingPeriod = 0;
 	
 
 	public void setRecentIntervals(int size) {
@@ -136,6 +140,7 @@ public class RelativeVolatilityDetector {
 	}
 	public Boolean setInputVarViaBuffer(double inputValue) throws IOException {
 		sample++;
+		driftPredictor.getPatternReservoir().incrementTimeStayingInCurrentState();
 
 		driftFound = cutpointDetector.setInput(inputValue);
 		if (driftFound) {
@@ -153,9 +158,15 @@ public class RelativeVolatilityDetector {
 			if (rollingIndex == recentIntervals.length) {
 				rollingIndex = 0;
 			}
-			severityBuffer.add(cutpointDetector.getSeverity());
+			
+			if(sample-previousDriftPoint>severityGracingPeriod)
+			{
+				severityBuffer.add(cutpointDetector.getSeverity());
+			}
+			
 			timestamp = 0;
-
+			
+			previousDriftPoint = sample;
 			
 			if (buffer.isFull() && reservoir.isFull()) {
 				double RelativeVar = buffer.getStdev() / reservoir.getReservoirStdev();

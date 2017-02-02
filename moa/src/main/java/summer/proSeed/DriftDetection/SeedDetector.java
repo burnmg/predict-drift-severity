@@ -45,7 +45,7 @@ public class SeedDetector implements CutPointDetector
 {
 	public SeedWindow window;
 	private double DELTA;
-	private double DELTACoefficient = 1; 
+	private double thresholdCoefficient = 1; 
 
 	private int defaultBlockSize;
 	private int blockSize;
@@ -82,6 +82,8 @@ public class SeedDetector implements CutPointDetector
 	private int coolingPeriod;
 	
 	private double previousSnapshot;
+	
+	private boolean adaptiveMode = false;
 
 	
 	public SeedDetector(double delta, int blockSize)
@@ -134,15 +136,19 @@ public class SeedDetector implements CutPointDetector
 
 	
 	@Override
-	public void setPredictions(PredictionModel predictions)
+	public void setPredictions(PredictionModel predictionModel)
 	{ 
-		if (predictions != null)
+		if (predictionModel != null)
 		{
-			this.predictions = predictions.predictionDriftPoints;
-			this.maxMeanPrediction = findMaxMean(this.predictions); // update
-																	// maximum
-																	// mean
-			this.DELTACoefficient = predictions.deltaCoefficient; 
+			this.predictions = predictionModel.predictedDriftPostion;
+			if(this.predictions!=null)
+			{
+				this.maxMeanPrediction = findMaxMean(this.predictions); // update
+				// maximum
+				// mean
+			}
+
+			this.thresholdCoefficient = predictionModel.deltaCoefficient; 
 		}
 		
 	}
@@ -210,7 +216,13 @@ public class SeedDetector implements CutPointDetector
 
 					// if find a drift.
 					// transform the DELTA with the coefficent
-					double threshold = getADWINBound(n0, n1, DELTA*DELTACoefficient);
+					double threshold = getADWINBound(n0, n1, DELTA);
+					
+					if(adaptiveMode )
+					{
+						threshold = thresholdCoefficient*threshold;
+					}
+					
 					if (samples%coolingPeriod==0 && diff > threshold)
 					{
 						blnReduceWidth = true;
@@ -365,6 +377,11 @@ public class SeedDetector implements CutPointDetector
 	public void setPredictions(double[][] predictions)
 	{
 	
+	}
+	
+	public void setAdaptiveMode(boolean mode)
+	{
+		this.adaptiveMode = mode;
 	}
 
 	

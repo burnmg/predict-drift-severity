@@ -44,16 +44,18 @@ public class ProSeed2Experiment
 		double transHigh = 0.75;
 		double transLow = 0.25;
 		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
-		/*
+		
 		Double[][] severityEdges = {{null, new Double(0.5), new Double(1)}, 
 				{new Double(1.5), null, new Double(2)}, 
 				{new Double(3), new Double(4), null}
 		};
-		*/
-		Double[][] severityEdges = {{null, new Double(4), new Double(3)}, 
+		
+		/*
+		Double[][] severityEdges = {{null, new Double(8), new Double(4)}, 
 				{new Double(2), null, new Double(1)}, 
-				{new Double(0.5), new Double(0.3), null}
+				{new Double(0.5), new Double(0.25), null}
 		};
+		*/
 		double[] res = run(0.01 ,states, networkTransitions, severityEdges);
 		re.end();
 	}
@@ -101,8 +103,8 @@ public class ProSeed2Experiment
 		 * START ProSeed Parameters 
 		 */
 		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
-		ProSeed2 proSeed2 = new ProSeed2(3, 20, 0.05, 100, 
-				VDSeedDetector, 32, 0.05, 0, 2000);
+		ProSeed2 proSeed2 = new ProSeed2(3, 80, 0.05, 100, 
+				VDSeedDetector, 32, 0.05, 10, 2000);
 		
 		/*
 		 * END ProSeed Parameters 
@@ -185,6 +187,26 @@ public class ProSeed2Experiment
 		}
 		
 		/*
+		 * S Some Print Test
+		 */
+		SeveritySamplingEdgeInterface[][] edges = proSeed2.getVolatilityDetector().getPredictor().getPatternReservoir().getSortEdges();
+		double[][] network = proSeed2.getVolatilityDetector().getPredictor().getPatternReservoir().getSortedNetwork();
+		
+		for(int i=0;i<edges.length;i++)
+		{
+			for(int j=0;j<edges[0].length;j++)
+			{
+				if(i!=j && network[i][j]>0.0001)System.out.printf("%30f:%f\n", (float)network[i][j], (float)edges[i][j].getMean());
+				edgeWriter.write((float)network[i][j]+","+(float)edges[i][j].getMean()+"\n");
+			}
+		}
+		
+		/*
+		 * E Some Print Test
+		 */
+		
+		
+		/*
 		 * START variables for test 
 		 */
 		int numDetectedDrift = 0;
@@ -203,7 +225,8 @@ public class ProSeed2Experiment
 		// Testing Phase
 		numBlocks = 0;
 		instanceCount = 0;
-		int testingStreamLength = (int)(0.2*trainingStreamLength); 
+		// int testingStreamLength = (int)(0.2*trainingStreamLength); 
+		int testingStreamLength = 0;
 		while(numBlocks < testingStreamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
@@ -252,9 +275,13 @@ public class ProSeed2Experiment
 			}
 			actualDriftPoint = instanceCount;
 			
-			if(numBlocks%printRate==0) System.out.println("Testing:"+numBlocks+"/"+testingStreamLength);
+			if(numBlocks%(0.2*printRate)==0) 
+				{
+				System.out.println("Testing:"+numBlocks+"/"+testingStreamLength);
+				}
 		}
 		
+		/*
 		// write generated edges
 		int networkSize = proSeed2.getNetwork().getNumberOfPatterns();
 		SeveritySamplingEdgeInterface[][] generatedEdges = proSeed2.getPatternReservoir().getSortEdges();
@@ -282,7 +309,7 @@ public class ProSeed2Experiment
 
 			}
 		}
-		
+		*/
 		dataWriter.close();
 		falsedriftWriter.close();
 		truedriftWriter.close();

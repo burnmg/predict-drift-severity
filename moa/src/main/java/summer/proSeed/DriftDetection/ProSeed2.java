@@ -107,8 +107,9 @@ public class ProSeed2 implements CutPointDetector
 		PredictionModel predictionModel = new PredictionModel();
 		DriftPrediction driftPrediction = volatilityDetector.getPredictor();
 
-		predictionModel.predictionDriftPoints = driftPrediction.predictNextCI(volDrift, timestep);
-		predictionModel.deltaCoefficient = driftPrediction.getDeltaCoefficient();
+		// FIXME cannot get the prediction 
+		predictionModel.predictedDriftPostion = driftPrediction.predictNextCI(volDrift, timestep);
+		predictionModel.deltaCoefficient = driftPrediction.getThresholdCoefficient();
 		
 		volatilityDetector.getDetector().setPredictions(predictionModel);
 			

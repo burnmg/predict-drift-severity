@@ -235,6 +235,11 @@ public class ProbabilisticNetwork {
 
 		return probs;
 	}
+	
+	public double[] getNetworkOutgoingTransitionProbilityOf(int index)
+	{
+		//TODO
+	}
 
 	public int getSumTransitions() {
 		int sum = 0;

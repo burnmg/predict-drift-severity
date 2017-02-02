@@ -19,6 +19,7 @@
 
 package summer.proSeed.PatternMining;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -47,6 +48,9 @@ public class PatternReservoir
 	private int prevLength = -1;
 	
 	private int fromIndex = -1;
+	private int currentPatternIndex=-1;
+	
+	private int timeStayingInCurrentState = 0;
 
 	public PatternReservoir()
 	{
@@ -223,9 +227,14 @@ public class PatternReservoir
 
 		// currentPatternIndex is the new pattern added (or updated).
 		// beforePrevPatternIndex < prevPatternIndex < currentPatternIndex
-		int currentPatternIndex = findPatternIndex(newPattern);
+		currentPatternIndex = findPatternIndex(newPattern);
 		
-		if(prevPatternIndex!=currentPatternIndex) fromIndex = currentPatternIndex;
+		// it is a new pattern
+		if(prevPatternIndex!=currentPatternIndex) 
+		{
+			timeStayingInCurrentState = 0;
+			fromIndex = currentPatternIndex;
+		}
 		
 		if (currentPatternIndex == -1)
 		{ // pattern not found, so new pattern should be inserted
@@ -573,5 +582,26 @@ public class PatternReservoir
 	public boolean getCompression()
 	{
 		return compressed;
+	}
+	
+	public int getFromIndex()
+	{
+		return this.fromIndex;
+	}
+	
+	/*
+	public int getCurrentIndex()
+	{
+		return this.currentPatternIndex;
+	}
+	*/
+	public int getTimeStayingInCurrentPattern()
+	{
+		return this.timeStayingInCurrentState;
+	}
+	
+	public void incrementTimeStayingInCurrentState()
+	{
+		this.timeStayingInCurrentState++;
 	}
 }

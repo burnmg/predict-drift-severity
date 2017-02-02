@@ -15,6 +15,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.rosuda.JRI.Rengine;
 
+import lin.test.test;
 import summer.magSeed.MagSeed;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
@@ -46,12 +47,58 @@ public class Main
 		Pattern.setRengine(re);
 		
 		// Set R Engine END 
-		confidenceAndNumberOfDriftTest(0.01);
-		confidenceAndNumberOfDriftTest(0.05);
-		confidenceAndNumberOfDriftTest(0.1);
+		testDataNormaisation();
 		
 		re.end();
 	}
+	
+	public static void testDataNormaisation()
+	{
+		double[][] data = {
+				{
+					23,1,1,1,1,2,3
+				},
+				{
+					12,4,1,24,12,312,3
+				}
+		};
+		double[][] dataN = dataNormaisation(data);
+		for(int i=0;i<dataN.length;i++)
+		{
+			for(int j=0; j<dataN[0].length;j++)
+			{
+				System.out.println(dataN[i][j]);
+			}
+
+		}
+	}
+	
+	public static double[][] dataNormaisation(double[][] data)
+	{
+		// find max & max
+		double[][] normlisedData = new double[data.length][data[0].length];
+		double max = data[0][0];
+		double min = data[0][0];
+		for(int i=0;i<data.length;i++)
+		{
+			for(int j=0; j<data[0].length;j++)
+			{
+				if(data[i][j] > max) max = data[i][j];
+				if(data[i][j] < min) min = data[i][j];
+			}
+
+		}
+		
+		for(int i=0;i<data.length;i++)
+		{
+			for(int j=0; j<data[0].length;j++)
+			{
+				normlisedData[i][j] = (data[i][j] - min) / (max-min);
+			}
+		}
+		return normlisedData;
+	}
+	
 	
 	public static void confidenceAndNumberOfDriftTest(double confidence) throws IOException
 	{

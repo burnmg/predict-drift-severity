@@ -22,8 +22,11 @@ package summer.proSeed.VolatilityDetection;
 import java.util.ArrayList;
 import java.util.function.DoublePredicate;
 
+import javax.annotation.Untainted;
+
 import org.apache.commons.math3.stat.StatUtils;
 
+import moa.classifiers.rules.core.anomalydetection.probabilityfunctions.ProbabilityFunction;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.PatternReservoir;
 import summer.proSeed.PatternMining.PatternTransition;
@@ -43,6 +46,7 @@ import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 public class DriftPrediction {
     private PatternReservoir patternReservoir;
 
+    
     private int patternLength = 0;
 
     public int predictionCorrect = 0;
@@ -200,10 +204,77 @@ public class DriftPrediction {
 	}
 
 
-
-	public double getDeltaCoefficient()
+	private double computeRisk()
 	{
-		// TODO Auto-generated method stub
+		// compute P_stay
+        int latestPatternIndex = this.patternReservoir.getLatestPatternIndex();
+        if (latestPatternIndex == -1) {
+            return -1;
+        }
+        
+        Pattern pattern = this.patternReservoir.getPatterns()[latestPatternIndex];
+        
+		double P_stay = (pattern.getAverageLength()-patternReservoir.getTimeStayingInCurrentPattern())/pattern.getAverageLength(); // TODO
+		double P_leave = 1-P_stay;
+		
+		SeveritySamplingEdgeInterface[][] edges = patternReservoir.getEdges();
+		double[][] edgesMean = new double[edges.length][edges.length];
+		for(int i=0;i<edgesMean.length;i++)
+		{
+			for(int j=0; j<edgesMean[0].length;j++)
+			{
+				edgesMean[i][j] = edges[i][j].getMean();
+			}
+
+		}
+		double[][] normalisedEdgesMean = dataNormaisation(edgesMean);
+		double sevIncomingEdge = normalisedEdgesMean[patternReservoir.getFromIndex()][latestPatternIndex]; // normalise
+		
+		double[] sevOutgoingEdgesMean = normalisedEdgesMean[patternReservoir.getLatestPatternIndex()];
+		
+		
+		double[] P_outgoingEdges = patternReservoir.getNetwork().getNetworkOutgoingTransitionProbilityOf(latestPatternIndex);
+		
+		//TODO remove itself's data
+		sevOutgoingEdgesMean[latestPatternIndex] = 0;
+		
+		double sumOfOutgointEges  = 0;
+		for(int i=0;i<sevOutgoingEdgesMean.length;i++)
+		{
+			sumOfOutgointEges += P_outgoingEdges[i] * sevOutgoingEdgesMean[i];
+		}
+		
+		double risk = P_stay*sevIncomingEdge + P_leave*sumOfOutgointEges;
+		return risk;
+	}
+
+	private static double[][] dataNormaisation(double[][] data)
+	{
+		// find max & max
+		double[][] normlisedData = new double[data.length][data[0].length];
+		double max = data[0][0];
+		double min = data[0][0];
+		for(int i=0;i<data.length;i++)
+		{
+			for(int j=0; j<data[0].length;j++)
+			{
+				if(data[i][j] > max) max = data[i][j];
+				if(data[i][j] < min) min = data[i][j];
+			}
+
+		}
+		
+		for(int i=0;i<data.length;i++)
+		{
+			for(int j=0; j<data[0].length;j++)
+			{
+				normlisedData[i][j] = (data[i][j] - min) / (max-min);
+			}
+		}
+		return normlisedData;
+	}
+	public double getThresholdCoefficient()
+	{
 		return 0;
 	}
 }

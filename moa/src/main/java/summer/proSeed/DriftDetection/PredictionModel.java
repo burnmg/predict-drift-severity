@@ -8,7 +8,7 @@ public class PredictionModel
 {
 
 	
-	public double[][] predictionDriftPoints = null; 
+	public double[][] predictedDriftPostion = null; 
 	/*
 	 * riskPair (currentEdgeRisk, allEdgeRisk)
 	 */
