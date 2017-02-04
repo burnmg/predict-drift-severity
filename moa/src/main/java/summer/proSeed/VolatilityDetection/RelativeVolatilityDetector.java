@@ -73,7 +73,7 @@ public class RelativeVolatilityDetector {
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = 0.05;
-		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000); // use default drift predictor
+		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000, true); // use default drift predictor
 		setRecentIntervals(resSize * 2);
 	}
 
@@ -82,7 +82,7 @@ public class RelativeVolatilityDetector {
 		this.reservoir = new Reservoir(resSize);
 		this.buffer = new Buffer(resSize);
 		this.confidence = confidence;
-		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000); // use default drift predictor
+		this.driftPredictor = new DriftPrediction(50, 100, 0.05, 100, 1000, true); // use default drift predictor
 		setRecentIntervals(resSize * 2);
 	}
 

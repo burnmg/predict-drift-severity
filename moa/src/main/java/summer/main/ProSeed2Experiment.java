@@ -14,6 +14,7 @@ import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
+import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.kylieExample.TextConsole;
 import testers.FalsePositiveTester;
 
@@ -50,13 +51,23 @@ public class ProSeed2Experiment
 				{new Double(3), new Double(4), null}
 		};
 		
+		
 		/*
 		Double[][] severityEdges = {{null, new Double(8), new Double(4)}, 
 				{new Double(2), null, new Double(1)}, 
 				{new Double(0.5), new Double(0.25), null}
 		};
 		*/
-		double[] res = run(0.01 ,states, networkTransitions, severityEdges);
+		
+		
+		/*
+		double[][] networkTransitions = {{0,1}, {1,0}};
+		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100)};
+		Double[][] severityEdges = {{null, new Double(8)},
+				{new Double(2), null}};
+		*/
+		
+		double[] res = run(0.01 ,states, networkTransitions, severityEdges, true, 50);
 		re.end();
 	}
 	
@@ -77,7 +88,7 @@ public class ProSeed2Experiment
 		double confidence = 0.01;
 		while(confidence<0.5)
 		{
-			double[] res = run(confidence ,states, networkTransitions, severityEdges);
+			double[] res = run(confidence ,states, networkTransitions, severityEdges, true, 50);
 			writer.write(res[0]+","+res[1]+","+res[2]+"\n");
 			confidence += 0.01;
 		}
@@ -97,14 +108,14 @@ public class ProSeed2Experiment
 	 * @throws IOException
 	 */
 	public static double[] run(double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
-			, Double[][] actualSeverityEdges) throws FileNotFoundException, IOException
+			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength) throws FileNotFoundException, IOException
 	{
 		/*
 		 * START ProSeed Parameters 
 		 */
 		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
 		ProSeed2 proSeed2 = new ProSeed2(3, 80, 0.05, 100, 
-				VDSeedDetector, 32, 0.05, 10, 2000);
+				VDSeedDetector, 32, 0.05, 10, 2000, useSimpleRiskMethod);
 		
 		/*
 		 * END ProSeed Parameters 
@@ -128,6 +139,8 @@ public class ProSeed2Experiment
 		BufferedWriter falsedriftWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/falsedrift.txt"));
 		BufferedWriter edgeWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/sortedEdge.txt"));
 		BufferedWriter actualEdgeWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/actualsortedEdge.txt"));
+		BufferedWriter riskWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/risk.txt"));
+		BufferedWriter patternWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/patterns.txt"));
 		
 		int printRate = 100;
 		
@@ -137,12 +150,6 @@ public class ProSeed2Experiment
 		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
 		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
 		trainingNetworkStream.intervalNoise = patternNoiseFlag; // patternNoiseFlag
-
-		// set the bernoulli stream (testing)
-		// bernoulli.setNoise(0.0); // noise for error rate generator
-		
-		int trainingStreamLength = 100*trainingNetworkStream.getStateTimeMean();
-		//int streamLength = 50;
 		
 		// set the bernoulli stream (training)
 		DoubleStream trainingStream = new DoubleStream(1024, 0, 1, 1);
@@ -153,7 +160,7 @@ public class ProSeed2Experiment
 		boolean positveDirft = false;
 		
 
-		
+		int trainingStreamLength = streamLength*trainingNetworkStream.getStateTimeMean();
 		// Trianing Phase
 		while(numBlocks < trainingStreamLength)
 		{
@@ -225,8 +232,8 @@ public class ProSeed2Experiment
 		// Testing Phase
 		numBlocks = 0;
 		instanceCount = 0;
-		// int testingStreamLength = (int)(0.2*trainingStreamLength); 
-		int testingStreamLength = 0;
+
+		int testingStreamLength = (int)1*trainingStreamLength;
 		while(numBlocks < testingStreamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
@@ -258,6 +265,9 @@ public class ProSeed2Experiment
 				}
 				dataWriter.write(output+"\n");
 				instanceCount++;
+				
+				
+
 			}
 			
 			numBlocks++;
@@ -275,12 +285,15 @@ public class ProSeed2Experiment
 			}
 			actualDriftPoint = instanceCount;
 			
-			if(numBlocks%(0.2*printRate)==0) 
-				{
+			if(numBlocks%(printRate)==0) 
+			{
 				System.out.println("Testing:"+numBlocks+"/"+testingStreamLength);
-				}
+			}
+			
+			DriftPrediction predictor = proSeed2.getVolatilityDetector().getPredictor();
+			riskWriter.write(predictor.getFromIndexCurrentIndexPair()+","+predictor.getCurrentRisk()+"\n");
+
 		}
-		
 		/*
 		// write generated edges
 		int networkSize = proSeed2.getNetwork().getNumberOfPatterns();
@@ -315,6 +328,9 @@ public class ProSeed2Experiment
 		truedriftWriter.close();
 		edgeWriter.close();
 		actualEdgeWriter.close();
+		riskWriter.close();
+		patternWriter.close();
+		
 		return new double[]{detectorConfidence, (double)numFalsePositive/instanceCount, (double)delay/numTrueDrift};
 	}
 }

@@ -1,6 +1,8 @@
 package summer.proSeed.DriftDetection;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import summer.proSeed.PatternMining.PatternReservoir;
@@ -38,13 +40,13 @@ public class ProSeed2 implements CutPointDetector
 	 * @throws FileNotFoundException
 	 */
 	public ProSeed2(int mergeParameter, int patternSize, double ksConfidence, int topK, SeedDetector VDdriftDetector,
-			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize) throws FileNotFoundException, IOException
+			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize, boolean useSimpleRiskMethod) throws FileNotFoundException, IOException
 	{
 		numSamples = 0;
 		this.learningPeriod = learningPeriod;
 
 		// volatilityDetector
-		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK, severitySampeSize);
+		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK, severitySampeSize, useSimpleRiskMethod);
 		
 		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor);
 
@@ -107,11 +109,15 @@ public class ProSeed2 implements CutPointDetector
 		PredictionModel predictionModel = new PredictionModel();
 		DriftPrediction driftPrediction = volatilityDetector.getPredictor();
 
-		// FIXME cannot get the prediction 
-		predictionModel.predictedDriftPostion = driftPrediction.predictNextCI(volDrift, timestep);
-		predictionModel.deltaCoefficient = driftPrediction.getThresholdCoefficient();
+
 		
-		volatilityDetector.getDetector().setPredictions(predictionModel);
+		if(numSamples%1000==0) 
+		{
+			volatilityDetector.getDetector().setPredictions(predictionModel);
+			predictionModel.predictedDriftPostion = driftPrediction.predictNextCI(volDrift, timestep);
+			predictionModel.deltaCoefficient = driftPrediction.getThresholdCoefficient();
+		}
+		numSamples++;
 			
 		return volatilityDetector.getDriftFound();
 	}

@@ -61,6 +61,11 @@ public class DriftPrediction {
     private Pattern currentPattern;
     private double[][] nextBounds;
     
+    private double currentRisk = 0;
+    private double fromIndexCurrentIndexPair = 0;
+    
+    private boolean useSimpleRiskMethod;
+    
     /**
      * 
      * @param m merge parameter. default: 3. Merge to 3 patterns
@@ -68,11 +73,13 @@ public class DriftPrediction {
      * @param ksConfidence
      * @param freqTransitions K for the top K.
      */
-    public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions, int severitySampleSize) {    	
+    public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions, int severitySampleSize
+    		, boolean useSimpleRiskMethod) {    	
     	patternReservoir = new PatternReservoir(patternReservoirSize, severitySampleSize);
     	patternReservoir.setMergeParameter(m);
     	ksDelta = ksConfidence;
     	numOfFrequentTransitions = freqTransitions;
+    	this.useSimpleRiskMethod = useSimpleRiskMethod;
     }
     
     public void setSlopeCompression(double slope) {
@@ -202,50 +209,107 @@ public class DriftPrediction {
 	{
 		return this.patternReservoir.getNetwork().getEdges();
 	}
-
-
+	
 	private double computeRisk()
+	{
+		if(useSimpleRiskMethod)
+		{
+			return this.computeRiskSimpleMethod();
+		}
+		else
+		{
+			return this.computeRiskComplexMethod();
+		}
+		
+	}
+	
+	private double computeRiskSimpleMethod()
+	{
+		int latestPatternIndex = this.patternReservoir.getLatestPatternIndex();
+		SeveritySamplingEdgeInterface[][] edges = patternReservoir.getEdges();
+		double[][] sevEdgesMean = new double[edges.length][edges.length];
+		for(int i=0;i<sevEdgesMean.length;i++)
+		{
+			for(int j=0; j<sevEdgesMean[0].length;j++)
+			{
+				double value = edges[i][j].getMean(); // only take finite mean
+				if(value<Double.MAX_VALUE)
+				{
+					sevEdgesMean[i][j] = value;
+				}
+			}
+
+		}
+		double[][] normalisedEdgesMean = dataNormaisation(sevEdgesMean);
+		int fromIndex = patternReservoir.getFromIndex();
+		double sevIncomingEdge = normalisedEdgesMean[fromIndex][latestPatternIndex]; // normalise
+		
+		return sevIncomingEdge;
+	}
+
+
+	private double computeRiskComplexMethod()
 	{
 		// compute P_stay
         int latestPatternIndex = this.patternReservoir.getLatestPatternIndex();
         if (latestPatternIndex == -1) {
-            return -1;
+             return -1;
         }
         
         Pattern pattern = this.patternReservoir.getPatterns()[latestPatternIndex];
         
-		double P_stay = (pattern.getAverageLength()-patternReservoir.getTimeStayingInCurrentPattern())/pattern.getAverageLength(); // TODO
-		double P_leave = 1-P_stay;
+        double patternlength = pattern.getAverageLength();
+        double stayingTimeInCurrentPattern = patternReservoir.getTimeStayingInCurrentPattern();
+        		
+		double prob_stay = (patternlength-stayingTimeInCurrentPattern)/patternlength;
+		if(prob_stay<0) prob_stay = 0;
 		
+		double prob_leave = 1-prob_stay;
+		
+		// get edges sample severity means
 		SeveritySamplingEdgeInterface[][] edges = patternReservoir.getEdges();
-		double[][] edgesMean = new double[edges.length][edges.length];
-		for(int i=0;i<edgesMean.length;i++)
+		double[][] sevEdgesMean = new double[edges.length][edges.length];
+		for(int i=0;i<sevEdgesMean.length;i++)
 		{
-			for(int j=0; j<edgesMean[0].length;j++)
+			for(int j=0; j<sevEdgesMean[0].length;j++)
 			{
-				edgesMean[i][j] = edges[i][j].getMean();
+				double value = edges[i][j].getMean(); // only take finite mean
+				if(value<Double.MAX_VALUE)
+				{
+					sevEdgesMean[i][j] = value;
+				}
 			}
 
 		}
-		double[][] normalisedEdgesMean = dataNormaisation(edgesMean);
-		double sevIncomingEdge = normalisedEdgesMean[patternReservoir.getFromIndex()][latestPatternIndex]; // normalise
+		double[][] normalisedEdgesMean = dataNormaisation(sevEdgesMean);
+		int fromIndex = patternReservoir.getFromIndex();
+		double sevIncomingEdge = normalisedEdgesMean[fromIndex][latestPatternIndex]; // normalise
 		
-		double[] sevOutgoingEdgesMean = normalisedEdgesMean[patternReservoir.getLatestPatternIndex()];
+		double[] sevOutgoingEdgesMean = normalisedEdgesMean[latestPatternIndex];
 		
-		
-		double[] P_outgoingEdges = patternReservoir.getNetwork().getNetworkOutgoingTransitionProbilityOf(latestPatternIndex);
-		
-		//TODO remove itself's data
-		sevOutgoingEdgesMean[latestPatternIndex] = 0;
-		
-		double sumOfOutgointEges  = 0;
-		for(int i=0;i<sevOutgoingEdgesMean.length;i++)
+		// adjust the probability by removing transitting to its own. 
+		double[] prob_outgoingEdgesUnadjusted = patternReservoir.getNetwork().getNetwork()[latestPatternIndex];
+		double[] prob_outgoingEdgesAdjusted = new double[prob_outgoingEdgesUnadjusted.length];
+		double sum = 0;
+		for(int i=0;i<prob_outgoingEdgesUnadjusted.length;i++)
 		{
-			sumOfOutgointEges += P_outgoingEdges[i] * sevOutgoingEdgesMean[i];
+			if(i!=latestPatternIndex) sum += prob_outgoingEdgesUnadjusted[i];
+		}
+		for(int i=0;i<prob_outgoingEdgesAdjusted.length;i++)
+		{
+			prob_outgoingEdgesAdjusted[i] = prob_outgoingEdgesUnadjusted[i]/sum;
 		}
 		
-		double risk = P_stay*sevIncomingEdge + P_leave*sumOfOutgointEges;
-		return risk;
+		sevOutgoingEdgesMean[latestPatternIndex] = 0;
+		
+		double sumOfOutgointEdgesRisk  = 0;
+		for(int i=0;i<sevOutgoingEdgesMean.length;i++)
+		{
+			sumOfOutgointEdgesRisk += prob_outgoingEdgesAdjusted[i] * sevOutgoingEdgesMean[i];
+		}
+		this.currentRisk = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
+		this.fromIndexCurrentIndexPair = fromIndex*10 + latestPatternIndex;
+		return currentRisk;
 	}
 
 	private static double[][] dataNormaisation(double[][] data)
@@ -275,6 +339,22 @@ public class DriftPrediction {
 	}
 	public double getThresholdCoefficient()
 	{
-		return 0;
+		// TODO model this
+		
+		this.currentRisk= computeRisk();
+		// System.out.println(risk);
+		return currentRisk;
 	}
+	
+	public double getCurrentRisk()
+	{
+		return this.currentRisk;
+	}
+	
+	public double getFromIndexCurrentIndexPair()
+	{
+		return this.fromIndexCurrentIndexPair;
+	}
+	
+	
 }
