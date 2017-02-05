@@ -104,14 +104,22 @@ public class ProSeed2 implements CutPointDetector
 		double timestep = this.volatilityDetector.getTimeStamp() + 1.0;
 
 		
-		boolean volDrift = this.setTraining(input);
+		boolean volDrift = false;
+		try
+		{
+			volDrift = volatilityDetector.setInputVarViaBuffer(input);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 		// setting prediction phase
 		PredictionModel predictionModel = new PredictionModel();
 		DriftPrediction driftPrediction = volatilityDetector.getPredictor();
 
 
 		
-		if(numSamples%1000==0) 
+		if(numSamples%100==0) 
 		{
 			volatilityDetector.getDetector().setPredictions(predictionModel);
 			predictionModel.predictedDriftPostion = driftPrediction.predictNextCI(volDrift, timestep);

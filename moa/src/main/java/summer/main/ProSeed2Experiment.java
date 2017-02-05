@@ -10,6 +10,7 @@ import java.nio.Buffer;
 import org.rosuda.JRI.Rengine;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
+import summer.proSeed.PatternMining.IndexedPattern;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
@@ -67,7 +68,7 @@ public class ProSeed2Experiment
 				{new Double(2), null}};
 		*/
 		
-		double[] res = run(0.01 ,states, networkTransitions, severityEdges, true, 50);
+		double[] res = run(1992,0.01 ,states, networkTransitions, severityEdges, true, 100);
 		re.end();
 	}
 	
@@ -88,7 +89,7 @@ public class ProSeed2Experiment
 		double confidence = 0.01;
 		while(confidence<0.5)
 		{
-			double[] res = run(confidence ,states, networkTransitions, severityEdges, true, 50);
+			double[] res = run(53141,confidence ,states, networkTransitions, severityEdges, true, 50);
 			writer.write(res[0]+","+res[1]+","+res[2]+"\n");
 			confidence += 0.01;
 		}
@@ -107,7 +108,7 @@ public class ProSeed2Experiment
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static double[] run(double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
+	public static double[] run(int seed, double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
 			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength) throws FileNotFoundException, IOException
 	{
 		/*
@@ -143,9 +144,7 @@ public class ProSeed2Experiment
 		BufferedWriter patternWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/patterns.txt"));
 		
 		int printRate = 100;
-		
-		
-		int seed = 1024;
+
 		ProbabilisticNetworkStream trainingNetworkStream = new ProbabilisticNetworkStream(networkTransitions, patterns, trials + seed, actualSeverityEdges); // Abrupt Volatility Change
 		trainingNetworkStream.networkNoise = networkNoise; // percentage of transition noise
 		trainingNetworkStream.setStateTimeMean(stateTimeMean); // set volatility interval of stream
@@ -265,9 +264,6 @@ public class ProSeed2Experiment
 				}
 				dataWriter.write(output+"\n");
 				instanceCount++;
-				
-				
-
 			}
 			
 			numBlocks++;
@@ -291,8 +287,7 @@ public class ProSeed2Experiment
 			}
 			
 			DriftPrediction predictor = proSeed2.getVolatilityDetector().getPredictor();
-			riskWriter.write(predictor.getFromIndexCurrentIndexPair()+","+predictor.getCurrentRisk()+"\n");
-
+			riskWriter.write(Math.abs(trainingNetworkStream.getCurrentSeverity())+","+predictor.getCurrentRisk()+"\n");
 		}
 		/*
 		// write generated edges
@@ -323,6 +318,11 @@ public class ProSeed2Experiment
 			}
 		}
 		*/
+		
+		IndexedPattern[] indexedPatterns = proSeed2.getVolatilityDetector().getPredictor().getPatternReservoir().getSortedPatterns();
+		String sortedPatternsString = proSeed2.getVolatilityDetector().getPredictor().getPatternReservoir().getPatternStringOf(indexedPatterns);
+		patternWriter.write(sortedPatternsString);
+		
 		dataWriter.close();
 		falsedriftWriter.close();
 		truedriftWriter.close();

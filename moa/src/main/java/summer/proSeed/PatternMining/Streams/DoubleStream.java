@@ -10,15 +10,15 @@ public class DoubleStream implements StreamGenerator
 {
 	private double mean;
 	private double streamNoise;
-	private double driftNoise;
+	private double driftMag;
 	private Random random;
 
-	public DoubleStream(int ranSeed, double mean, double streamNoise, double driftNoise)
+	public DoubleStream(int ranSeed, double mean, double streamNoise, double driftMag)
 	{
 		random = new Random(ranSeed);
 		this.mean = mean;
 		this.streamNoise = streamNoise;
-		this.driftNoise = driftNoise;
+		this.driftMag = driftMag;
 	}
 
 	public double generateNext()
@@ -29,7 +29,8 @@ public class DoubleStream implements StreamGenerator
 	public void addDrift(double driftSeverity)
 	{
 		// this.mean += driftSeverity + driftNoise * random.nextGaussian();
-		this.mean += (1+driftSeverity) * streamNoise * random.nextGaussian();
+		// this.mean += (1+driftSeverity) * streamNoise * random.nextGaussian();
+		this.mean = this.mean + driftSeverity*driftMag;
 	}
 	
 	public void addVarDrift(double driftSeverity)

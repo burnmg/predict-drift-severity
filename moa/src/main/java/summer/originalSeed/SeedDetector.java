@@ -1,5 +1,7 @@
 package summer.originalSeed;
 
+import summer.proSeed.DriftDetection.PredictionModel;
+
 /*
 This source code is provided "as is" without warranty of any kind. 
 All warranties, expresss and implied, including without limitation, 
@@ -40,7 +42,7 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 	}
 
 	@Override
-	public boolean setInputWithTraining(double inputValue) {
+	public boolean setInput(double inputValue) {
 		SeedBlock cursor;
 
 		addElement(inputValue);
@@ -127,4 +129,13 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 	{
 		return 0;
 	}
+
+	@Override
+	public void setPredictions(PredictionModel predictions)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

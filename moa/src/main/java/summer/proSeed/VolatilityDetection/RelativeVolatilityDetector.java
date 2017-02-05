@@ -178,8 +178,8 @@ public class RelativeVolatilityDetector {
 					{
 						array[i] = severityBuffer.get(i);
 					}
+					
 					driftPredictor.addNewPattern(interval, buffer, recentIntervals, sample, patternLength, array);
-
 					// clear reservoir
 					// clear severity buffer
 					

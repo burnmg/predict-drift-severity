@@ -19,39 +19,15 @@ import moa.tasks.TaskMonitor;
  * @author Albert Bifet (abifet at cs dot waikato dot ac dot nz)
  * @version $Revision: 7 $
  */
-public class ADWINChangeDetector extends AbstractChangeDetector implements CutPointDetector {
+public class ADWINChangeDetector implements CutPointDetector {
 
     protected ADWIN adwin;
 
-    public FloatOption deltaAdwinOption = new FloatOption("deltaAdwin", 'a',
-            "Delta of Adwin change detection", 0.002, 0.0, 1.0);
 
-    @Override
-    public void input(double inputValue) {
-        if (this.adwin == null) {
-            resetLearning();
-        }
-        this.isChangeDetected = adwin.setInput(inputValue);
-        this.isWarningZone = false;
-        this.delay = 0.0;
-        this.estimation = adwin.getEstimation();
-    }
-
-    @Override
-    public void resetLearning() {
-        adwin = new ADWIN((double) this.deltaAdwinOption.getValue());
-    }
-
-    @Override
-    public void getDescription(StringBuilder sb, int indent) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    protected void prepareForUseImpl(TaskMonitor monitor,
-            ObjectRepository repository) {
-        // TODO Auto-generated method stub
-    }
+    public ADWINChangeDetector(double delta)
+	{
+    	adwin = new ADWIN(delta);
+	}
 
     @Override
     public long getChecks() {
@@ -59,14 +35,31 @@ public class ADWINChangeDetector extends AbstractChangeDetector implements CutPo
     }
 
     @Override
-    public boolean setInputWithTraining(double d) {
-        input(d);
-        return this.isChangeDetected;
+    public boolean setInput(double d) {
+    	boolean drift = adwin.setInput(d);
+    	
+    	return drift;
     }
 
 	@Override
 	public void setPredictions(double[][] predictions) {
 	    // dummy method not implemented	
 	}
+
+	@Override
+	public double getSeverity()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setPredictions(PredictionModel predictions)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }
 
