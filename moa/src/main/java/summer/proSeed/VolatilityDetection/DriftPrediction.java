@@ -214,16 +214,16 @@ public class DriftPrediction {
 	{
 		if(useSimpleRiskMethod)
 		{
-			return this.computeRiskSimpleMethod();
+			return this.computeRiskOnlyFirstTerm();
 		}
 		else
 		{
-			return this.computeRiskComplexMethod();
+			return this.computeRiskOnlySecondTerm();
 		}
 		
 	}
 	
-	private double computeRiskSimpleMethod()
+	private double computeRiskOnlyFirstTerm()
 	{
 		int latestPatternIndex = this.patternReservoir.getLatestPatternIndex();
 		SeveritySamplingEdgeInterface[][] edges = patternReservoir.getEdges();
@@ -245,6 +245,54 @@ public class DriftPrediction {
 		double sevIncomingEdge = normalisedEdgesMean[fromIndex][latestPatternIndex]; // normalise
 		
 		return sevIncomingEdge;
+	}
+	
+	private double computeRiskOnlySecondTerm()
+	{
+        int latestPatternIndex = this.patternReservoir.getLatestPatternIndex();
+        if (latestPatternIndex == -1) {
+             return -1;
+        }
+		// get edges sample severity means
+		SeveritySamplingEdgeInterface[][] edges = patternReservoir.getEdges();
+		double[][] sevEdgesMean = new double[edges.length][edges.length];
+		for(int i=0;i<sevEdgesMean.length;i++)
+		{
+			for(int j=0; j<sevEdgesMean[0].length;j++)
+			{
+				double value = edges[i][j].getMean(); // only take finite mean
+				if(value<Double.MAX_VALUE)
+				{
+					sevEdgesMean[i][j] = value;
+				}
+			}
+
+		}
+		double[][] normalisedEdgesMean = dataNormaisation(sevEdgesMean);
+		
+		double[] sevOutgoingEdgesMean = normalisedEdgesMean[latestPatternIndex];
+		
+		// adjust the probability by removing transitting to its own. 
+		double[] prob_outgoingEdgesUnadjusted = patternReservoir.getNetwork().getNetwork()[latestPatternIndex];
+		double[] prob_outgoingEdgesAdjusted = new double[prob_outgoingEdgesUnadjusted.length];
+		double sum = 0;
+		for(int i=0;i<prob_outgoingEdgesUnadjusted.length;i++)
+		{
+			if(i!=latestPatternIndex) sum += prob_outgoingEdgesUnadjusted[i];
+		}
+		for(int i=0;i<prob_outgoingEdgesAdjusted.length;i++)
+		{
+			prob_outgoingEdgesAdjusted[i] = prob_outgoingEdgesUnadjusted[i]/sum;
+		}
+		
+		sevOutgoingEdgesMean[latestPatternIndex] = 0;
+		double sumOfOutgointEdgesRisk = 0;
+		for(int i=0;i<sevOutgoingEdgesMean.length;i++)
+		{
+			sumOfOutgointEdgesRisk += prob_outgoingEdgesAdjusted[i] * sevOutgoingEdgesMean[i];
+		}
+		
+		return sumOfOutgointEdgesRisk;
 	}
 
 
@@ -308,7 +356,7 @@ public class DriftPrediction {
 			sumOfOutgointEdgesRisk += prob_outgoingEdgesAdjusted[i] * sevOutgoingEdgesMean[i];
 		}
 		this.currentRisk = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
-		this.fromIndexCurrentIndexPair = fromIndex*10 + latestPatternIndex;
+		// this.currentRisk = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
 		return currentRisk;
 	}
 

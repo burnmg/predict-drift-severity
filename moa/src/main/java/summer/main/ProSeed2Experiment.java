@@ -1,6 +1,7 @@
 package summer.main;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,15 +43,7 @@ public class ProSeed2Experiment
 		
 		//put the experiment code here
 		
-		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
-		double transHigh = 0.75;
-		double transLow = 0.25;
-		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
-		
-		Double[][] severityEdges = {{null, new Double(0.5), new Double(1)}, 
-				{new Double(1.5), null, new Double(2)}, 
-				{new Double(3), new Double(4), null}
-		};
+
 		
 		
 		/*
@@ -68,7 +61,30 @@ public class ProSeed2Experiment
 				{new Double(2), null}};
 		*/
 		
-		double[] res = run(1992,0.01 ,states, networkTransitions, severityEdges, true, 100);
+		Pattern[] states = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
+		double transHigh = 0.75;
+		double transLow = 0.25;
+		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
+		
+		/*
+		Double[][] severityEdges = {{null, new Double(0.15), new Double(0.2)}, 
+				{new Double(0.25), null, new Double(0.3)}, 
+				{new Double(0.35), new Double(0.4), null}
+		};
+		*/
+		Double[][] severityEdges = {{null, new Double(0.4), new Double(0.35)}, 
+				{new Double(0.3), null, new Double(0.25)}, 
+				{new Double(0.2), new Double(0.15), null}
+		};
+		/*
+		run(1992,0.01 ,states, networkTransitions, severityEdges, true, 100, "1");
+		run(1993,0.01 ,states, networkTransitions, severityEdges, true, 100, "2");
+		run(1782,0.01 ,states, networkTransitions, severityEdges, true, 100, "3");
+		run(1882,0.01 ,states, networkTransitions, severityEdges, true, 100, "4");
+		run(901,0.01 ,states, networkTransitions, severityEdges, true, 100, "5");
+		*/
+		
+		run(901,0.01 ,states, networkTransitions, severityEdges, false, 100, "test");
 		re.end();
 	}
 	
@@ -89,7 +105,7 @@ public class ProSeed2Experiment
 		double confidence = 0.01;
 		while(confidence<0.5)
 		{
-			double[] res = run(53141,confidence ,states, networkTransitions, severityEdges, true, 50);
+			double[] res = run(53141,confidence ,states, networkTransitions, severityEdges, true, 50, "1");
 			writer.write(res[0]+","+res[1]+","+res[2]+"\n");
 			confidence += 0.01;
 		}
@@ -109,7 +125,7 @@ public class ProSeed2Experiment
 	 * @throws IOException
 	 */
 	public static double[] run(int seed, double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
-			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength) throws FileNotFoundException, IOException
+			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength, String id) throws FileNotFoundException, IOException
 	{
 		/*
 		 * START ProSeed Parameters 
@@ -134,14 +150,16 @@ public class ProSeed2Experiment
 		/*
 		 * END Network Stream Generator Parameters 
 		 */
-		
-		BufferedWriter dataWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/data.txt"));
-		BufferedWriter truedriftWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/truedrift.txt"));
-		BufferedWriter falsedriftWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/falsedrift.txt"));
-		BufferedWriter edgeWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/sortedEdge.txt"));
-		BufferedWriter actualEdgeWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/actualsortedEdge.txt"));
-		BufferedWriter riskWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/risk.txt"));
-		BufferedWriter patternWriter = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/patterns.txt"));
+		String directoryString  = "/Users/rl/Desktop/data/" + id;
+		File dir = new File(directoryString);
+		dir.mkdirs();
+		BufferedWriter dataWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile() + "/data"));
+		BufferedWriter truedriftWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile()+"/truedrift.txt"));
+		BufferedWriter falsedriftWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile()+"/falsedrift.txt"));
+		BufferedWriter edgeWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile()+"/sortedEdge.txt"));
+		BufferedWriter actualEdgeWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile()+"/actualsortedEdge.txt"));
+		BufferedWriter riskWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile()+"/risk.txt"));
+		BufferedWriter patternWriter = new BufferedWriter(new FileWriter(dir.getAbsoluteFile() +"/patterns.txt"));
 		
 		int printRate = 100;
 
@@ -159,7 +177,7 @@ public class ProSeed2Experiment
 		boolean positveDirft = false;
 		
 
-		int trainingStreamLength = streamLength*trainingNetworkStream.getStateTimeMean();
+		int trainingStreamLength = (int)(streamLength*trainingNetworkStream.getStateTimeMean());
 		// Trianing Phase
 		while(numBlocks < trainingStreamLength)
 		{
@@ -233,6 +251,7 @@ public class ProSeed2Experiment
 		instanceCount = 0;
 
 		int testingStreamLength = (int)1*trainingStreamLength;
+		//int testingStreamLength = 0;
 		while(numBlocks < testingStreamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();
