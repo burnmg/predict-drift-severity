@@ -51,9 +51,6 @@ public class ExperimentConfidenceNSeverity
 		// File dir = new File("/Users/rl/Desktop/Experiments/"+id);
 		// dir.mkdirs();
 		
-
-		
-		
 		DoubleStream stream = new DoubleStream(1992, 0, 1, 1);
 		int streamLength = 1000000;
 		int numDrift = 100;

@@ -40,13 +40,14 @@ public class ProSeed2 implements CutPointDetector
 	 * @throws FileNotFoundException
 	 */
 	public ProSeed2(int mergeParameter, int patternSize, double ksConfidence, int topK, SeedDetector VDdriftDetector,
-			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize, boolean useSimpleRiskMethod) throws FileNotFoundException, IOException
+			int VDSize, double VDconfidience, int learningPeriod, int severitySampeSize, boolean useSimpleRiskMethod,
+			double coefficientBeta) throws FileNotFoundException, IOException
 	{
 		numSamples = 0;
 		this.learningPeriod = learningPeriod;
 
 		// volatilityDetector
-		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK, severitySampeSize, useSimpleRiskMethod);
+		DriftPrediction driftPredictor = new DriftPrediction(3, patternSize, ksConfidence, topK, severitySampeSize, useSimpleRiskMethod, coefficientBeta);
 		
 		volatilityDetector = new RelativeVolatilityDetector(VDdriftDetector, VDSize, VDconfidience, driftPredictor);
 

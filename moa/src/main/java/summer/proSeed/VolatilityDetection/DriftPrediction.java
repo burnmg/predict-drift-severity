@@ -61,10 +61,12 @@ public class DriftPrediction {
     private Pattern currentPattern;
     private double[][] nextBounds;
     
-    private double currentRisk = 0;
+    private double currentEstimatedSeverity = 0;
     private double fromIndexCurrentIndexPair = 0;
     
     private boolean useSimpleRiskMethod;
+    
+    private double coefficientBeta;
     
     /**
      * 
@@ -74,12 +76,13 @@ public class DriftPrediction {
      * @param freqTransitions K for the top K.
      */
     public DriftPrediction(int m, int patternReservoirSize, double ksConfidence, int freqTransitions, int severitySampleSize
-    		, boolean useSimpleRiskMethod) {    	
+    		, boolean useSimpleRiskMethod, double coefficientBeta) {    	
     	patternReservoir = new PatternReservoir(patternReservoirSize, severitySampleSize);
     	patternReservoir.setMergeParameter(m);
     	ksDelta = ksConfidence;
     	numOfFrequentTransitions = freqTransitions;
     	this.useSimpleRiskMethod = useSimpleRiskMethod;
+    	this.coefficientBeta = coefficientBeta;
     }
     
     public void setSlopeCompression(double slope) {
@@ -210,7 +213,7 @@ public class DriftPrediction {
 		return this.patternReservoir.getNetwork().getEdges();
 	}
 	
-	private double computeRisk()
+	private double computeEstimatedSeverity()
 	{
 		if(useSimpleRiskMethod)
 		{
@@ -355,9 +358,9 @@ public class DriftPrediction {
 		{
 			sumOfOutgointEdgesRisk += prob_outgoingEdgesAdjusted[i] * sevOutgoingEdgesMean[i];
 		}
-		this.currentRisk = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
+		this.currentEstimatedSeverity = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
 		// this.currentRisk = prob_stay*sevIncomingEdge + prob_leave*sumOfOutgointEdgesRisk;
-		return currentRisk;
+		return currentEstimatedSeverity;
 	}
 
 	private static double[][] dataNormaisation(double[][] data)
@@ -387,16 +390,14 @@ public class DriftPrediction {
 	}
 	public double getThresholdCoefficient()
 	{
-		// TODO model this
-		
-		this.currentRisk= computeRisk();
-		// System.out.println(risk);
-		return currentRisk;
+		this.currentEstimatedSeverity = computeEstimatedSeverity();
+
+		return 0;
 	}
 	
 	public double getCurrentRisk()
 	{
-		return this.currentRisk;
+		return this.currentEstimatedSeverity;
 	}
 	
 	public double getFromIndexCurrentIndexPair()

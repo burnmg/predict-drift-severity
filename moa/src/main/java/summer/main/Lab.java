@@ -9,10 +9,6 @@ public class Lab
 
 	public static void main(String args[])
 	{
-		Random r = new Random();
-		if(Double.POSITIVE_INFINITY>Double.MAX_VALUE)
-		{
-			System.out.println(r.nextGaussian()+100);
-		}
+		double t = 1/;
 	}
 }

@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.Buffer;
 
 import org.rosuda.JRI.Rengine;
 import summer.proSeed.DriftDetection.ProSeed2;
@@ -18,7 +16,6 @@ import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.VolatilityDetection.DriftPrediction;
 import summer.proSeed.kylieExample.TextConsole;
-import testers.FalsePositiveTester;
 
 public class ProSeed2Experiment
 {
@@ -125,14 +122,14 @@ public class ProSeed2Experiment
 	 * @throws IOException
 	 */
 	public static double[] run(int seed, double detectorConfidence, Pattern[] patterns, double[][] networkTransitions
-			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength, String id) throws FileNotFoundException, IOException
+			, Double[][] actualSeverityEdges, boolean useSimpleRiskMethod, int streamLength, String id, double coefficientBeta) throws FileNotFoundException, IOException
 	{
 		/*
 		 * START ProSeed Parameters 
 		 */
 		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
 		ProSeed2 proSeed2 = new ProSeed2(3, 80, 0.05, 100, 
-				VDSeedDetector, 32, 0.05, 10, 2000, useSimpleRiskMethod);
+				VDSeedDetector, 32, 0.05, 10, 2000, useSimpleRiskMethod, coefficientBeta);
 		
 		/*
 		 * END ProSeed Parameters 
