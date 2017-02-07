@@ -18,6 +18,7 @@ public class SummerExperiment
 	StreamGenerator datastream;
 	long trainingStreamBlockLength;
 	long testingStreamBLockLength;
+	private boolean needTraining;
 
 	
 	public SummerExperiment(CutPointDetector detector, double detectorConfidence, StreamGenerator datastream,
@@ -38,6 +39,11 @@ public class SummerExperiment
 		
 	}
 	
+	public void setNeedTraining(boolean s)
+	{
+		this.needTraining = s;
+	}
+	
 	public double[] run()
 	{
 		boolean positveDirft = false;
@@ -45,7 +51,7 @@ public class SummerExperiment
 		// training
 		long instanceCount = 0;
 		long blockCount = 0;
-		while(blockCount<trainingStreamBlockLength)
+		while(blockCount<trainingStreamBlockLength && needTraining)
 		{
 			int blockLength = networkStream.generateNext();
 			for(int i=0;i<blockLength;i++)
@@ -54,7 +60,6 @@ public class SummerExperiment
 				detector.setInput(value);
 				
 				instanceCount++;
-				if(instanceCount>trainingStreamBlockLength) break;
 			}
 			
 			blockCount++; 
@@ -69,7 +74,7 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); // create one drift
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+trainingStreamBlockLength);
+			if(blockCount%100==0) System.out.println("training:"+blockCount+"/"+trainingStreamBlockLength);
 		}
 		
 		// testing
@@ -83,7 +88,7 @@ public class SummerExperiment
 		long numFalsePositive = 0;
 		long delay = 0;
 		
-		while(instanceCount<testingStreamBLockLength)
+		while(blockCount<testingStreamBLockLength)
 		{
 			int blockLength = networkStream.generateNext();
 			boolean detectedTrueDrift = false;
@@ -110,8 +115,8 @@ public class SummerExperiment
 				}
 				
 				instanceCount++;
-				if(instanceCount>testingStreamBLockLength) break;
 			}
+			
 			blockCount++; 
 			actualDriftPoint = instanceCount;
 			
@@ -126,15 +131,15 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); 
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+testingStreamBLockLength);
+			if(blockCount%100==0) System.out.println("testing:"+blockCount+"/"+testingStreamBLockLength);
 		}
 		
-		double fp = (double)numFalsePositive/testingStreamBLockLength;
-		double fn = ((double)numDetectedDrift-numTrueDrift)/testingStreamBLockLength;
+		double fp = (double)numFalsePositive/instanceCount;
+		double fn = ((double)blockCount-numTrueDrift)/instanceCount;
 		double dl = (double)delay/numTrueDrift;
 		
 		// confidence, FP, FN, DL
-		return new double[]{confidence, fp, fn, dl};
+		return new double[]{confidence, fp*100000, fn*100000, dl};
 	}
 
 }

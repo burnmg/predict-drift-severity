@@ -7,4 +7,5 @@ public interface StreamGenerator
 
 	void addDrift(double driftSeverity);
 
+	public void setSeed(int seed);
 }

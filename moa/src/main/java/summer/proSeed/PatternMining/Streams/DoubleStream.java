@@ -39,4 +39,11 @@ public class DoubleStream implements StreamGenerator
 	{
 		this.streamNoise += driftSeverity;
 	}
+
+	@Override
+	public void setSeed(int seed)
+	{
+		this.random = new Random(seed);
+		
+	}
 }
