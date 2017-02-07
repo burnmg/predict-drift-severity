@@ -2,6 +2,7 @@ package summer.main;
 
 import summer.proSeed.DriftDetection.CutPointDetector;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.StreamGenerator;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 
@@ -10,28 +11,30 @@ public class SummerExperiment
 	// detector setting TODO 
 	CutPointDetector detector;
 	double confidence; 
+	double detectorConfidence;
 	
 	// stream setting
-	ProbabilisticNetworkStream networkstream;
-	DoubleStream doubleStream;
-	int trainingStreamLength;
-	int testingStreamLength;
+	ProbabilisticNetworkStream networkStream;
+	StreamGenerator datastream;
+	long trainingStreamBlockLength;
+	long testingStreamBLockLength;
 
 	
-	public SummerExperiment(CutPointDetector detector, DoubleStream doubleStream,
-			int trainingStreamLength, int testStreamLength, int seed, 
+	public SummerExperiment(CutPointDetector detector, double detectorConfidence, StreamGenerator datastream,
+			long trainingStreamLength, long testStreamLength, int seed, 
 			double[][] networkTransitions, 	Pattern[] patterns, Double[][] severityEdges)
 	{
 		this.detector = detector;
-		this.doubleStream = doubleStream;
-		this.trainingStreamLength = trainingStreamLength;
-		this.testingStreamLength = testStreamLength;
+		this.datastream = datastream;
+		this.trainingStreamBlockLength = trainingStreamLength;
+		this.testingStreamBLockLength = testStreamLength;
+		this.detectorConfidence = detectorConfidence;
 		
 		// configure network stream 
-		networkstream = new ProbabilisticNetworkStream(networkTransitions, patterns, seed, severityEdges); // Abrupt Volatility Change
-		networkstream.networkNoise = 0; // percentage of transition noise
-		networkstream.setStateTimeMean(100); // set volatility interval of stream
-		networkstream.intervalNoise = 1; // patternNoiseFlag
+		networkStream = new ProbabilisticNetworkStream(networkTransitions, patterns, seed, severityEdges); // Abrupt Volatility Change
+		networkStream.networkNoise = 0; // percentage of transition noise
+		networkStream.setStateTimeMean(100); // set volatility interval of stream
+		networkStream.intervalNoise = 1; // patternNoiseFlag
 		
 	}
 	
@@ -42,31 +45,31 @@ public class SummerExperiment
 		// training
 		long instanceCount = 0;
 		long blockCount = 0;
-		while(instanceCount<trainingStreamLength)
+		while(blockCount<trainingStreamBlockLength)
 		{
 			int blockLength = networkStream.generateNext();
 			for(int i=0;i<blockLength;i++)
 			{
-				double value = doubleStream.generateNext();
+				double value = datastream.generateNext();
 				detector.setInput(value);
 				
 				instanceCount++;
-				if(instanceCount>trainingStreamLength) break;
+				if(instanceCount>trainingStreamBlockLength) break;
 			}
 			
 			blockCount++; 
 			
 			if(positveDirft)
 			{
-				doubleStream.addDrift(networkStream.getCurrentSeverity()); // create one drift
+				datastream.addDrift(networkStream.getCurrentSeverity()); // create one drift
 				positveDirft = false;
 			}
 			else
 			{
-				doubleStream.addDrift(-networkStream.getCurrentSeverity()); // create one drift
+				datastream.addDrift(-networkStream.getCurrentSeverity()); // create one drift
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+trainingStreamLength);
+			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+trainingStreamBlockLength);
 		}
 		
 		// testing
@@ -80,13 +83,13 @@ public class SummerExperiment
 		long numFalsePositive = 0;
 		long delay = 0;
 		
-		while(instanceCount<testingStreamLength)
+		while(instanceCount<testingStreamBLockLength)
 		{
 			int blockLength = networkStream.generateNext();
 			boolean detectedTrueDrift = false;
 			for(int i=0;i<blockLength;i++)
 			{
-				double value = doubleStream.generateNext();
+				double value = datastream.generateNext();
 				boolean drift = detector.setInput(value);
 				
 				if (drift)
@@ -107,7 +110,7 @@ public class SummerExperiment
 				}
 				
 				instanceCount++;
-				if(instanceCount>testingStreamLength) break;
+				if(instanceCount>testingStreamBLockLength) break;
 			}
 			blockCount++; 
 			actualDriftPoint = instanceCount;
@@ -115,19 +118,19 @@ public class SummerExperiment
 			// create one drift
 			if(positveDirft)
 			{
-				doubleStream.addDrift(networkStream.getCurrentSeverity()); 
+				datastream.addDrift(networkStream.getCurrentSeverity()); 
 				positveDirft = false;
 			}
 			else
 			{
-				doubleStream.addDrift(-networkStream.getCurrentSeverity()); 
+				datastream.addDrift(-networkStream.getCurrentSeverity()); 
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+testingStreamLength);
+			if(blockCount%100==0) System.out.println("training:"+instanceCount+"/"+testingStreamBLockLength);
 		}
 		
-		double fp = (double)numFalsePositive/testingStreamLength;
-		double fn = ((double)numDetectedDrift-numTrueDrift)/testingStreamLength;
+		double fp = (double)numFalsePositive/testingStreamBLockLength;
+		double fn = ((double)numDetectedDrift-numTrueDrift)/testingStreamBLockLength;
 		double dl = (double)delay/numTrueDrift;
 		
 		// confidence, FP, FN, DL

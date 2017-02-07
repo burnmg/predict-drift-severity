@@ -21,11 +21,13 @@ public class DoubleStream implements StreamGenerator
 		this.driftMag = driftMag;
 	}
 
+	@Override
 	public double generateNext()
 	{
 		return mean + streamNoise * random.nextGaussian();
 	}
-
+	
+	@Override
 	public void addDrift(double driftSeverity)
 	{
 		// this.mean += driftSeverity + driftNoise * random.nextGaussian();
