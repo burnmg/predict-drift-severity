@@ -283,16 +283,21 @@ public class DriftPrediction {
 		{
 			if(i!=latestPatternIndex) sum += prob_outgoingEdgesUnadjusted[i];
 		}
-		for(int i=0;i<prob_outgoingEdgesAdjusted.length;i++)
+		if(Math.abs(sum)>0.0001)
 		{
-			prob_outgoingEdgesAdjusted[i] = prob_outgoingEdgesUnadjusted[i]/sum;
+			for(int i=0;i<prob_outgoingEdgesAdjusted.length;i++)
+			{
+				prob_outgoingEdgesAdjusted[i] = prob_outgoingEdgesUnadjusted[i]/sum;
+			}
 		}
+
 		
 		sevOutgoingEdgesMean[latestPatternIndex] = 0;
 		double sumOfOutgointEdgesRisk = 0;
 		for(int i=0;i<sevOutgoingEdgesMean.length;i++)
 		{
 			sumOfOutgointEdgesRisk += prob_outgoingEdgesAdjusted[i] * sevOutgoingEdgesMean[i];
+			// System.out.println(prob_outgoingEdgesAdjusted[i]+":"+sevOutgoingEdgesMean[i]);
 		}
 		
 		return sumOfOutgointEdgesRisk;
@@ -391,8 +396,10 @@ public class DriftPrediction {
 	public double getThresholdCoefficient()
 	{
 		this.currentEstimatedSeverity = computeEstimatedSeverity();
-
-		return 0;
+		
+		// return 1 + coefficientBeta * (1-currentEstimatedSeverity);
+		return 1 + coefficientBeta * currentEstimatedSeverity;
+		// return 1 + (currentEstimatedSeverity);
 	}
 	
 	public double getCurrentRisk()

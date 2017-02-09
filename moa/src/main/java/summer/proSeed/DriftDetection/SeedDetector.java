@@ -79,11 +79,10 @@ public class SeedDetector implements CutPointDetector
 	BufferInterface warningBuffer; // unlimited size sliding window. 
 	BufferInterface preWarningBuffer; // fixed size sliding window
 	private int preWarningBufferSize;
-	private int coolingPeriod;
 	
 	private double previousSnapshot;
 	
-	private boolean adaptiveMode = false;
+	private boolean adaptiveMode = true;
 
 	
 	public SeedDetector(double delta, int blockSize)
@@ -92,6 +91,7 @@ public class SeedDetector implements CutPointDetector
 		this.defaultBlockSize = blockSize;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize);
+		
 	}
 
 	// return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75); // Seed Best
@@ -102,6 +102,7 @@ public class SeedDetector implements CutPointDetector
 		this.defaultBlockSize = blockSize;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize, decayMode, compressionMode, epsilonHat, alpha, term);
+	
 	}
 	
 	
@@ -130,7 +131,6 @@ public class SeedDetector implements CutPointDetector
 		warningBuffer = new UnlimitedBuffer(preWarningBufferSize); // assign a same size for warning buffer for optimisation.
 		this.preWarningBufferSize = preWarningBufferSize;
 		
-		this.coolingPeriod = coolingPeriod;
 	}
 
 
@@ -143,7 +143,7 @@ public class SeedDetector implements CutPointDetector
 			this.predictions = predictionModel.predictedDriftPostion;
 			if(this.predictions!=null)
 			{
-				this.maxMeanPrediction = findMaxMean(this.predictions); // update
+				 this.maxMeanPrediction = findMaxMean(this.predictions); // update
 				// maximum
 				// mean
 			}
@@ -217,13 +217,9 @@ public class SeedDetector implements CutPointDetector
 					// if find a drift.
 					// transform the DELTA with the coefficent
 					double threshold = getADWINBound(n0, n1, DELTA);
+				
 					
-					if(adaptiveMode )
-					{
-						threshold = thresholdCoefficient*threshold;
-					}
-					
-					if (samples%coolingPeriod==0 && diff > threshold)
+					if ( diff > threshold)
 					{
 						blnReduceWidth = true;
 						window.resetDecayIteration();
@@ -254,10 +250,6 @@ public class SeedDetector implements CutPointDetector
 						// severity = sigmoid(((u1/n1 - u0/n0) / ((n1+n0)/2)));
 						// severity = (u1/n1 - u0/n0) / ((n1+n0)/2);
 						
-						// reset
-						preWarningBuffer.addAll(warningBuffer);
-						preWarningBuffer.add(inputValue); // if there is a drift, add the inputValue to the preWarning buffer used in the future. 
-						warningBuffer.clear();
 						
 						/*
 						 * Snapshot approach
@@ -267,33 +259,19 @@ public class SeedDetector implements CutPointDetector
 						previousSnapshot = u1 / n1;
 						return true;
 					}
-					// else if (currently is warning)
-					else if(warning)
-					{
-						if(!keepWarning && diff>getADWINBound(n0, n1, WARNING_DELTA))
-						{
-							keepWarning = true;
-						}
-					}
-					// else if (currently is not warning)
-					else if(!warning && !warningFound && diff > getADWINBound(n0, n1, WARNING_DELTA))
-					{
-						warningFound = true;
-						keepWarning = true; // warning detected
-						setWarningFlags(true); // set warning flags		
-					}
 					
 					
-
 					cursor = cursor.getPrevious();
-				}
 				
-				if (keepWarning == false)
-				{
-					setWarningFlags(false); // reset warning flags
-					// reset warning buffer TODO
-					warningBuffer = new UnlimitedBuffer(preWarningBufferSize); 
+					
+					
 				}
+			
+
+				window.getHead().setPrevious(null);
+			
+				
+
 			}
 		}
 		
@@ -302,14 +280,7 @@ public class SeedDetector implements CutPointDetector
 			// window.checkCompression(); // block compression check
 		}
 		
-		if(warning)
-		{
-			warningBuffer.add(inputValue);
-		}
-		else
-		{
-			preWarningBuffer.add(inputValue);
-		}
+
 
 		return false;
 	}
@@ -325,7 +296,7 @@ public class SeedDetector implements CutPointDetector
 		double dd = Math.log(2 * Math.log(n) / delta);
 		double v = window.getVariance() / window.getWidth();
 		double m = (1 / (n0)) + (1 / (n1));
-		double epsilon = Math.sqrt(2 * m * v * dd) + (double) 2 / 3 * dd * m;
+		double epsilon = thresholdCoefficient * Math.sqrt(2 * m * v * dd) + (double) 2 / 3 * dd * m;
 
 		return epsilon;
 	}
@@ -342,24 +313,6 @@ public class SeedDetector implements CutPointDetector
 		errorWindow[windowPos] = (int) value;
 		pTotal += value;
 
-		if (instCount >= windowSize)
-		{
-			p = pTotal / windowSize;
-			s = Math.sqrt(p * (1 - p) / windowSize);
-			if ((p + s) < (pMin + sMin))
-			{
-				pMin = p;
-				sMin = s;
-			}
-		}
-
-		if ((p + s) > pMin + warningConfidence * sMin)
-		{
-			warning = true;
-		} else
-		{
-			warning = false;
-		}
 	}
 
 	public long getChecks()
@@ -382,6 +335,12 @@ public class SeedDetector implements CutPointDetector
 	public void setAdaptiveMode(boolean mode)
 	{
 		this.adaptiveMode = mode;
+	}
+
+	@Override
+	public boolean setInputWithTraining(double input)
+	{
+		return false;
 	}
 
 	

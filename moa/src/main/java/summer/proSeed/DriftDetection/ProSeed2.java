@@ -17,6 +17,7 @@ public class ProSeed2 implements CutPointDetector
 	RelativeVolatilityDetector volatilityDetector;
 	int numSamples;
 	int learningPeriod;
+	BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/coefficient"));
 
 	/**
 	 * 
@@ -89,6 +90,7 @@ public class ProSeed2 implements CutPointDetector
 		return volDrift;
 	}
 
+	@Override
 	public boolean setInputWithTraining(double input)
 	{
 		this.setTraining(input);
@@ -120,11 +122,21 @@ public class ProSeed2 implements CutPointDetector
 
 
 		
-		if(numSamples%100==0) 
+		if(volDrift) 
 		{
-			volatilityDetector.getDetector().setPredictions(predictionModel);
 			predictionModel.predictedDriftPostion = driftPrediction.predictNextCI(volDrift, timestep);
 			predictionModel.deltaCoefficient = driftPrediction.getThresholdCoefficient();
+		 	volatilityDetector.getDetector().setPredictions(predictionModel);
+		 	try
+			{
+				writer.write(predictionModel.deltaCoefficient+"\n");
+				writer.flush();
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		numSamples++;
 			
@@ -151,6 +163,7 @@ public class ProSeed2 implements CutPointDetector
 	public double getSeverity()
 	{
 		return volatilityDetector.getDetector().getSeverity();
+		
 	}
 
 	@Override

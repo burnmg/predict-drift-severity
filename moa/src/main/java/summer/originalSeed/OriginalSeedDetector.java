@@ -15,7 +15,7 @@ whether in an action in contract or tort, even if the authors have been
 advised of the possibility of such damages.
 */
 
-public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetector {
+public class OriginalSeedDetector implements summer.proSeed.DriftDetection.CutPointDetector {
 	public SeedWindow window;
 	private double DELTA;
 	private int defaultBlockSize;
@@ -26,14 +26,14 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 	public long checks;
 	public int warningCount = 0;
 
-	public SeedDetector(double delta, int blockSize) {
+	public OriginalSeedDetector(double delta, int blockSize) {
 		this.DELTA = delta;
 		this.defaultBlockSize = blockSize;
 		this.blockSize = blockSize;
 		this.window = new SeedWindow(blockSize);
 	}
 
-	public SeedDetector(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat,
+	public OriginalSeedDetector(double delta, int blockSize, int decayMode, int compressionMode, double epsilonHat,
 			double alpha, int term) {
 		this.DELTA = delta;
 		this.defaultBlockSize = blockSize;
@@ -133,8 +133,14 @@ public class SeedDetector implements summer.proSeed.DriftDetection.CutPointDetec
 	@Override
 	public void setPredictions(PredictionModel predictions)
 	{
-		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean setInputWithTraining(double input)
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

@@ -45,6 +45,13 @@ public class ADWINChangeDetector implements CutPointDetector {
 		
 	}
 
+	@Override
+	public boolean setInputWithTraining(double input)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }
 

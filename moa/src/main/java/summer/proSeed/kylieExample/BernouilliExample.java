@@ -107,11 +107,11 @@ public class BernouilliExample {
 		}
 	}
 
-	private summer.originalSeed.SeedDetector createOriginalSeed(String type) {
+	private summer.originalSeed.OriginalSeedDetector createOriginalSeed(String type) {
 		if (type.equals("best")) {
-			return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75); // Seed Best
+			return new summer.originalSeed.OriginalSeedDetector(0.05, 32, 1, 1, 0.01, 0.8, 75); // Seed Best
 		} else {
-			return new summer.originalSeed.SeedDetector(0.05, 32, 1, 1, 0.0025, 0.2, 75); // Seed Worst
+			return new summer.originalSeed.OriginalSeedDetector(0.05, 32, 1, 1, 0.0025, 0.2, 75); // Seed Worst
 		} 
 	}
 

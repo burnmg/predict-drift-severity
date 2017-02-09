@@ -81,7 +81,7 @@ public class ProSeed2Experiment
 		run(901,0.01 ,states, networkTransitions, severityEdges, true, 100, "5");
 		*/
 		
-		run(901,0.01 ,states, networkTransitions, severityEdges, false, 100, "test");
+		run(901,0.01 ,states, networkTransitions, severityEdges, false, 100, "test", 0.1);
 		re.end();
 	}
 	
@@ -102,7 +102,7 @@ public class ProSeed2Experiment
 		double confidence = 0.01;
 		while(confidence<0.5)
 		{
-			double[] res = run(53141,confidence ,states, networkTransitions, severityEdges, true, 50, "1");
+			// double[] res = run(53141,confidence ,states, networkTransitions, severityEdges, true, 50, "1");
 			writer.write(res[0]+","+res[1]+","+res[2]+"\n");
 			confidence += 0.01;
 		}
@@ -127,7 +127,7 @@ public class ProSeed2Experiment
 		/*
 		 * START ProSeed Parameters 
 		 */
-		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 0.1, 5, 1, 1, 0.01, 0.8, 75, 32, 200);
+		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 32);
 		ProSeed2 proSeed2 = new ProSeed2(3, 80, 0.05, 100, 
 				VDSeedDetector, 32, 0.05, 10, 2000, useSimpleRiskMethod, coefficientBeta);
 		
@@ -247,8 +247,8 @@ public class ProSeed2Experiment
 		numBlocks = 0;
 		instanceCount = 0;
 
-		int testingStreamLength = (int)1*trainingStreamLength;
-		//int testingStreamLength = 0;
+		//int testingStreamLength = (int)1*trainingStreamLength;
+		int testingStreamLength = 0;
 		while(numBlocks < testingStreamLength)
 		{
 			int streamInterval = trainingNetworkStream.generateNext();

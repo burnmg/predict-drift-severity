@@ -1,4 +1,3 @@
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +30,18 @@ public class SummerExperimentsMain
 		 */
 		
 		
-		ExecutorService pool = Executors.newFixedThreadPool(1);
+		ExecutorService pool = Executors.newFixedThreadPool(2);
+
+		// double[] cons = new double[]{0.05, 0.1, 0.15, 0.2, 0.25};
+		double[] betas = new double[]{0.1};
+		double[] cons = new double[]{0.05, 0.1};
+		// public SummerExperimentThreadUnit(double[] confidences, 
+		// double[] betas, int seed, int repeatTime, String detectorName, String fileName)
 		
-		Callable<Integer> task = new SummerExperimentThreadUnit(0.1, 2313 , 3, "ProSeed2");
-		task.call();
-		
-		// pool.submit(task);
+
+		// pool.submit(new SummerExperimentThreadUnit(cons, betas, 321, 2, "ProSeed2", "ProSeed"));
+		new SummerExperimentThreadUnit(cons, betas, 321, 2, "ProSeed1", "ProSeed1").call();
+
 		pool.shutdown();
 		
 		try
@@ -46,8 +51,9 @@ public class SummerExperimentsMain
 		{
 			e.printStackTrace();
 		}
+		System.out.println("Done!");
 		
-		re.stop();
+		re.end();
 
 	}
 

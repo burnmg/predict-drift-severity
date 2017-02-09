@@ -25,7 +25,7 @@ public class LinBernouilliExample {
 		/*
 		 * START ProSeed Parameters 
 		 */
-		summer.originalSeed.SeedDetector VDSeedDetector =new summer.originalSeed.SeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
+		summer.originalSeed.OriginalSeedDetector VDSeedDetector =new summer.originalSeed.OriginalSeedDetector(0.5, 32, 1, 1, 0.01, 0.8, 75);
 		ProSeed2 proSeed = new ProSeed2(3, 100, 0.05, 100, 
 				VDSeedDetector, 32, 0.5, 0, 200);
 		

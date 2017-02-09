@@ -3,14 +3,12 @@ package summer.main;
 import summer.proSeed.DriftDetection.CutPointDetector;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.StreamGenerator;
-import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 
 public class SummerExperiment
 {
 	// detector setting TODO 
 	CutPointDetector detector;
-	double confidence; 
 	double detectorConfidence;
 	
 	// stream setting
@@ -57,7 +55,7 @@ public class SummerExperiment
 			for(int i=0;i<blockLength;i++)
 			{
 				double value = datastream.generateNext();
-				detector.setInput(value);
+				detector.setInputWithTraining(value);
 				
 				instanceCount++;
 			}
@@ -74,7 +72,7 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); // create one drift
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("training:"+blockCount+"/"+trainingStreamBlockLength);
+			if(blockCount%100==0) System.out.println(Thread.currentThread().getId()+": training:"+blockCount+"/"+trainingStreamBlockLength);
 		}
 		
 		// testing
@@ -131,15 +129,16 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); 
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println("testing:"+blockCount+"/"+testingStreamBLockLength);
+			if(blockCount%500==0) System.out.println(Thread.currentThread().getId()+": testing:"+blockCount+"/"+testingStreamBLockLength);
 		}
 		
 		double fp = (double)numFalsePositive/instanceCount;
 		double fn = ((double)blockCount-numTrueDrift)/instanceCount;
 		double dl = (double)delay/numTrueDrift;
 		
-		// confidence, FP, FN, DL
-		return new double[]{confidence, fp*100000, fn*100000, dl};
+		System.out.println(blockCount);
+		// confidence, FP, FN, DL, TD
+		return new double[]{detectorConfidence, fp*100000, fn*100000, dl, numTrueDrift};
 	}
 
 }

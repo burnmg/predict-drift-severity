@@ -31,4 +31,6 @@ public interface CutPointDetector {
 	public void setPredictions(PredictionModel predictions);
 
 	boolean setInput(double input);
+
+	boolean setInputWithTraining(double input);
 }
