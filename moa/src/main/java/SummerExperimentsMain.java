@@ -1,3 +1,5 @@
+import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +15,7 @@ public class SummerExperimentsMain
 
 	public static void main(String[] args) throws Exception
 	{
+
 		/*
 		 * START Rengine
 		 */
@@ -29,20 +32,39 @@ public class SummerExperimentsMain
 		 * END Rengine
 		 */
 		
-		
-		ExecutorService pool = Executors.newFixedThreadPool(2);
+		ExecutorService pool = Executors.newFixedThreadPool(3);
 
-		// double[] cons = new double[]{0.05, 0.1, 0.15, 0.2, 0.25};
-		double[] betas = new double[]{0.1};
-		double[] cons = new double[]{0.05, 0.1};
+		double[] cons = new double[]{0.05, 0.1, 0.15, 0.2, 0.25};
+		// double[] cons = new double[]{0.05, 0.1};
 		// public SummerExperimentThreadUnit(double[] confidences, 
 		// double[] betas, int seed, int repeatTime, String detectorName, String fileName)
 		
 
-		// pool.submit(new SummerExperimentThreadUnit(cons, betas, 321, 2, "ProSeed2", "ProSeed"));
-		new SummerExperimentThreadUnit(cons, betas, 321, 2, "ProSeed1", "ProSeed1").call();
+		Random ran = new Random(5776);
+		
+		/**
+		 * ProSeed2
+		 */
+		
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.1}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.1"));
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.2}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.2"));
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.3}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.3"));
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.4}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.4"));
+		
+		/**
+		 * Seed and ADWIN
+		 */
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.0}, ran.nextInt(), 10, "ADWIN", "ADWIN"));
+		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.0}, ran.nextInt(), 10, "Seed", "Seed"));
 
+		/**
+		 * ProSeed1
+		 */
+		pool.submit(new SummerExperimentThreadUnit((double[]) Arrays.copyOfRange(cons, 0, 3), new double[]{0.0}, ran.nextInt(), 10, "ProSeed1", "ProSeed1.1"));
+		pool.submit(new SummerExperimentThreadUnit((double[]) Arrays.copyOfRange(cons, 3, cons.length), new double[]{0.0}, ran.nextInt(), 10, "ProSeed1", "ProSeed1.2"));
 		pool.shutdown();
+		
+		
 		
 		try
 		{
@@ -51,9 +73,10 @@ public class SummerExperimentsMain
 		{
 			e.printStackTrace();
 		}
-		System.out.println("Done!");
 		
 		re.end();
+		
+		System.out.println("Done!");
 
 	}
 

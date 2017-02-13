@@ -7,13 +7,18 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
+import org.rosuda.JRI.Rengine;
+
 import summer.originalSeed.OriginalSeedDetector;
 import summer.proSeed.DriftDetection.ADWINChangeDetector;
 import summer.proSeed.DriftDetection.CutPointDetector;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.Pattern;
+import summer.proSeed.PatternMining.StreamGenerator;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
+import summer.proSeed.PatternMining.Streams.GradualDoubleStream;
+import summer.proSeed.kylieExample.TextConsole;
 
 public class SummerExperimentThreadUnit implements Callable<Integer>
 {
@@ -38,34 +43,72 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 	@Override
 	public Integer call() throws Exception
 	{
+
+		
 		BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/rl/Desktop/experiments/"+fileName+".csv"));
 		// confidence, FP, FN, DL
 		writer.write("detectorName,repeatID,beta,confidence,FP,FN,DL,TD\n");
 
-		/*
-		Double[][] severityEdges = {{null, new Double(0.05), new Double(0.1)}, 
-				{new Double(0.15), null, new Double(0.2)}, 
-				{new Double(0.25), new Double(0.3), null}
-		};
-		*/
 		// set network
+		/**
+		 * 3 patterns
+		 */
+		/*
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
 		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
-
-	
-		/*
-		Double[][] severityEdges = {{null, new Double(0.2), new Double(0.3)}, 
-				{new Double(0.4), null, new Double(0.5)}, 
-				{new Double(0.6), new Double(0.7), null}
-		};
-		*/
 		
 		Double[][] severityEdges = {{null, new Double(1), new Double(2)}, 
 				{new Double(3), null, new Double(4)}, 
 				{new Double(5), new Double(6), null}
 		};
+		*/
+		
+		/**
+		 * 5 patterns
+		 */
+		/*
+		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100), new Pattern(4000, 100), new Pattern(5000, 100)};
+		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.2, 0.2, 0.4, 0.2});
+		Double[][] severityEdges = PatternGenerator.generateEdges(1, 0.5, 5);
+		*/
+		
+		/**
+		 * 10 patterns
+		 */
+		/*
+		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(1500, 100), new Pattern(2000, 100), new Pattern(2500, 100), new Pattern(3000, 100), 
+				new Pattern(3500, 100), new Pattern(4000, 100), new Pattern(4500, 100), new Pattern(5000, 100), new Pattern(5500, 100)
+		};
+		
+		
+		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.1, 0.1, 0.15, 0.1, 0.15, 0.1, 0.1, 0.1, 0.1});
+		Double[][] severityEdges = PatternGenerator.generateEdges(1, 0.25, 10);
+		*/
+		
+		/**
+		 * 3 patterns Bernuoli
+		 */
+		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
+		double transHigh = 0.75;
+		double transLow = 0.25;
+		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
+		
+		Double[][] severityEdges = {{null, new Double(0.3), new Double(0.4)}, 
+				{new Double(0.5), null, new Double(0.6)}, 
+				{new Double(0.7), new Double(0.8), null}
+		};
+		
+		
+		/**
+		 * 5 patterns Bernuoli
+		 */
+		
+		/**
+		 * 10 patterns Bernuoli
+		 */
+		
 		
 		for(int i=0;i<confidences.length;i++)
 		{
@@ -75,23 +118,23 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		
 
 		writer.close();
-
+	
 		return null;
 	}
 	
 	public void runWithOneConfidence(double confidence, double beta, Pattern[] patterns, double[][] networkTransitions, Double[][] severityEdges, BufferedWriter writer) throws FileNotFoundException, IOException
 	{
 		Random random = new Random(seed);
-		int blockLength = 5000;
+		int blockLength = 50000;
 		
 		// loop start here
 		for(int i=0;i<this.repeatTime;i++)
 		{
 			System.out.println(detectorName+":"+i);
 			seed = random.nextInt();
-			DoubleStream dataStream = new DoubleStream(random.nextInt(), 0, 1, 1);
+			// StreamGenerator dataStream = new DoubleStream(random.nextInt(), 0.05, 1, 1);
+			StreamGenerator dataStream = new GradualDoubleStream(random.nextInt(), 0.05, 1, 1, 100);
 			SummerExperiment experiment = null;
-			
 			double detectorConfidence = confidence;
 			
 			CutPointDetector detector = null;

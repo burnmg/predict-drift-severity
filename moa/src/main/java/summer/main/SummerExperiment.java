@@ -72,7 +72,7 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); // create one drift
 				positveDirft = true;
 			}
-			if(blockCount%100==0) System.out.println(Thread.currentThread().getId()+": training:"+blockCount+"/"+trainingStreamBlockLength);
+			if(blockCount%1000==0) System.out.println(Thread.currentThread().getId()+": training:"+blockCount+"/"+trainingStreamBlockLength);
 		}
 		
 		// testing
@@ -129,7 +129,7 @@ public class SummerExperiment
 				datastream.addDrift(-networkStream.getCurrentSeverity()); 
 				positveDirft = true;
 			}
-			if(blockCount%500==0) System.out.println(Thread.currentThread().getId()+": testing:"+blockCount+"/"+testingStreamBLockLength);
+			if(blockCount%1000==0) System.out.println(Thread.currentThread().getId()+": testing:"+blockCount+"/"+testingStreamBLockLength);
 		}
 		
 		double fp = (double)numFalsePositive/instanceCount;

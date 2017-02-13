@@ -13,6 +13,7 @@ import java.util.Random;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.rosuda.JRI.Rengine;
 
 import lin.test.test;
@@ -24,6 +25,7 @@ import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
 import summer.proSeed.PatternMining.Streams.DoubleStream;
+import summer.proSeed.PatternMining.Streams.GradualDoubleStream;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
 import summer.proSeed.VolatilityDetection.RelativeVolatilityDetector;
 import summer.proSeed.kylieExample.TextConsole;
@@ -33,23 +35,24 @@ public class Main
 
 	public static void main(String[] args) throws IOException
 	{
-
-
-		String[] reArgs = new String[]{"--save"};
-		Rengine re = new Rengine(reArgs, false, new TextConsole());
-		System.out.println("Rengine created, waiting for R");
-		// the engine creates R is a new thread, so we should wait until it's ready
+		testGradualDoubleStream();
+	}
+	
+	public static void testGradualDoubleStream() throws IOException
+	{
+		GradualDoubleStream stream = new GradualDoubleStream(3213, 0, 0, 1, 100);
+		BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/rl/Desktop/data/data.txt"));
 		
-		if (!re.waitForR()) {
-			System.out.println("Cannot load R");
-			return;
+		for(int i=0; i<2000;i++)
+		{
+			if(i==500) stream.addDrift(1);
+			if(i==1500) stream.addDrift(-1);
+			writer.write(stream.generateNext() + "\n");
 		}
-		Pattern.setRengine(re);
 		
-		// Set R Engine END 
-		testDataNormaisation();
+		writer.close();
 		
-		re.end();
+		
 	}
 	
 	public static void testDataNormaisation()

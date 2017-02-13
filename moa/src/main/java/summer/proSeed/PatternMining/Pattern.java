@@ -122,18 +122,21 @@ public class Pattern implements Comparable<Pattern> {
 	}
 
 	private double getStatistic(double[] x, double[] y) {
-		long xVec = re.rniPutDoubleArray(x);
-		re.rniAssign("a", xVec, 0);
-		long yVec = re.rniPutDoubleArray(y);
-		re.rniAssign("b", yVec, 0);
-		REXP ans = re.eval("ks.test(a, b)");
-	
+		synchronized (re)
+		{
+			long xVec = re.rniPutDoubleArray(x);
+			re.rniAssign("a", xVec, 0);
+			long yVec = re.rniPutDoubleArray(y);
+			re.rniAssign("b", yVec, 0);
+			REXP ans = re.eval("ks.test(a, b)");
 		
-		RList ansList = ans.asList();
-		REXP rStat = ansList.at("statistic");
-		double stat = rStat.asDouble();
-
-		return stat;
+			
+			RList ansList = ans.asList();
+			REXP rStat = ansList.at("statistic");
+			double stat = rStat.asDouble();
+			return stat;
+		}
+		
 	}
 
 	public void addData(double[] extraData, int length) {

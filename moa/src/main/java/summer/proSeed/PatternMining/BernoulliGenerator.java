@@ -24,7 +24,6 @@ import java.util.Random;
 public class BernoulliGenerator implements StreamGenerator {
 
     private final int DEFAULT_SEED = 666;
-    private boolean lowMean;
 
     private int randomSeed;
     private Random random;
@@ -34,15 +33,11 @@ public class BernoulliGenerator implements StreamGenerator {
     private int streamLength = Integer.MAX_VALUE;
     private double noiseProb;
 
-    private final double MEAN_HIGH = 0.8;
-    private final double MEAN_LOW = 0.2;
-
     public BernoulliGenerator(double prob) {
         sample = 0;
         p = prob;
         randomSeed = DEFAULT_SEED;
         random = new Random(DEFAULT_SEED);
-        lowMean = true;
         noiseProb = 0.0;
     }
 
@@ -51,7 +46,6 @@ public class BernoulliGenerator implements StreamGenerator {
         p = prob;
         randomSeed = seed;
         random = new Random(seed);
-        lowMean = true;
         noiseProb = 0.0;
     }
 
@@ -60,30 +54,13 @@ public class BernoulliGenerator implements StreamGenerator {
         p = prob;
         randomSeed = seed;
         random = new Random(seed);
-        lowMean = true;
         noiseProb = noise;
     }
 
-    public void swapMean() {
-        if (lowMean) {
-            lowMean = false; // change mean from low to high
-            p = MEAN_HIGH;
-        } else {
-            lowMean = true; // change mean from high to low
-            p = MEAN_LOW;
-        }
-    }
+
 
     public double getMean() {
         return p;
-    }
-
-    public boolean getLowMean() {
-        return lowMean;
-    }
-
-    public void setLowMean(boolean b) {
-        lowMean = b;
     }
 
     public void setMean(double prob) {
@@ -117,7 +94,8 @@ public class BernoulliGenerator implements StreamGenerator {
         return false;
     }
 
-    public int generateNext() {
+    @Override
+    public double generateNext() {
         int output;
         double rand = this.random.nextDouble();
         sample++;
@@ -144,4 +122,18 @@ public class BernoulliGenerator implements StreamGenerator {
         this.random = new Random(this.randomSeed);
         sample = 0;
     }
+
+	@Override
+	public void addDrift(double driftSeverity)
+	{
+		p = p + driftSeverity;
+		if(p>1) p = 1;
+		if(p<0) p = 0;		
+	}
+
+	@Override
+	public void setSeed(int seed)
+	{
+		random = new Random(seed);	
+	}
 }

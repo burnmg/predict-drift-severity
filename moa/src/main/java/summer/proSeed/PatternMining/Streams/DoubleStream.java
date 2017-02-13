@@ -1,9 +1,6 @@
 package summer.proSeed.PatternMining.Streams;
 
 import java.util.Random;
-
-import javax.print.attribute.standard.Severity;
-
 import summer.proSeed.PatternMining.StreamGenerator;
 
 public class DoubleStream implements StreamGenerator
@@ -12,6 +9,8 @@ public class DoubleStream implements StreamGenerator
 	private double streamNoise;
 	private double driftMag;
 	private Random random;
+	
+
 
 	public DoubleStream(int ranSeed, double mean, double streamNoise, double driftMag)
 	{
@@ -20,6 +19,7 @@ public class DoubleStream implements StreamGenerator
 		this.streamNoise = streamNoise;
 		this.driftMag = driftMag;
 	}
+	
 
 	@Override
 	public double generateNext()
