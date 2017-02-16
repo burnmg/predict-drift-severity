@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.rosuda.JRI.Rengine;
 
+import summer.main.PatternGenerator;
 import summer.main.SummerExperimentThreadUnit;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.kylieExample.TextConsole;
@@ -31,21 +32,20 @@ public class SummerExperimentsMain
 		/*
 		 * END Rengine
 		 */
+		int repeatTime = 10;
 		
-		ExecutorService pool = Executors.newFixedThreadPool(3);
+		ExecutorService pool = Executors.newFixedThreadPool(8);
 
 		double[] cons = new double[]{0.05, 0.1, 0.15, 0.2, 0.25};
-		// double[] cons = new double[]{0.05, 0.1};
-		// public SummerExperimentThreadUnit(double[] confidences, 
-		// double[] betas, int seed, int repeatTime, String detectorName, String fileName)
-		
-
 		Random ran = new Random(5776);
 		
-		/**
-		 * ProSeed2
-		 */
+		// 5 patterns
 		
+		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100),new Pattern(4000, 100),new Pattern(5000, 100)};
+		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.2, 0.2, 0.4, 0.2});
+		
+		Double[][] severityEdges = PatternGenerator.generateEdgesHighLow(0.3, 0.8, 5);
+
 		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.1}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.1"));
 		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.2}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.2"));
 		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.3}, ran.nextInt(), 10, "ProSeed2", "ProSeed2 beta0.3"));
@@ -54,18 +54,22 @@ public class SummerExperimentsMain
 		/**
 		 * Seed and ADWIN
 		 */
+		
 		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.0}, ran.nextInt(), 10, "ADWIN", "ADWIN"));
 		pool.submit(new SummerExperimentThreadUnit(cons, new double[]{0.0}, ran.nextInt(), 10, "Seed", "Seed"));
-
 		/**
 		 * ProSeed1
 		 */
+		
 		pool.submit(new SummerExperimentThreadUnit((double[]) Arrays.copyOfRange(cons, 0, 3), new double[]{0.0}, ran.nextInt(), 10, "ProSeed1", "ProSeed1.1"));
 		pool.submit(new SummerExperimentThreadUnit((double[]) Arrays.copyOfRange(cons, 3, cons.length), new double[]{0.0}, ran.nextInt(), 10, "ProSeed1", "ProSeed1.2"));
+		
+		
 		pool.shutdown();
+
 		
-		
-		
+
+
 		try
 		{
 			pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);

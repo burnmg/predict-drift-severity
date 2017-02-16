@@ -6,19 +6,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.Callable;
-
-import org.rosuda.JRI.Rengine;
-
 import summer.originalSeed.OriginalSeedDetector;
 import summer.proSeed.DriftDetection.ADWINChangeDetector;
 import summer.proSeed.DriftDetection.CutPointDetector;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
+import summer.proSeed.PatternMining.BinomialGenerator;
+import summer.proSeed.PatternMining.CumulativeBernuoliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.StreamGenerator;
-import summer.proSeed.PatternMining.Streams.DoubleStream;
 import summer.proSeed.PatternMining.Streams.GradualDoubleStream;
-import summer.proSeed.kylieExample.TextConsole;
+
 
 public class SummerExperimentThreadUnit implements Callable<Integer>
 {
@@ -29,6 +27,9 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 	private String detectorName;
 	private int repeatTime;
 	private String fileName;
+	private Pattern[] patterns;
+	double[][] networkTransitions;
+	Double[][] severityEdges;
 	
 	public SummerExperimentThreadUnit(double[] confidences, double[] betas, int seed, int repeatTime, String detectorName, String fileName)
 	{
@@ -39,6 +40,20 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		this.fileName = fileName;
 		this.betas = betas;
 	}
+	
+	public SummerExperimentThreadUnit(double[] confidences, double[] betas, int seed, int repeatTime, String detectorName, String fileName, 
+			Pattern[] patterns, double[][] network, Double[][] severity)
+	{
+		this.confidences = confidences;
+		this.seed = seed;
+		this.detectorName = detectorName;
+		this.repeatTime = repeatTime;
+		this.fileName = fileName;
+		this.betas = betas;
+		this.patterns = patterns;
+		this.networkTransitions = network;
+		this.severityEdges = severity;
+	}
 
 	@Override
 	public Integer call() throws Exception
@@ -47,13 +62,13 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/rl/Desktop/experiments/"+fileName+".csv"));
 		// confidence, FP, FN, DL
-		writer.write("detectorName,repeatID,beta,confidence,FP,FN,DL,TD\n");
+		writer.write("detectorName,repeatID,beta,confidence,FP,FN,DL,TD,COUNT\n");
 
 		// set network
 		/**
 		 * 3 patterns
 		 */
-		/*
+		
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
@@ -63,7 +78,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 				{new Double(3), null, new Double(4)}, 
 				{new Double(5), new Double(6), null}
 		};
-		*/
+		
 		
 		/**
 		 * 5 patterns
@@ -90,15 +105,17 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		/**
 		 * 3 patterns Bernuoli
 		 */
+		/*
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
 		double[][] networkTransitions = { { 0, transHigh, transLow }, { transLow, 0, transHigh }, { transHigh, transLow, 0 } };
 		
-		Double[][] severityEdges = {{null, new Double(0.3), new Double(0.4)}, 
-				{new Double(0.5), null, new Double(0.6)}, 
-				{new Double(0.7), new Double(0.8), null}
+		Double[][] severityEdges = {{null, new Double(0.2), new Double(0.3)}, 
+				{new Double(0.4), null, new Double(0.5)}, 
+				{new Double(0.6), new Double(0.7), null}
 		};
+		*/
 		
 		
 		/**
@@ -132,8 +149,12 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		{
 			System.out.println(detectorName+":"+i);
 			seed = random.nextInt();
-			// StreamGenerator dataStream = new DoubleStream(random.nextInt(), 0.05, 1, 1);
+			
+			//StreamGenerator dataStream = new DoubleStream(random.nextInt(), 0.05, 1, 1);
 			StreamGenerator dataStream = new GradualDoubleStream(random.nextInt(), 0.05, 1, 1, 100);
+			//StreamGenerator dataStream = new BernoulliGenerator(0.5);
+			//StreamGenerator dataStream = new CumulativeBernuoliGenerator(0.5, 100, seed);
+			//StreamGenerator dataStream = new BinomialGenerator(100, 0.5, 1);
 			SummerExperiment experiment = null;
 			double detectorConfidence = confidence;
 			
@@ -170,8 +191,8 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 				experiment.setNeedTraining(true);
 			}
 			double[] res = experiment.run();
-			// detectorName, repeatID, beta, confidence, FP, FN, DL
-			writer.write(String.format("%s,%d,%f,%f,%f,%f,%f,%f\n", detectorName, i, beta, res[0], res[1], res[2], res[3], res[4]));
+			// detectorName, repeatID, beta, confidence, FP, FN, DL, true positive rate, instance count
+			writer.write(String.format("%s,%d,%f,%f,%f,%f,%f,%f,%f\n", detectorName, i, beta, res[0], res[1], res[2], res[3], res[4], res[5]));
 			
 		}
 

@@ -1,6 +1,11 @@
 package summer.main;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import summer.proSeed.DriftDetection.CutPointDetector;
+import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.StreamGenerator;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
@@ -42,8 +47,19 @@ public class SummerExperiment
 		this.needTraining = s;
 	}
 	
-	public double[] run()
+	public double[] run() 
 	{
+		BufferedWriter wrtier = null;
+		
+		try
+		{
+			wrtier = new BufferedWriter(new FileWriter("/Users/rl/Desktop/severity.txt"));
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		boolean positveDirft = false;
 		
 		// training
@@ -95,6 +111,7 @@ public class SummerExperiment
 				double value = datastream.generateNext();
 				boolean drift = detector.setInput(value);
 				
+				
 				if (drift)
 				{
 					// if it is false drift
@@ -109,8 +126,11 @@ public class SummerExperiment
 						detectedTrueDrift = true;
 					} 
 					
+
+					
 					numDetectedDrift++;
 				}
+				
 				
 				instanceCount++;
 			}
@@ -137,8 +157,19 @@ public class SummerExperiment
 		double dl = (double)delay/numTrueDrift;
 		
 		System.out.println(blockCount);
+		
+		try
+		{
+			wrtier.close();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// confidence, FP, FN, DL, TD
-		return new double[]{detectorConfidence, fp*100000, fn*100000, dl, numTrueDrift};
+		return new double[]{detectorConfidence, fp*100000, fn*100000, dl, numTrueDrift, instanceCount};
+		
 	}
 
 }

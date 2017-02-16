@@ -21,6 +21,8 @@ import summer.magSeed.MagSeed;
 import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.DriftDetection.SeedDetector;
 import summer.proSeed.PatternMining.BernoulliGenerator;
+import summer.proSeed.PatternMining.BinomialGenerator;
+import summer.proSeed.PatternMining.CumulativeBernuoliGenerator;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.Network.ProbabilisticNetwork;
 import summer.proSeed.PatternMining.Network.SeveritySamplingEdgeInterface;
@@ -35,7 +37,40 @@ public class Main
 
 	public static void main(String[] args) throws IOException
 	{
-		testGradualDoubleStream();
+		testBinomialGenerator();
+	}
+	
+	public static void testBinomialGenerator()
+	{
+		BinomialGenerator g = new BinomialGenerator(100, 0.5, 1993);
+		
+				for(int i=0;i<100;i++)
+				{
+					System.out.println(g.generateNext());
+				}
+				g.addDrift(1);
+				for(int i=0;i<100;i++)
+				{
+					System.out.println(g.generateNext());
+				}
+	}
+	public static void testPatternGenerator()
+	{
+		Double[][] severity = PatternGenerator.generateEdgesHighLow(0.2, 0.8, 5);
+		int t = 0;
+	}
+	public static void testCumulativeBernuoliGenerator()
+	{
+		CumulativeBernuoliGenerator g = new CumulativeBernuoliGenerator(0.2, 100, 32131);
+		for(int i=0;i<100;i++)
+		{
+			System.out.println(g.generateNext());
+		}
+		g.addDrift(1);
+		for(int i=0;i<100;i++)
+		{
+			System.out.println(g.generateNext());
+		}
 	}
 	
 	public static void testGradualDoubleStream() throws IOException

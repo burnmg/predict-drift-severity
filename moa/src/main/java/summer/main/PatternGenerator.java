@@ -52,7 +52,7 @@ public class PatternGenerator
 	}
 	
 	// different algorithm from the generateNetworkProb
-	public static Double[][] generateEdges(double startSeverity, double step, int patternCount)
+	public static Double[][] generateEdgesIncremental(double startSeverity, double step, int patternCount)
 	{
 		
 		Double[][] edges = new Double[patternCount][patternCount];
@@ -70,6 +70,38 @@ public class PatternGenerator
 				{
 					edges[i][j] = severity;
 					severity += step;
+				}
+			}
+		}
+		
+		return edges;
+	}
+	
+	public static Double[][] generateEdgesHighLow(double high, double low, int patternCount)
+	{
+		
+		Double[][] edges = new Double[patternCount][patternCount];
+		boolean isHigh = false;
+		for(int i=0;i<edges.length;i++)
+		{
+			
+			for(int j=0;j<edges[0].length;j++)
+			{
+				if(i==j)
+				{
+					edges[i][j] = null;
+				}
+				else
+				{
+					if(isHigh)
+					{
+						edges[i][j] = low;
+						isHigh = false;
+					}else {
+						edges[i][j] = high;
+						isHigh = true;
+					}
+					
 				}
 			}
 		}
