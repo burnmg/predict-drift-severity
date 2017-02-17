@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import summer.proSeed.DriftDetection.CutPointDetector;
-import summer.proSeed.DriftDetection.ProSeed2;
 import summer.proSeed.PatternMining.Pattern;
 import summer.proSeed.PatternMining.StreamGenerator;
 import summer.proSeed.PatternMining.Streams.ProbabilisticNetworkStream;
