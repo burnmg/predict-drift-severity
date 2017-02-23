@@ -1,5 +1,6 @@
 # About
-Predict Drift Severity
+Predict Drift Severity.
+Project sources are in packagle "summer"
 
 # MOA (Massive Online Analysis)
 
