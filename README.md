@@ -1,6 +1,6 @@
 # About
 Predict Drift Severity.
-Project sources are in packagle "summer"
+Project sources are in package "summer"
 
 # MOA (Massive Online Analysis)
 
