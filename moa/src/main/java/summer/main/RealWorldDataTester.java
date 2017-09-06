@@ -33,9 +33,9 @@ public class RealWorldDataTester
 		/*
 		 * END Rengine
 		 */
-		String stream = "/Users/rl/Desktop/errorRates forest.csv";
-		String PRESSdriftWriterDir = "/Users/rl/Desktop/press.csv";
-		String ADWINdriftWriterDir = "/Users/rl/Desktop/adwin.csv";
+		String stream = "/Users/rl/Desktop/forest error.csv";
+		String PRESSdriftWriterDir = "/Users/rl/Desktop/forest_press.csv";
+		String ADWINdriftWriterDir = "/Users/rl/Desktop/forest_adwin.csv";
 		double detectorConfidence = 0.15;
 		double beta = 1;
 		SeedDetector VDSeedDetector = new SeedDetector(detectorConfidence, 32);

@@ -70,7 +70,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		 * 3 patterns
 		 */
 		
-		/*
+		
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
@@ -80,21 +80,23 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 				{new Double(3), null, new Double(4)}, 
 				{new Double(5), new Double(6), null}
 		};
-		*/
+		
 		
 		/**
 		 * 5 patterns
 		 */
+		
 		/*
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100), new Pattern(4000, 100), new Pattern(5000, 100)};
 		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.2, 0.2, 0.4, 0.2});
-		Double[][] severityEdges = PatternGenerator.generateEdges(1, 0.5, 5);
+		Double[][] severityEdges = PatternGenerator.generateEdgesIncremental(1, 0.5, 5);
 		*/
 		
 		/**
 		 * 10 patterns
 		 */
 		
+		/*
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(1500, 100), new Pattern(2000, 100), new Pattern(2500, 100), new Pattern(3000, 100), 
 				new Pattern(3500, 100), new Pattern(4000, 100), new Pattern(4500, 100), new Pattern(5000, 100), new Pattern(5500, 100)
 		};
@@ -102,7 +104,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		
 		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.1, 0.1, 0.15, 0.1, 0.15, 0.1, 0.1, 0.1, 0.1});
 		Double[][] severityEdges = PatternGenerator.generateEdgesIncremental(1, 0.25, 10);
-		
+		*/
 		
 		/**
 		 * 3 patterns Bernuoli
@@ -129,10 +131,11 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		 */
 		
 		
+		boolean isOnline = true;
 		for(int i=0;i<confidences.length;i++)
 		{
 			for(int j=0;j<betas.length;j++)
-			runWithOneConfidence(confidences[i], betas[j], patterns, networkTransitions, severityEdges, writer);
+			runWithOneConfidence(confidences[i], betas[j], patterns, networkTransitions, severityEdges, writer, isOnline);
 		}
 		
 
@@ -141,7 +144,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		return null;
 	}
 	
-	public void runWithOneConfidence(double confidence, double beta, Pattern[] patterns, double[][] networkTransitions, Double[][] severityEdges, BufferedWriter writer) throws FileNotFoundException, IOException
+	public void runWithOneConfidence(double confidence, double beta, Pattern[] patterns, double[][] networkTransitions, Double[][] severityEdges, BufferedWriter writer, boolean isOnline) throws FileNotFoundException, IOException
 	{
 		Random random = new Random(seed);
 		int blockLength = 50000;
@@ -192,7 +195,18 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 			{
 				experiment.setNeedTraining(true);
 			}
-			double[] res = experiment.run();
+			
+			double[] res = null;
+			if(isOnline)
+			{
+				res = experiment.runOnlinePRESS();
+			}
+			else
+			{
+				res = experiment.run();
+			}
+			
+			
 			// detectorName, repeatID, beta, confidence, FP, FN, DL, true positive rate, instance count
 			writer.write(String.format("%s,%d,%f,%f,%f,%f,%f,%f,%f\n", detectorName, i, beta, res[0], res[1], res[2], res[3], res[4], res[5]));
 			
