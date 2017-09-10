@@ -64,18 +64,19 @@ public class SummerExperimentsMain
 		 * 
 		 */
 		
+		double beta = 0.6;
 		
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.05}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.05 set1"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.1}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.1 set1"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.15}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.15 set1"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.2}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.2 set1"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.25}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.25 set1"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.05}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.05 set1"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.1}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.1 set1"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.15}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.15 set1"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.2}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.2 set1"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.25}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.25 set1"));
 
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.05}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.05 set2"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.1}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.1 set2"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.15}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.15 set2"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.2}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.2 set2"));
-		pool.submit(new SummerExperimentThreadUnit(new double[]{0.25}, new double[]{0.6}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.25 set2"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.05}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.05 set2"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.1}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.1 set2"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.15}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.15 set2"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.2}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.2 set2"));
+		pool.submit(new SummerExperimentThreadUnit(new double[]{0.25}, new double[]{beta}, ran.nextInt(), repeatTime, "ProSeed2", "PRESS beta0.6 conf 0.25 set2"));
 		
 		
 		/**

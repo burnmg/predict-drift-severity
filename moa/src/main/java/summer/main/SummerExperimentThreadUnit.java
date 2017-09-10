@@ -70,7 +70,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		 * 3 patterns
 		 */
 		
-		
+		/*
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(2000, 100), new Pattern(3000, 100)};
 		double transHigh = 0.75;
 		double transLow = 0.25;
@@ -81,7 +81,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 				{new Double(5), new Double(6), null}
 		};
 		
-		
+		*/
 		/**
 		 * 5 patterns
 		 */
@@ -96,7 +96,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		 * 10 patterns
 		 */
 		
-		/*
+		
 		Pattern[] patterns = { new Pattern(1000, 100), new Pattern(1500, 100), new Pattern(2000, 100), new Pattern(2500, 100), new Pattern(3000, 100), 
 				new Pattern(3500, 100), new Pattern(4000, 100), new Pattern(4500, 100), new Pattern(5000, 100), new Pattern(5500, 100)
 		};
@@ -104,7 +104,7 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 		
 		double[][] networkTransitions = PatternGenerator.generateNetworkProb(new double[]{0.1, 0.1, 0.15, 0.1, 0.15, 0.1, 0.1, 0.1, 0.1});
 		Double[][] severityEdges = PatternGenerator.generateEdgesIncremental(1, 0.25, 10);
-		*/
+		
 		
 		/**
 		 * 3 patterns Bernuoli
@@ -155,8 +155,10 @@ public class SummerExperimentThreadUnit implements Callable<Integer>
 			System.out.println(detectorName+":"+i);
 			seed = random.nextInt();
 			
-			StreamGenerator dataStream = new DoubleStream(random.nextInt(), 0.05, 1, 1);
-			//StreamGenerator dataStream = new GradualDoubleStream(random.nextInt(), 0.05, 1, 1, 100);
+			// StreamGenerator dataStream = new DoubleStream(random.nextInt(), 0.05, 1, 1);
+			
+			StreamGenerator dataStream = new GradualDoubleStream(random.nextInt(), 0.05, 1, 1, 100);
+			
 			//StreamGenerator dataStream = new BernoulliGenerator(0.5);
 			//StreamGenerator dataStream = new CumulativeBernuoliGenerator(0.5, 100, seed);
 			//StreamGenerator dataStream = new BinomialGenerator(100, 0.5, 1);
